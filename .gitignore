@@ -1,0 +1,23 @@
+# Sensitive local configuration; keep placeholder examples trackable.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# OS and temporary files.
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.swp
+*~
+
+# Common dependencies and generated output; refine after choosing a stack.
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+dist/
+build/
+coverage/
