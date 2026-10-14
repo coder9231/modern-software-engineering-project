@@ -1,0 +1,29 @@
+name: 缺陷反馈
+description: 提供复现步骤，帮助团队定位并修复问题。
+title: "[缺陷] "
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤与输入
+      description: 描述如何触发问题；示例文件应去除敏感信息。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 可附错误信息或截图，请遮盖敏感信息。
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境与版本
+      description: 例如系统、浏览器或运行时版本，以及项目版本或提交号。
