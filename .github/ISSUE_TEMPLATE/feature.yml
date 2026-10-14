@@ -1,0 +1,30 @@
+name: 功能建议
+description: 提出功能或改进，并明确使用场景与验收条件。
+title: "[功能] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 使用场景与问题
+      description: 谁在什么情况下遇到了什么问题？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 预期行为与范围
+      description: 描述功能如何帮助使用者，以及本次准备完成的范围。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      description: 写出能够观察或验证的完成条件，必要时附输入与预期输出。
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 补充信息
+      description: 可补充相关课程要求、参考资料、依赖或待讨论的问题。
