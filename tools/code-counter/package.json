@@ -1,0 +1,13 @@
+{
+  "name": "course-code-counter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Zero-dependency source line counter for the software engineering course project",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test",
+    "count": "node cli.mjs"
+  },
+  "bin": { "code-count": "cli.mjs" }
+}

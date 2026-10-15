@@ -8,9 +8,13 @@
 | --- | --- | --- | --- |
 | 待填写 | 待填写 | 待填写 | 待填写 |
 
-## 邀请成员加入私有仓库
+## 仓库与协作权限
 
-仓库所有者可在 GitHub 仓库的 **Settings → Collaborators**（界面也可能显示 **Collaborators and teams**）中添加成员，输入对方的 GitHub 用户名并发送邀请。成员接受邀请后获得仓库访问权限；仅分享仓库链接不会授予访问权限。
+项目仓库为 [coder9231/modern-software-engineering-project](https://github.com/coder9231/modern-software-engineering-project)，通过开源协作支持团队共同维护。公开仓库的源码可以读取和 Fork；直接向仓库推送仍需要写入权限。
+
+仓库所有者可在 GitHub 仓库的 **Settings → Collaborators**（界面也可能显示 **Collaborators and teams**）中添加成员，输入对方的 GitHub 用户名并发送邀请。成员接受邀请后按所授角色协作。外部贡献者可以通过 Fork 和 Pull Request 参与。
+
+[线上演示站](https://se-practice-coder9231.a0910663736.chatgpt.site)已公开，无需 ChatGPT 账号登录；站点访问与 GitHub 仓库写入权限分别管理。
 
 如后续迁入组织仓库，可按组织的团队与角色安排权限。具体协作流程见 [CONTRIBUTING.md](../CONTRIBUTING.md)。
 

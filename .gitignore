@@ -21,3 +21,33 @@ __pycache__/
 dist/
 build/
 coverage/
+
+# Website build/ contains maintained platform integration sources.
+!/website/build/
+/website/build/*
+!/website/build/*.ts
+!/website/build/connector-preview-plugin.mjs
+!/website/build/connector-preview-worker.mjs
+!/website/build/sites-vite-plugin.LICENSE
+
+# Disposable website deployment archive and checkout-local runtime state.
+/website-deployment.tar.gz
+/website/.sites-runtime/
+/website/.wrangler/
+/website/.next/
+/website/.vinext/
+/website/*.tsbuildinfo
+/website/outputs/
+/website/work/
+/website/.agents/
+/website/.codex/
+/website-deployment-*.tar.gz
+
+# Generated code-count reports.
+reports/
+
+# Local course datasets and transcribed course material are not published.
+/testcase1/
+/testcase2/
+/testcase3/
+/docs/course-photo-notes-2026-10-14.md

@@ -1,0 +1,33 @@
+name: Verify code counter
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Verify shared counter and API service
+        run: node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs website/lib/code-count-service.test.mjs
+      - name: Install website dependencies
+        working-directory: website
+        run: npm ci
+      - name: Check website types
+        working-directory: website
+        run: npx tsc --noEmit
+      - name: Lint application code
+        working-directory: website
+        run: npx eslint app lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
+      - name: Build website
+        working-directory: website
+        run: npm run build
