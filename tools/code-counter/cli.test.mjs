@@ -275,9 +275,10 @@ test('uses exit 2 for partial filesystem errors and still emits a JSON report', 
   assert.equal(result.status, 2, result.stderr || result.stdout);
   const report = JSON.parse(result.stdout);
   assert.deepEqual(report.files.map((file) => file.path), ['readable.js']);
-  assert.ok(report.errors.some((entry) => entry.path === 'unreadable.js'));
-  assert.match(result.stderr, /unreadable\.js/);
-  assert.match(result.stderr, /EACCES|EPERM|permission|denied/i);
+  assert.equal(report.errors.length, 1);
+  assert.equal(report.errors[0].path, 'unreadable.js');
+  assert.match(report.errors[0].message, /\b(?:EACCES|EPERM)\b/);
+  assert.match(result.stderr, /读取失败.*errors/);
   const output = path.join(directory, 'partial.csv');
   const csv = run(directory, '.', '--format', 'csv', '--output', output);
   assert.equal(csv.status, 2, csv.stderr || csv.stdout);

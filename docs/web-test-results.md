@@ -15,7 +15,7 @@
 
 5 项跳过源于当前环境无法创建硬链接/符号链接，或 Windows 缺少 POSIX 权限夹具。真实 HTTP 联调覆盖健康与配置、服务端示例、UTF-8/UTF-16LE/UTF-16BE/GB18030、路径与来源校验、100 文件批量上限、恰好 4 MiB、二进制伪装及 JSON/CSV 附件响应。
 
-复现命令见 [运行说明](web-code-counter.md)。GitHub 工作流 `.github/workflows/ci.yml` 配置了共享核心、API 服务、类型、应用静态检查和构建；本轮只验证本地对应命令，没有声称 GitHub Actions 已运行。
+复现命令见 [运行说明](web-code-counter.md)。GitHub 工作流 `.github/workflows/ci.yml` 在推送和 Pull Request 时执行共享核心、API 服务、类型、应用静态检查和构建；远程执行结果见 [GitHub Actions](https://github.com/coder9231/modern-software-engineering-project/actions)。首次 Linux 执行启用了本机 Windows 跳过的权限案例，并发现 JSON 模式的测试应从 `report.errors` 检查文件详情、从 stderr 检查摘要；已按 CLI 的实际契约修正测试，未更改 CLI 行为或添加跳过。
 
 ## 网页操作验收
 
