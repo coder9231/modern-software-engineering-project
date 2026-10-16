@@ -50,6 +50,9 @@ svg { flex-shrink: 0; }
 .breadcrumb svg { color: #b0bab4; }
 .breadcrumb strong { font-weight: 500; color: #52665a; }
 .topbar-end { display: flex; align-items: center; gap: 25px; }
+.intro-replay-button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 9px; border: 1px solid #e1e9e3; border-radius: 5px; background: #fff; color: #527563; font-size: 10px; white-space: nowrap; }
+.intro-replay-button:hover:not(:disabled) { background: #edf5f1; border-color: #b6cdbf; }
+@media (max-width: 600px) { .intro-replay-button { padding: 7px; } .intro-replay-button > span { display: none; } }
 .service-status { display: flex; align-items: center; gap: 7px; color: #789081; font-size: 10px; }
 .service-status i { width: 5px; height: 5px; background: #4eaa7a; border-radius: 50%; box-shadow: 0 0 0 3px #f0f8f2; }
 .service-status.offline { color: #b68048; }.service-status.offline i { background: #c58e51; box-shadow: 0 0 0 3px #fcf5eb; }

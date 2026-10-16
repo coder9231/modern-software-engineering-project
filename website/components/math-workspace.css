@@ -1,0 +1,210 @@
+.math-workspace { --math-green: #217c65; --math-ink: #253f36; --math-muted: #74877d; --math-border: #e2eae5; font-size: 14px; padding-bottom: 12px; }
+.math-heading { display: flex; align-items: center; justify-content: space-between; gap: 22px; margin-bottom: 25px; }
+.math-eyebrow { color: #7c9b8a; font-size: 10px; letter-spacing: 1.6px; margin-bottom: 10px; font-weight: 600; }
+.math-heading h1 { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; font-size: 28px; }
+.math-heading h1 > span { font-size: 10px; font-weight: 500; letter-spacing: 1px; color: #6e9481; background: #eaf3ed; border: 1px solid #dceae0; padding: 5px 8px; border-radius: 5px; }
+.math-heading p { margin-top: 8px; color: var(--math-muted); font-size: 13px; line-height: 1.8; }
+.math-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; min-height: 39px; font-size: 13px; padding: 9px 14px; border-radius: 7px; font-weight: 550; white-space: nowrap; line-height: 1.3; }
+.math-btn-primary { color: #fff; background: var(--math-green); border-color: var(--math-green); box-shadow: 0 2px 3px #16563f0d; }
+.math-btn-primary:hover:not(:disabled) { background: #175f4d; }
+.math-btn-soft { color: #486658; background: #fff; border-color: #dbe6df; }
+.math-btn-soft:hover:not(:disabled) { background: #f1f7f3; border-color: #a3bfad; }
+.math-tabs { display: flex; gap: 6px; padding: 5px; width: fit-content; max-width: 100%; background: #eaf0ec; border: 1px solid #e2eae4; border-radius: 9px; margin-bottom: 24px; overflow-x: auto; }
+.math-tabs button { display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; background: transparent; color: #7d8d83; font-size: 13px; padding: 10px 16px; white-space: nowrap; }
+.math-tabs button.active { background: #fff; color: #26795e; box-shadow: 0 1px 5px #1e412211; font-weight: 600; }
+.math-tabs button > span { font-size: 11px; background: #e8f2eb; border-radius: 4px; padding: 1px 5px; }
+.math-panel { border: 1px solid var(--math-border); border-radius: 11px; background: #fff; }
+.math-panel-title { display: flex; gap: 12px; align-items: center; margin-bottom: 23px; }
+.math-panel-title > :last-child:not(:first-child):not(div) { margin-left: auto; color: #90a495; }
+.math-panel-title h2 { color: #355343; font-size: 16px; line-height: 1.6; }
+.math-panel-title p { font-size: 12px; color: #8a9b8e; margin-top: 3px; line-height: 1.8; }
+.math-step { width: 30px; height: 31px; background: #eef5ee; border: 1px solid #e1eddf; color: #7b9e7e; display: grid; place-items: center; border-radius: 6px; font-size: 11px; flex-shrink: 0; }
+.math-workbench { display: grid; grid-template-columns: minmax(290px, 340px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.math-settings { padding: 23px; }
+.math-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 19px; min-width: 0; }
+.math-field > label { color: #607a68; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.math-field input, .math-field select { width: 100%; min-width: 0; height: 38px; padding: 8px 10px; border: 1px solid #dce6de; border-radius: 6px; background: #fff; color: #3c5b47; font-size: 13px; }
+.math-field input::placeholder { color: #acb8ac; font-size: 12px; }
+.math-count-input { display: flex; align-items: center; position: relative; }
+.math-count-input input { font-size: 20px; height: 47px; font-weight: 600; letter-spacing: -.5px; padding-right: 55px; font-variant-numeric: tabular-nums; }
+.math-count-input > span { position: absolute; right: 13px; color: #91a090; font-size: 12px; pointer-events: none; }
+.math-presets { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 1px; }
+.math-presets button { background: #f8faf7; color: #82917d; border: 1px solid #e6ece1; padding: 5px 7px; border-radius: 4px; font-size: 11px; }
+.math-presets button.selected { background: #eaf4ec; color: #467d53; border-color: #bfd9c3; }
+.math-operators { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+.math-operators button { font-size: 23px; border: 1px solid #e0e8df; background: #fafcf8; color: #91a08a; border-radius: 6px; height: 42px; }
+.math-operators button.selected { border-color: #8ebc9b; background: #eef7ef; color: #2f7c4d; }
+.math-fields-two { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.math-checkboxes { display: grid; gap: 13px; border-top: 1px solid #edf1e9; padding-top: 19px; margin: 0 0 21px; }
+.math-checkboxes label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6a806a; line-height: 1.6; cursor: pointer; }
+.math-workspace input[type="checkbox"] { width: 15px; height: 15px; margin: 0; }
+.math-help { font-size: 12px; color: #879783; line-height: 1.85; margin-bottom: 17px; }
+.math-advanced { border-top: 1px solid #eaf0e6; padding-top: 17px; }
+.math-advanced summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #74906d; cursor: pointer; font-size: 13px; margin-bottom: 18px; }
+.math-advanced summary::-webkit-details-marker { display: none; }
+.math-advanced[open] summary svg { transform: rotate(90deg); }
+.math-generate { width: 100%; margin-top: 1px; min-height: 43px; }
+.math-generate svg:last-child { margin-left: auto; }
+.math-settings-note { color: #97a68f; font-size: 11px; line-height: 1.8; text-align: center; margin-top: 12px; }
+.math-practice-area { min-width: 0; padding-top: 9px; }
+.math-practice-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
+.math-kicker { color: #93a88e; font-size: 9px; letter-spacing: 1px; font-weight: 600; line-height: 1.8; }
+.math-practice-heading h2 { font-size: 19px; font-weight: 600; color: #36563b; margin-top: 5px; line-height: 1.6; }
+.math-timer { display: grid; grid-template-columns: auto auto; gap: 5px 7px; align-items: center; background: #f0f5ed; border: 1px solid #e1ebdb; border-radius: 7px; padding: 10px 12px; color: #78976d; flex-shrink: 0; }
+.math-timer strong { font-size: 16px; color: #527c49; font-variant-numeric: tabular-nums; }
+.math-timer > span { grid-column: 1 / -1; text-align: center; font-size: 10px; color: #96a88b; }
+.math-empty-practice { min-height: 535px; background: linear-gradient(145deg, #f1f6ee, #f8faf5); border: 1px dashed #d7e4cf; border-radius: 11px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 35px 20px; text-align: center; }
+.math-empty-art { position: relative; padding: 28px; margin-bottom: 21px; }
+.math-mini-paper { width: 236px; transform: rotate(-7deg); background: #fff; border: 1px solid #e4ebdd; box-shadow: 5px 10px 26px #5c7c3610; padding: 27px 23px; display: grid; gap: 22px; border-radius: 7px; color: #8b9d7b; font-size: 12px; text-align: left; position: relative; }
+.math-mini-paper > span { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.math-mini-paper i { border-bottom: 1px solid #d7e2ca; flex: 1; min-width: 20px; }
+.math-mini-paper b { display: grid; place-items: center; position: absolute; right: -11px; bottom: -12px; background: #e0edda; color: #6a9c53; border: 4px solid #f7faf3; width: 42px; height: 42px; border-radius: 50%; transform: rotate(7deg); }
+.math-floating-symbol { position: absolute; right: 0; top: 0; color: #c0d6b0; font-size: 36px; transform: rotate(13deg); }
+.math-floating-plus { position: absolute; bottom: 5px; left: 0; color: #bed4ad; font-size: 29px; transform: rotate(-15deg); }
+.math-empty-practice h3 { font-size: 19px; font-weight: 550; color: #68845b; margin-bottom: 12px; line-height: 1.7; }
+.math-empty-practice > p { color: #9aaa8d; font-size: 13px; line-height: 1.9; white-space: pre-line; }
+.math-empty-features { display: flex; flex-wrap: wrap; justify-content: center; gap: 13px; margin-top: 25px; }
+.math-empty-features span { font-size: 11px; color: #90a47d; display: flex; align-items: center; gap: 4px; }
+.math-session-bar { background: #edf5eb; border: 1px solid #dfead9; padding: 12px 14px; border-radius: 7px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-size: 12px; color: #8b9e7c; margin-bottom: 17px; }
+.math-session-bar b { color: #5e8850; font-weight: 550; }
+.math-inline { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; padding: 2px 0; color: #69905a; font-size: 12px; line-height: 1.6; }
+.math-session-bar .math-inline { margin-left: auto; }
+.math-worksheet-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 16px 0 12px; flex-wrap: wrap; }
+.math-worksheet-toolbar > div { display: flex; gap: 7px; }
+.math-worksheet-toolbar button { border: 1px solid #e2e9da; background: #f8faf5; color: #8c9b80; font-size: 11px; border-radius: 5px; padding: 6px 9px; }
+.math-worksheet-toolbar button.active { border-color: #b3cda3; background: #eaf3e4; color: #64904f; }
+.math-worksheet-toolbar > span { font-size: 10px; color: #a1ae94; line-height: 1.7; }
+.math-question-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.math-question { padding: 15px; border: 1px solid #e2e9db; background: #fff; border-radius: 8px; min-width: 0; }
+.math-question-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; color: #a4b299; font-size: 10px; font-variant-numeric: tabular-nums; }
+.math-result-tag { display: inline-flex; gap: 3px; align-items: center; font-size: 10px; color: #77a366; }
+.math-question.is-correct { border-color: #c8dfbb; }
+.math-question.is-wrong { border-color: #e8d5b9; background: #fffefa; }
+.math-question.is-wrong .math-result-tag { color: #ba9460; }
+.math-expression { display: block; font-size: 17px; color: #557448; letter-spacing: .2px; line-height: 1.7; margin-bottom: 13px; overflow-wrap: anywhere; }
+.math-expression > span { color: #a6b698; padding-left: 4px; }
+.math-question > input { width: 100%; min-width: 0; border: 1px solid #e5ecdd; background: #fcfdf9; border-radius: 5px; height: 37px; color: #65894e; font-size: 14px; padding: 8px 10px; }
+.math-question > input::placeholder { color: #b0bca2; font-size: 12px; }
+.math-question > input:disabled { background: #f6f8f1; opacity: .9; }
+.math-question-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; gap: 8px; color: #9dae8a; font-size: 11px; min-height: 17px; }
+.math-question-bottom b { font-weight: 550; color: #789d5c; }
+.math-question-bottom button { background: transparent; border: 0; font-size: 10px; display: inline-flex; align-items: center; color: #a4b594; padding: 0; }
+.math-answer-note { margin-top: 8px; font-size: 11px; color: #ad946f; line-height: 1.7; overflow-wrap: anywhere; }
+.math-pagination { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 16px 0; color: #9bab8f; font-size: 11px; }
+.math-pagination > div { display: flex; gap: 7px; }
+.math-pagination button { height: 28px; width: 30px; border-radius: 5px; border: 1px solid #e0e9d8; background: #fff; color: #9db28c; display: grid; place-items: center; }
+.math-submit-row { display: flex; gap: 15px; align-items: center; justify-content: space-between; border-top: 1px solid #e5ecde; padding-top: 17px; }
+.math-submit-row > p { font-size: 11px; color: #a0af93; line-height: 1.8; }
+.math-grade-summary { display: flex; align-items: center; gap: 16px; background: #edf6e8; border: 1px solid #d7e8cc; border-radius: 8px; padding: 17px; }
+.math-score-ring { height: 72px; width: 72px; min-width: 72px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(#81ac66 var(--score), #dfead5 var(--score)); position: relative; }
+.math-score-ring::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #edf6e8; }
+.math-score-ring strong { position: relative; font-size: 20px; font-weight: 600; color: #608e43; }
+.math-score-ring small { font-size: 10px; font-weight: 400; }
+.math-grade-summary > div:nth-child(2) > span { color: #99ad86; font-size: 11px; }
+.math-grade-summary h3 { color: #608344; font-size: 17px; margin-top: 4px; font-weight: 550; }
+.math-grade-summary p { color: #99ab84; font-size: 11px; margin-top: 7px; line-height: 1.7; }
+.math-grade-summary > svg { color: #aec89b; margin-left: auto; }
+.math-all-correct { display: flex; flex-direction: column; align-items: center; padding: 40px 15px; gap: 12px; color: #9fb58c; border: 1px dashed #d4e3c7; border-radius: 8px; }
+.math-all-correct h3 { font-size: 16px; color: #7b9b63; }
+.math-all-correct p { font-size: 12px; }
+.math-export-panel { margin-top: 25px; border: 1px solid #e2eadb; border-radius: 8px; background: #f7faf3; padding: 18px; }
+.math-export-panel h3 { color: #7a9367; font-size: 13px; display: flex; align-items: center; gap: 7px; font-weight: 550; }
+.math-export-panel > div > p { color: #a1af95; font-size: 11px; margin-top: 7px; line-height: 1.8; }
+.math-print-options { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 17px; }
+.math-print-options label { font-size: 12px; color: #8c9f7c; display: flex; align-items: center; gap: 7px; }
+.math-print-options select { font-size: 12px; min-height: 32px; padding: 5px 6px; border-color: #dfe8d6; color: #8c9f7c; }
+.math-print-options .math-btn { min-height: 33px; padding: 7px 11px; font-size: 12px; margin-left: auto; }
+.math-downloads { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e7eedd; }
+.math-downloads .math-inline { color: #8da478; font-size: 11px; }
+.math-downloads > code { color: #acb89f; font-size: 10px; overflow: hidden; text-overflow: ellipsis; max-width: 100%; margin-left: auto; }
+.math-engine-note { display: flex; align-items: center; gap: 16px; border-top: 1px solid #e2e9da; padding: 24px 3px 4px; margin-top: 26px; color: #a6b79a; }
+.math-engine-note h3 { font-size: 13px; font-weight: 550; color: #819b6c; }
+.math-engine-note p { font-size: 11px; line-height: 1.9; color: #a4b498; margin-top: 5px; }
+.math-message { border: 1px solid; border-radius: 7px; display: flex; gap: 9px; align-items: center; padding: 12px 14px; margin-bottom: 18px; font-size: 13px; line-height: 1.8; }
+.math-message > span { flex: 1; overflow-wrap: anywhere; }
+.math-message button { background: transparent; border: 0; color: inherit; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-size: 12px; }
+.math-error { background: #fff7ef; color: #ab7c4e; border-color: #efdcc5; }
+.math-notice { background: #f0f7eb; color: #819d6a; border-color: #dfebd4; }
+.math-loading { background: #edf5ea; color: #71995c; border-color: #dce9d2; }
+.math-history { padding: 25px; }
+.math-history .math-panel-title { align-items: flex-start; }
+.math-history .math-panel-title > svg { color: #8ca579; margin-top: 4px; }
+.math-history .math-panel-title > button { flex-shrink: 0; color: #a3b095; font-size: 12px; }
+.math-history-list article { display: flex; align-items: center; gap: 15px; padding: 19px 0; border-top: 1px solid #edf1e7; }
+.math-history-icon { height: 42px; width: 42px; min-width: 42px; background: #edf5e8; color: #91ab7b; display: grid; place-items: center; border-radius: 8px; }
+.math-history-info { flex: 1; min-width: 0; }
+.math-history-info h3 { font-size: 14px; color: #738b5e; font-weight: 550; }
+.math-history-info p { margin-top: 6px; color: #a1af94; font-size: 11px; line-height: 1.7; }
+.math-history-info p > span { padding: 0 9px; }
+.math-history-info small { display: block; margin-top: 4px; color: #b4bfaa; font-size: 10px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.math-history-score { text-align: right; min-width: 65px; }
+.math-history-score strong { color: #7e9e64; font-size: 20px; font-weight: 550; display: block; }
+.math-history-score > span { font-size: 10px; color: #a6b599; margin-top: 5px; display: block; }
+.math-history-list .math-btn { font-size: 12px; padding: 8px 11px; min-height: 34px; }
+.math-icon-button { border: 0; background: transparent; padding: 5px; color: #afbea1; display: grid; place-items: center; }
+.math-blank { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; padding: 70px 20px; text-align: center; color: #b5c5a6; }
+.math-blank h3 { color: #8fa77a; font-size: 17px; line-height: 1.7; font-weight: 550; }
+.math-blank p { color: #aebd9f; font-size: 12px; line-height: 1.8; }
+.math-blank .math-btn { margin-top: 8px; }
+.math-24-layout { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 24px; }
+.math-24-board { padding: 27px; }
+.math-playing-cards { display: flex; justify-content: center; gap: 14px; padding: 30px 0 29px; }
+.math-playing-card { width: 100px; height: 146px; border: 1px solid #e0e8d7; border-radius: 9px; box-shadow: 1px 5px 10px #506f2910; background: #fff; color: #547b43; display: flex; flex-direction: column; justify-content: space-between; padding: 9px; transform: rotate(-3deg); }
+.math-playing-card:nth-child(even) { transform: rotate(3deg); }
+.math-playing-card.red { color: #ba866d; }
+.math-playing-card small { display: flex; flex-direction: column; font-size: 12px; line-height: 1.2; align-self: flex-start; align-items: center; }
+.math-playing-card small:last-child { transform: rotate(180deg); align-self: flex-end; }
+.math-playing-card strong { font-size: 43px; font-weight: 550; text-align: center; }
+.math-24-actions { display: flex; justify-content: center; gap: 10px; margin-bottom: 27px; flex-wrap: wrap; }
+.math-24-form { border-top: 1px solid #e8eee1; padding-top: 24px; }
+.math-24-form label { color: #7b9569; font-size: 13px; display: block; margin-bottom: 10px; }
+.math-24-form > div { display: flex; gap: 9px; }
+.math-24-form input { border: 1px solid #dfe8d5; border-radius: 6px; min-width: 0; width: 100%; color: #719754; padding: 11px 13px; font-size: 15px; background: #fcfdf9; }
+.math-24-form input::placeholder { font-size: 12px; color: #b2bea4; }
+.math-24-form > p { color: #a6b598; font-size: 11px; line-height: 1.9; margin-top: 11px; }
+.math-24-note { background: #edf4e8; border: 1px solid #e1ebd8; border-radius: 10px; padding: 25px 22px; align-self: start; }
+.math-24-note h3 { color: #799963; font-size: 21px; line-height: 1.7; margin-top: 13px; font-weight: 550; }
+.math-24-note > p { font-size: 12px; color: #a1b18f; line-height: 2; margin-top: 15px; margin-bottom: 26px; }
+.math-24-note > div { display: flex; gap: 9px; align-items: center; font-size: 11px; line-height: 1.8; color: #94ab80; margin-top: 15px; }
+.math-24-note > div > span { color: #abc198; border: 1px solid #dce8d2; border-radius: 4px; padding: 2px 5px; font-size: 10px; }
+.math-card-result { display: flex; gap: 12px; padding: 16px; border-radius: 7px; margin-top: 18px; border: 1px solid; }
+.math-card-result.correct { background: #eef7e8; color: #83a56a; border-color: #dbeacc; }
+.math-card-result.incorrect { background: #fff8ec; color: #b79b6c; border-color: #ecdfc3; }
+.math-card-result strong { font-size: 14px; font-weight: 550; }
+.math-card-result p { font-size: 12px; line-height: 1.8; margin-top: 5px; }
+.math-card-result code { display: block; font-size: 11px; line-height: 1.8; margin-top: 6px; overflow-wrap: anywhere; }
+.math-hint { display: flex; gap: 12px; background: #f5f8ef; border: 1px solid #e5eddb; border-radius: 7px; padding: 15px; color: #acb99a; margin-top: 16px; }
+.math-hint > div { min-width: 0; }
+.math-hint span { display: block; font-size: 11px; color: #a0b18c; }
+.math-hint strong { display: block; margin-top: 8px; font-size: 19px; color: #839f68; font-weight: 500; overflow-wrap: anywhere; }
+.math-seed-label { font-size: 10px; color: #b2c0a4; margin-top: 17px; overflow-wrap: anywhere; }
+.math-modal-backdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; background: #19332560; backdrop-filter: blur(3px); }
+.math-modal { width: 100%; max-width: 540px; background: #fff; border: 1px solid #dbe7d5; border-radius: 12px; padding: 25px; box-shadow: 0 15px 70px #15352030; }
+.math-modal .math-panel-title { color: #92ac7b; }
+.math-modal .math-panel-title h2 { flex: 1; font-size: 15px; }
+.math-evaluation-expression { font-size: 22px; line-height: 1.8; color: #89a66f; padding: 14px 0 22px; overflow-wrap: anywhere; }
+.math-evaluation-expression b { color: #5f8f3f; font-weight: 550; }
+.math-modal > h3 { color: #8da876; font-size: 13px; margin-bottom: 11px; }
+.math-modal > code { display: block; padding: 14px; background: #f1f6ec; border: 1px solid #e3ecd9; color: #8ba671; font-size: 14px; line-height: 1.8; border-radius: 7px; overflow-wrap: anywhere; }
+.math-modal > p { font-size: 12px; color: #a1b48d; line-height: 1.9; margin-top: 18px; }
+.math-print-sheet { display: none; }
+@media (min-width: 1500px) { .math-question-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1150px) { .math-workbench { grid-template-columns: 290px minmax(0, 1fr); gap: 18px; } .math-settings { padding: 19px; } .math-practice-heading { align-items: flex-start; } .math-practice-heading h2 { font-size: 17px; } .math-timer { padding: 8px; } .math-timer > span { font-size: 9px; } .math-submit-row { flex-wrap: wrap; } .math-submit-row .math-btn { margin-left: auto; } .math-24-layout { grid-template-columns: minmax(0, 1fr); } .math-24-note { display: none; } }
+@media (max-width: 950px) { .math-workbench { grid-template-columns: 1fr; } .math-settings { padding: 23px; } .math-settings > .math-field, .math-settings > .math-fields-two, .math-settings > .math-checkboxes { max-width: none; } .math-question-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .math-empty-practice { min-height: 380px; } .math-empty-art { margin-bottom: 6px; } .math-practice-area { padding-top: 8px; } .math-tabs { width: 100%; } .math-tabs button { padding: 10px 12px; flex: 1; } .math-heading h1 { font-size: 25px; } .math-history-list article { gap: 12px; } }
+@media (max-width: 600px) { .math-heading { align-items: flex-start; gap: 10px; margin-bottom: 19px; } .math-heading h1 { font-size: 23px; gap: 9px; } .math-heading h1 > span { font-size: 8px; } .math-heading p { font-size: 12px; } .math-heading > .math-btn { padding: 8px 9px; min-height: 34px; font-size: 11px; gap: 5px; } .math-eyebrow { font-size: 8px; letter-spacing: 1px; } .math-tabs { gap: 2px; margin-bottom: 19px; } .math-tabs button { gap: 5px; font-size: 11px; padding: 9px 7px; } .math-tabs button svg { width: 14px; } .math-panel-title { margin-bottom: 19px; } .math-settings { padding: 20px; } .math-practice-heading h2 { font-size: 16px; } .math-timer strong { font-size: 14px; } .math-session-bar { gap: 9px; font-size: 11px; padding: 10px; } .math-question-grid { gap: 9px; } .math-question { padding: 12px; } .math-expression { font-size: 15px; } .math-question-top { margin-bottom: 10px; } .math-question > input { font-size: 13px; } .math-grade-summary { padding: 13px; gap: 12px; } .math-score-ring { height: 61px; width: 61px; min-width: 61px; } .math-score-ring strong { font-size: 17px; } .math-grade-summary h3 { font-size: 15px; } .math-grade-summary > svg { display: none; } .math-grade-summary p { font-size: 10px; } .math-print-options { gap: 10px; } .math-print-options label { font-size: 11px; } .math-downloads { gap: 10px; } .math-history { padding: 20px 15px; } .math-history .math-panel-title { flex-wrap: wrap; gap: 10px; } .math-history .math-panel-title > div { flex: 1; } .math-history .math-panel-title > button { margin-left: auto; } .math-history-list article { flex-wrap: wrap; } .math-history-icon { height: 34px; width: 34px; min-width: 34px; } .math-history-info h3 { font-size: 13px; } .math-history-info p { font-size: 10px; } .math-history-score strong { font-size: 17px; } .math-history-list .math-btn { margin-left: auto; } .math-history-info { flex-basis: calc(100% - 135px); } .math-24-board { padding: 21px 16px; } .math-playing-cards { gap: 9px; } .math-playing-card { width: 70px; height: 110px; padding: 7px; } .math-playing-card strong { font-size: 32px; } .math-playing-card small { font-size: 10px; } .math-24-form > div { flex-wrap: wrap; } .math-24-form .math-btn { width: 100%; } .math-engine-note { align-items: flex-start; } .math-modal { padding: 21px; } }
+@media print {
+  @page { margin: 15mm 12mm; }
+  body.math-print-mode { background: white; color: black; min-width: 0; }
+  body.math-print-mode .sidebar, body.math-print-mode .topbar, body.math-print-mode .workspace-footer, body.math-print-mode .nav-scrim { display: none !important; }
+  body.math-print-mode .main-shell { margin: 0 !important; }
+  body.math-print-mode .workspace { padding: 0 !important; max-width: none !important; margin: 0 !important; }
+  body.math-print-mode .workspace > :not(.math-workspace) { display: none !important; }
+  body.math-print-mode .math-workspace > :not(.math-print-sheet) { display: none !important; }
+  body.math-print-mode .math-workspace { padding: 0; }
+  body.math-print-mode .math-print-sheet { display: block; background: white; color: black; }
+  .math-print-sheet h1 { color: black; text-align: center; font-size: 22px; margin-bottom: 20px; }
+  .math-print-meta { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 15px; margin-bottom: 25px; border-bottom: 1px solid #aaa; font-size: 12px; }
+  .math-print-questions { display: grid; grid-template-columns: repeat(var(--math-print-columns), minmax(0, 1fr)); gap: var(--math-print-gap) 18px; }
+  .math-print-questions > div { break-inside: avoid; page-break-inside: avoid; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; color: black; }
+  .math-print-sheet footer { font-size: 9px; color: #555; border-top: 1px solid #aaa; margin-top: 30px; padding-top: 10px; overflow-wrap: anywhere; }
+}

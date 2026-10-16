@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SE Lab · 软件工程实践平台",
-  description: "面向现代软件工程课程的团队实践平台。导入项目、分析代码规模、查看语言分布并导出代码统计报告，记录从需求到交付的工程实践。",
+  description: "现代软件工程课程团队实践平台：项目代码统计、可定制的四则运算练习、精确批改与 24 点挑战，记录从需求到交付的工程实践。",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

@@ -1,4 +1,4 @@
-name: Verify code counter
+name: Verify software engineering platform
 
 on:
   push:
@@ -17,8 +17,8 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: website/package-lock.json
-      - name: Verify shared counter and API service
-        run: node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs website/lib/code-count-service.test.mjs
+      - name: Verify shared counters, arithmetic and API services
+        run: node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs website/lib/code-count-service.test.mjs website/lib/math/core.test.mjs website/lib/math-service.test.mjs website/lib/math-ocr.test.mjs tools/arithmetic/cli.test.mjs
       - name: Install website dependencies
         working-directory: website
         run: npm ci
@@ -27,7 +27,7 @@ jobs:
         run: npx tsc --noEmit
       - name: Lint application code
         working-directory: website
-        run: npx eslint app lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
+        run: npx eslint app components/cinematic-intro.tsx "components/math-*.tsx" lib/math "lib/math-*.mjs" "lib/math-*.mts" lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
       - name: Build website
         working-directory: website
         run: npm run build
