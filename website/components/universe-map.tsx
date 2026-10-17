@@ -23,16 +23,28 @@ const STARS = [
   [93, 65, 1], [96, 91, 1], [6, 83, 1], [11, 71, 1], [27, 76, 1], [40, 54, 1], [56, 48, 1], [65, 64, 1], [87, 33, 1], [95, 5, 1],
 ];
 
+const motionStorageKey = "se-lab-universe-motion-v1";
+
 export default function UniverseMap({ onNavigate }: { onNavigate: (destination: Destination) => void }) {
   const [highlighted, setHighlighted] = useState<Destination>("counter");
   const [travelling, setTravelling] = useState<Destination | null>(null);
   const [animationEnabled, setAnimationEnabled] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [flightOrigin, setFlightOrigin] = useState({ x: 50, y: 50 });
+  const stageRef = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pending = useRef(false);
   const destination = WORLDS.find(world => world.id === highlighted) ?? WORLDS[0];
   const flight = WORLDS.find(world => world.id === travelling);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      try { setAnimationEnabled(window.sessionStorage.getItem(motionStorageKey) !== "paused"); }
+      catch { /* Storage is optional; the animation control still works. */ }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     const cancel = () => {
@@ -68,11 +80,28 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
     };
   }, []);
 
+  function toggleAnimation() {
+    const enabled = !animationEnabled;
+    setAnimationEnabled(enabled);
+    try { window.sessionStorage.setItem(motionStorageKey, enabled ? "playing" : "paused"); }
+    catch { /* Only the current visit keeps the preference when storage is blocked. */ }
+  }
+
   function navigate(id: Destination) {
     if (pending.current) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       onNavigate(id);
       return;
+    }
+    const world = stageRef.current?.querySelector<HTMLElement>(".universe-world");
+    const sphere = stageRef.current?.querySelector<HTMLElement>(`[data-destination="${id}"] .se-planet__sphere`);
+    if (world && sphere) {
+      const bounds = world.getBoundingClientRect();
+      const target = sphere.getBoundingClientRect();
+      if (bounds.width > 0 && bounds.height > 0) setFlightOrigin({
+        x: Math.max(0, Math.min(100, (target.left + target.width / 2 - bounds.left) / bounds.width * 100)),
+        y: Math.max(0, Math.min(100, (target.top + target.height / 2 - bounds.top) / bounds.height * 100)),
+      });
     }
     pending.current = true;
     setHighlighted(id);
@@ -85,7 +114,7 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
   }
 
   return (
-    <section className={`universe-map${travelling ? " universe-map--travelling" : ""}${!animationEnabled || !pageVisible || reducedMotion ? " universe-map--paused" : ""}`} aria-labelledby="universe-heading" style={{ "--flight-x": `${flight?.x ?? 50}%`, "--flight-y": `${flight?.y ?? 50}%` } as CSSProperties}>
+    <section className={`universe-map${travelling ? " universe-map--travelling" : ""}${!animationEnabled || !pageVisible || reducedMotion ? " universe-map--paused" : ""}`} aria-labelledby="universe-heading" style={{ "--flight-x": `${flightOrigin.x}%`, "--flight-y": `${flightOrigin.y}%` } as CSSProperties}>
       <header className="universe-heading">
         <div>
           <p className="universe-eyebrow"><span /> SE LAB / THE ENGINEERING UNIVERSE</p>
@@ -95,12 +124,12 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
         <div className="universe-map-badge"><Compass size={15} strokeWidth={1.3} /><span>工程宇宙<small>LIVING STAR MAP</small></span></div>
       </header>
 
-      <div className="universe-stage">
+      <div className="universe-stage" ref={stageRef}>
         <div className="universe-stage-corner universe-stage-corner--top" aria-hidden="true" />
         <div className="universe-stage-corner universe-stage-corner--bottom" aria-hidden="true" />
         <div className="universe-map-caption"><Crosshair size={12} strokeWidth={1.2} /><span>星图导航</span><i /><small>5 个目的地</small></div>
         <span className="universe-map-coordinate" aria-hidden="true">SE–001 / EXPLORATION FIELD</span>
-        <button type="button" className="universe-motion-toggle" onClick={() => setAnimationEnabled(enabled => !enabled)} disabled={reducedMotion || travelling !== null} aria-label={reducedMotion ? "星系保持静止，已遵循系统减少动态效果设置" : animationEnabled ? "暂停星系动画" : "播放星系动画"} title={reducedMotion ? "已遵循系统减少动态效果设置" : "悬停或聚焦星球时，动画会暂时停下，方便选择。"}>
+        <button type="button" className="universe-motion-toggle" onClick={toggleAnimation} disabled={reducedMotion || travelling !== null} aria-label={reducedMotion ? "星系保持静止，已遵循系统减少动态效果设置" : animationEnabled ? "暂停星系动画" : "播放星系动画"} title={reducedMotion ? "已遵循系统减少动态效果设置" : "悬停或聚焦时稳住所选星球的位置，背景继续运行。"}>
           {animationEnabled && !reducedMotion ? <Pause size={12} strokeWidth={1.5} /> : <Play size={12} strokeWidth={1.5} />}<span>{reducedMotion ? "静止模式" : animationEnabled ? "暂停动画" : "播放动画"}</span>
         </button>
         <div className="universe-world">
@@ -126,7 +155,7 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
           </svg>
           <div className="universe-sun" aria-hidden="true"><span className="universe-sun-halo" /><span className="universe-sun-core" /><span className="universe-sun-line" /><div><span className="universe-sun-label">YOUR IDEAS. IN ORBIT.</span><strong>SE <em>LAB</em><b>✦</b></strong><span className="universe-sun-subtitle">每个世界，都始于一个想法</span></div></div>
           {WORLDS.map((world, index) => (
-            <button key={world.id} type="button" className={`universe-planet universe-planet--${world.kind}${highlighted === world.id ? " universe-planet--highlighted" : ""}`} style={{ "--planet-x": `${world.x}%`, "--planet-y": `${world.y}%`, "--planet-size": `${world.size}px`, "--destination-color": world.color, "--drift-duration": `${20 + index * 3}s`, "--drift-delay": `${-index * 4.1}s`, "--drift-x": `${9 + index % 3 * 3}px`, "--drift-y": `${6 + index % 2 * 3}px`, "--surface-duration": `${40 + index * 9}s` } as CSSProperties} onMouseEnter={() => { if (!pending.current) setHighlighted(world.id); }} onFocus={() => { if (!pending.current) setHighlighted(world.id); }} onClick={() => navigate(world.id)} disabled={travelling !== null} aria-label={`${world.name}：${world.title}，进入${world.title}`}>
+            <button key={world.id} type="button" data-destination={world.id} className={`universe-planet universe-planet--${world.kind}${highlighted === world.id ? " universe-planet--highlighted" : ""}`} style={{ "--planet-x": `${world.x}%`, "--planet-y": `${world.y}%`, "--planet-size": `${world.size}px`, "--destination-color": world.color, "--drift-duration": `${24 + index * 3}s`, "--drift-delay": `${-index * 4.1}s`, "--drift-x": `${6 + index % 3 * 2}px`, "--drift-y": `${5 + index % 2 * 2}px`, "--surface-duration": `${55 + index * 11}s` } as CSSProperties} onMouseEnter={() => { if (!pending.current) setHighlighted(world.id); }} onFocus={() => { if (!pending.current) setHighlighted(world.id); }} onClick={() => navigate(world.id)} disabled={travelling !== null} aria-label={`${world.name}：${world.title}，进入${world.title}`}>
               <span className="universe-planet-visual"><span className="universe-planet-drift"><PlanetOrb kind={world.kind} />{world.id === "math" && <span className="universe-moon"><i /><span>24</span></span>}</span><span className="universe-planet-selector" /></span>
               <span className="universe-planet-label"><span className="universe-planet-number">0{index + 1}</span><span><strong>{world.name}<ArrowUpRight size={12} strokeWidth={1.3} /></strong><small>{world.title}</small></span></span>
               <span className="universe-planet-mobile-description">{world.description}</span>
