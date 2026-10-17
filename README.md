@@ -4,6 +4,8 @@
 
 已实现代码量统计工具的命令行版本和网站前后端。自主功能现选为课堂图片中的四则运算：提供可配置出题、精确批改、打印、双语界面、计时与本地历史，并重用数学核心实现 24 点。网站使用 React/Vinext；个人展示信息仍待团队补充。四则运算的真实网页联调与发布状态见[本轮测试记录](docs/arithmetic-test-results.md)。
 
+2026-10-17 已发布网站第 4 版“SE Lab · 工程宇宙”：以星图首页和五颗功能星球承接代码统计、四则运算、工程实践、个人主页与项目档案，并加入进入功能的镜头过渡和约 5.4 秒的星系开场。采用原生 CSS/SVG 的 2.5D 表现，保留文字导航、功能直达链接与减少动态效果策略。类型检查、lint、生产构建及本地与线上各 14 项 HTTP 回归通过；桌面与手机本地交互已验收，线上另验星图、开场、键盘进入起源星和部分直达行为。本轮 GitHub 推送与 CI 待核实。设计与实际结果见[宇宙导航设计决策](docs/decisions/0005-universe-navigation.md)和[验证记录](docs/universe-test-results.md)。
+
 ## 运行网站
 
 需要 Node.js **22.13.0 或以上**。在本仓库根目录执行：
@@ -22,9 +24,9 @@ npm run dev
 
 网站运行、接口与限制见 [网站说明](docs/web-code-counter.md)，架构取舍见 [网站设计决策](docs/decisions/0002-web-code-counter.md)。
 
-通过侧边栏或 [`#math` 入口](https://se-practice-coder9231.a0910663736.chatgpt.site/#math)进入“四则运算”模块，可配置题量、运算符、操作数及答案范围、括号、负数、分数和除法模式。默认每题 2 个运算符、整数 0～100、答案 0～100；固定种子可复现题目，单次最多 10000 道。2026-10-16 四则运算与开场动画已完成生产构建并发布为网站第 3 版，线上 HTTP 14 项通过；版本与验收边界见[测试记录](docs/arithmetic-test-results.md)。
+通过星图中的逻辑星、侧边栏或 [`#math` 入口](https://se-practice-coder9231.a0910663736.chatgpt.site/#math)进入“四则运算”模块，可配置题量、运算符、操作数及答案范围、括号、负数、分数和除法模式。默认每题 2 个运算符、整数 0～100、答案 0～100；固定种子可复现题目，单次最多 10000 道。四则运算于 2026-10-16 随网站第 3 版上线，其历史版本与验收边界见[测试记录](docs/arithmetic-test-results.md)；当前第 4 版加入宇宙导航并通过线上 HTTP 回归。
 
-AI OCR 已实现服务端适配器与人工校正界面，模拟接口测试通过。密钥配置流程中断，尚未取得真实密钥，不能把功能入口视为已通过手写识别验收；人工转录、校正与数学批改独立于 AI 服务。本轮另加入原创胶片氛围的开场动画，约 4.8 秒，可跳过、按 Escape 退出或手动重播；未使用外部电影素材或音乐。设计、无障碍选择与实测边界见[开场动画设计决策](docs/decisions/0004-cinematic-opening.md)。
+AI OCR 已实现服务端适配器与人工校正界面，模拟接口测试通过。密钥配置流程中断，尚未取得真实密钥，不能把功能入口视为已通过手写识别验收；人工转录、校正与数学批改独立于 AI 服务。第 3 版曾加入约 4.8 秒的原创胶片氛围开场，可跳过、按 Escape 退出或手动重播；未使用外部电影素材或音乐。该版设计与实测边界见[开场动画设计决策](docs/decisions/0004-cinematic-opening.md)，本轮宇宙主题升级的验收另行记录。
 
 ## 运行四则运算工具
 
@@ -38,7 +40,7 @@ node --test website/lib/math/core.test.mjs website/lib/math-service.test.mjs web
 
 CLI 与网站共用数学核心，用调度场算法、逆波兰表达式及精确分数计算；结构去重，题空间不足或搜索达限时明确报错，输出文件仅新建、不覆盖。参数与示例见[四则运算工具说明](tools/arithmetic/README.md)，完整课程需求映射见[四则运算需求](docs/arithmetic-requirements.md)。
 
-启动网站后可运行 `node --test tools/arithmetic/web-api.test.mjs` 做真实 HTTP 功能验收。本地与已发布的线上第 3 版均通过数学 8 项和代码统计 6 项 HTTP 检查。容量实验另用 `node tools/arithmetic/load-test.mjs`，已在本地开发服务完成 5 并发、100 请求的测量；这不是生产容量承诺。万级并发尚未验证，不能由“生成一万道题”推断。
+启动网站后可运行 `node --test tools/arithmetic/web-api.test.mjs` 做真实 HTTP 功能验收。当前第 4 版的本地与线上回归分别通过数学 8 项和代码统计 6 项 HTTP 检查。容量实验另用 `node tools/arithmetic/load-test.mjs`，历史本地开发服务曾完成 5 并发、100 请求的测量；这不是生产容量承诺。万级并发尚未验证，不能由“生成一万道题”推断。
 
 ## 运行代码量统计工具
 
@@ -61,7 +63,7 @@ node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test
 
 - **代码量统计工具**：作为第一个可运行的功能，分析代码文件并展示统计结果。
 - **四则运算自主功能**：面向老师出题和学生练习，提供可配置规则、精确批改、可打印练习及 24 点重用案例。
-- **个人主页与成果展示**：网站已有展示入口，个人介绍、成员信息和成果材料待补充。
+- **个人主页与成果展示**：本轮起源星展示已知 GitHub 账号与真实项目作品；个人介绍和成员职责待补充，不提供资料编辑或云同步。
 
 ## 阶段里程碑
 
@@ -69,8 +71,8 @@ node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test
 | --- | --- | --- |
 | 需求澄清 | 确认课程要求、统计规则、技术栈和任务分工 | 统计规则和网站技术栈已定义；四则运算主题已选，团队分工待填写 |
 | 统计工具最小版本 | 完成约定范围的统计功能及验收样例 | CLI 与网站前后端首版已实现 |
-| 自主功能迭代 | 四则运算、可配置练习、批改及模块重用 | 已实现并发布第 3 版，本地与线上 HTTP 已验证；真实 OCR 与剩余浏览器流程待验收 |
-| 主页与展示 | 整理成果、演示流程和课程实践记录 | 网站入口已有；个人信息与成果材料待补充 |
+| 自主功能迭代 | 四则运算、可配置练习、批改及模块重用 | 第 3 版首次上线，当前第 4 版宇宙导航继续保留功能；本地与线上 HTTP 已验证，真实 OCR 等独立流程待验收 |
+| 主页与展示 | 整理成果、演示流程和课程实践记录 | 第 4 版星图与起源星已上线；个人信息、成员职责与更多成果材料待补充 |
 
 ## 仓库导航
 
@@ -84,6 +86,8 @@ node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test
 - [四则运算设计决策](docs/decisions/0003-arithmetic.md)：RPN、精确有理数、结构去重、种子与 24 点重用。
 - [四则运算测试记录](docs/arithmetic-test-results.md)：单元测试、真实 HTTP 验收和容量验证边界。
 - [开场动画设计决策](docs/decisions/0004-cinematic-opening.md)：原创胶片意象、跳过与重播、焦点恢复、减少动态效果和浏览器实测。
+- [宇宙导航设计决策](docs/decisions/0005-universe-navigation.md)：功能星球、直达导航、业务状态保留与轻量视觉实现。
+- [宇宙导航验证记录](docs/universe-test-results.md)：本轮星图、转场、无障碍及功能回归的实际验收状态。
 - [协作说明](CONTRIBUTING.md)：Issue、分支、Pull Request 与评审流程。
 - [许可与第三方材料](THIRD_PARTY_NOTICES.md)：自有源码、依赖与本地课程材料的授权边界。
 - `.github/`：功能与缺陷 Issue 模板、Pull Request 模板。

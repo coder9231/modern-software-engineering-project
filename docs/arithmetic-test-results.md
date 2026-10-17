@@ -60,7 +60,7 @@ Remove-Item Env:ARITHMETIC_URL
 | 部署 | `appgdep_6ad1d929b3f08191b4fde35e9b675ab1`，状态 `succeeded` |
 | 线上功能验收 | 数学 8 项与代码统计 6 项 HTTP 测试全部通过 |
 
-GitHub 新版本 CI 尚未核实；以上 Sites 构建、部署和 HTTP 结果不替代 GitHub Actions 的运行结果。
+第 3 版源码对应 GitHub 提交 `4364638`，已核实 [GitHub Actions 38871181200](https://github.com/coder9231/modern-software-engineering-project/actions/runs/38871181200) 成功。该结果与以上 Sites 构建、部署和 HTTP 检查分别记录；后续宇宙导航版本仍需核对其自己的构建与 CI 结果。
 
 ## 本地浏览器流程
 
@@ -113,7 +113,7 @@ JSON 报告包含实际并发、成功/失败数、错误率、HTTP 状态、全
 ## 尚需真实材料或环境
 
 - 浏览器剩余流程：计时准确性、JSON 下载、打印预览、整套练习的窄屏操作，以及减少动态系统偏好的实机检查；已执行范围见上表。
-- 新版本 GitHub Actions CI；Sites 生产构建、线上发布及同版本 HTTP 验收已经完成，详见上文。
+- 后续迭代的 GitHub Actions CI 需要按新提交单独核对；第 3 版 CI、Sites 生产构建、线上发布及同版本 HTTP 验收已经完成，详见上文。
 - AI 密钥配置流程中断，尚未取得真实密钥；未调用真实图片识别，不声称支持某种手写体的实测准确率。服务端适配器与人工校正界面已实现，6 项模拟接口测试通过；人工转录/校正与数学核验可独立使用。
 - 课件要求的估时应在后续迭代开始前记录。本轮没有可追溯的完整事前估计，不补写虚构工时。
 

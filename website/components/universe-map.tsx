@@ -1,0 +1,120 @@
+"use client";
+
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { ArrowUpRight, Compass, CornerDownRight, Crosshair, Orbit } from "lucide-react";
+import { PlanetOrb, type PlanetKind } from "./planet-orb";
+import "./universe-map.css";
+
+type Destination = "counter" | "math" | "practice" | "profile" | "about";
+type World = { id: Destination; kind: PlanetKind; name: string; title: string; english: string; description: string; coordinates: string; x: number; y: number; size: number; color: string; features: string[] };
+
+const WORLDS: World[] = [
+  { id: "counter", kind: "data", name: "数据星", title: "代码统计", english: "DATA", description: "读懂每一行代码。上传源码，探索语言分布、代码与注释的组成。", coordinates: "01 / DATA OBSERVATORY", x: 23, y: 28, size: 119, color: "#8cc8ed", features: ["多语言分析", "图表与报告", "文件与目录"] },
+  { id: "math", kind: "logic", name: "逻辑星", title: "四则运算", english: "LOGIC", description: "让思维沿着轨道运行。定制练习、检验答案，再向 24 点卫星发起挑战。", coordinates: "02 / LOGIC STATION", x: 75, y: 23, size: 99, color: "#eac58e", features: ["定制出题", "练习与批改", "24 点挑战"] },
+  { id: "practice", kind: "build", name: "建造星", title: "工程实践", english: "BUILD", description: "从需求走向可运行的系统。沿着迭代足迹，了解设计、复用与验证。", coordinates: "03 / ENGINEERING BASE", x: 81, y: 65, size: 79, color: "#91dec6", features: ["需求与设计", "测试与验证", "持续迭代"] },
+  { id: "profile", kind: "origin", name: "起源星", title: "个人主页", english: "ORIGIN", description: "每次探索，都有一个起点。这里为个人介绍、作品与学习记录留下一片空间。", coordinates: "04 / PERSONAL ORIGIN", x: 50, y: 79, size: 77, color: "#c9d2af", features: ["个人介绍", "作品展示", "资料待完善"] },
+  { id: "about", kind: "archive", name: "档案星", title: "关于项目", english: "ARCHIVE", description: "保存这个宇宙的来历。了解课程项目、开源仓库，以及我们正在构建的未来。", coordinates: "05 / PROJECT ARCHIVE", x: 19, y: 69, size: 87, color: "#c7b9e8", features: ["项目背景", "开源协作", "版本记录"] },
+];
+
+const STARS = [
+  [4, 13, 1], [8, 58, 2], [12, 30, 1], [15, 8, 1], [17, 47, 1], [20, 90, 1], [25, 58, 1], [29, 12, 2], [31, 42, 1], [33, 88, 1],
+  [36, 29, 1], [39, 68, 1], [42, 9, 1], [44, 37, 1], [48, 62, 1], [51, 18, 2], [54, 92, 1], [57, 32, 1], [59, 71, 2], [62, 8, 1],
+  [64, 48, 1], [67, 84, 1], [69, 16, 1], [72, 57, 1], [75, 92, 1], [78, 38, 2], [82, 10, 1], [85, 79, 1], [88, 48, 1], [91, 22, 1],
+  [93, 65, 1], [96, 91, 1], [6, 83, 1], [11, 71, 1], [27, 76, 1], [40, 54, 1], [56, 48, 1], [65, 64, 1], [87, 33, 1], [95, 5, 1],
+];
+
+export default function UniverseMap({ onNavigate }: { onNavigate: (destination: Destination) => void }) {
+  const [highlighted, setHighlighted] = useState<Destination>("counter");
+  const [travelling, setTravelling] = useState<Destination | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pending = useRef(false);
+  const destination = WORLDS.find(world => world.id === highlighted) ?? WORLDS[0];
+  const flight = WORLDS.find(world => world.id === travelling);
+
+  useEffect(() => {
+    const cancel = () => {
+      if (timer.current !== null) clearTimeout(timer.current);
+      timer.current = null;
+      pending.current = false;
+      setTravelling(null);
+    };
+    const onVisibility = () => { if (document.hidden) cancel(); };
+    window.addEventListener("hashchange", cancel);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      if (timer.current !== null) clearTimeout(timer.current);
+      pending.current = false;
+      window.removeEventListener("hashchange", cancel);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
+  function navigate(id: Destination) {
+    if (pending.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onNavigate(id);
+      return;
+    }
+    pending.current = true;
+    setHighlighted(id);
+    setTravelling(id);
+    timer.current = setTimeout(() => {
+      timer.current = null;
+      pending.current = false;
+      onNavigate(id);
+    }, 650);
+  }
+
+  return (
+    <section className={`universe-map${travelling ? " universe-map--travelling" : ""}`} aria-labelledby="universe-heading" style={{ "--flight-x": `${flight?.x ?? 50}%`, "--flight-y": `${flight?.y ?? 50}%` } as CSSProperties}>
+      <header className="universe-heading">
+        <div>
+          <p className="universe-eyebrow"><span /> SE LAB / THE ENGINEERING UNIVERSE</p>
+          <h1 id="universe-heading">从一个想法，<span>探索无限可能。</span></h1>
+          <p className="universe-introduction">选择一颗星球，开启你的下一次探索。</p>
+        </div>
+        <div className="universe-map-badge"><Compass size={15} strokeWidth={1.3} /><span>工程宇宙<small>INTERACTIVE STAR MAP</small></span></div>
+      </header>
+
+      <div className="universe-stage">
+        <div className="universe-stage-corner universe-stage-corner--top" aria-hidden="true" />
+        <div className="universe-stage-corner universe-stage-corner--bottom" aria-hidden="true" />
+        <div className="universe-map-caption"><Crosshair size={12} strokeWidth={1.2} /><span>星图导航</span><i /><small>5 个目的地</small></div>
+        <span className="universe-map-coordinate" aria-hidden="true">SE–001 / EXPLORATION FIELD</span>
+        <div className="universe-world">
+          <div className="universe-nebula" aria-hidden="true" />
+          <div className="universe-stars" aria-hidden="true">{STARS.map(([x, y, size], index) => <i key={index} style={{ left: `${x}%`, top: `${y}%`, width: size, height: size, opacity: .2 + (index % 5) * .13 }} />)}</div>
+          <svg className="universe-orbits" viewBox="0 0 900 560" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="se-map-orbit" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#8ac4d1" stopOpacity=".04" /><stop offset=".48" stopColor="#8ac4d1" stopOpacity=".3" /><stop offset="1" stopColor="#d7c39c" stopOpacity=".07" /></linearGradient></defs>
+            <g fill="none" stroke="url(#se-map-orbit)" strokeWidth=".8">
+              <ellipse cx="450" cy="275" rx="325" ry="157" transform="rotate(-19 450 275)" />
+              <ellipse cx="450" cy="275" rx="230" ry="106" transform="rotate(-19 450 275)" strokeDasharray="2 7" />
+              <ellipse cx="450" cy="275" rx="400" ry="204" transform="rotate(-19 450 275)" />
+              <path d="M450 275 207 157M450 275 675 129M450 275 729 364M450 275 450 442M450 275 171 386" strokeDasharray="2 8" strokeOpacity=".28" />
+            </g>
+            <g fill="#9bd4d3" opacity=".55"><circle cx="393" cy="97" r="2" /><circle cx="628" cy="381" r="1.6" /><circle cx="345" cy="459" r="1.5" /></g>
+          </svg>
+          <div className="universe-sun" aria-hidden="true"><span className="universe-sun-halo" /><span className="universe-sun-core" /><span className="universe-sun-line" /><div><span className="universe-sun-label">YOUR IDEAS. IN ORBIT.</span><strong>SE <em>LAB</em><b>✦</b></strong><span className="universe-sun-subtitle">每个世界，都始于一个想法</span></div></div>
+          {WORLDS.map((world, index) => (
+            <button key={world.id} type="button" className={`universe-planet universe-planet--${world.kind}${highlighted === world.id ? " universe-planet--highlighted" : ""}`} style={{ "--planet-x": `${world.x}%`, "--planet-y": `${world.y}%`, "--planet-size": `${world.size}px`, "--destination-color": world.color } as CSSProperties} onMouseEnter={() => { if (!pending.current) setHighlighted(world.id); }} onFocus={() => { if (!pending.current) setHighlighted(world.id); }} onClick={() => navigate(world.id)} disabled={travelling !== null} aria-label={`${world.name}：${world.title}，进入${world.title}`}>
+              <span className="universe-planet-visual"><PlanetOrb kind={world.kind} /><span className="universe-planet-selector" />{world.id === "math" && <span className="universe-moon"><i /><span>24</span></span>}</span>
+              <span className="universe-planet-label"><span className="universe-planet-number">0{index + 1}</span><span><strong>{world.name}<ArrowUpRight size={12} strokeWidth={1.3} /></strong><small>{world.title}</small></span></span>
+              <span className="universe-planet-mobile-description">{world.description}</span>
+            </button>
+          ))}
+        </div>
+        <div className="universe-stage-instruction"><Orbit size={13} strokeWidth={1.2} /><span>点击星球，进入它的世界</span><span className="universe-stage-instruction-line" /></div>
+      </div>
+
+      <div className="universe-readout" style={{ "--destination-color": destination.color } as CSSProperties}>
+        <div className="universe-readout-symbol" aria-hidden="true"><Orbit size={28} strokeWidth={.8} /></div>
+        <div className="universe-readout-content"><p>{destination.coordinates}</p><h2>{destination.name}<span>/</span><small>{destination.title}</small></h2><p className="universe-readout-description">{destination.description}</p></div>
+        <div className="universe-readout-features">{destination.features.map(feature => <span key={feature}>{feature}</span>)}</div>
+        <button type="button" className="universe-enter" onClick={() => navigate(destination.id)} disabled={travelling !== null}>进入{destination.name}<ArrowUpRight size={16} strokeWidth={1.4} /></button>
+      </div>
+
+      <nav className="universe-direct-navigation" aria-label="直接进入功能"><span><CornerDownRight size={13} /> 快速抵达</span>{WORLDS.map(world => <button type="button" key={world.id} onClick={() => navigate(world.id)} disabled={travelling !== null}>{world.title}<ArrowUpRight size={11} /></button>)}</nav>
+      <p className="universe-flight-status" role="status" aria-live="polite">{flight ? `正在前往${flight.name}，即将进入${flight.title}。` : ""}</p>
+    </section>
+  );
+}

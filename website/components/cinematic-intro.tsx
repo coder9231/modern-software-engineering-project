@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { PlanetOrb } from "./planet-orb";
 import "./cinematic-intro.css";
 
 type CinematicIntroProps = {
@@ -8,11 +9,18 @@ type CinematicIntroProps = {
   onActiveChange?: (active: boolean) => void;
 };
 
-const storageKey = "se-lab-cinematic-intro-v1";
-const duration = 4800;
+const storageKey = "se-lab-cinematic-intro-v2";
+const duration = 5400;
 let seenInMemory = false;
 
-/** An original, silent film-leader opening. Closed dialogs never cover the SSR page. */
+const distantStars = Array.from({ length: 82 }, (_, index) => ({
+  x: (index * 367 + 47) % 1600,
+  y: (index * 193 + 71) % 1000,
+  radius: index % 7 === 0 ? 1.6 : index % 3 === 0 ? 1 : 0.65,
+  opacity: 0.2 + (index % 5) * 0.13,
+}));
+
+/** A silent discovery of the SE Lab galaxy. Closed dialogs never cover the SSR page. */
 export default function CinematicIntro({ replayToken = 0, onActiveChange }: CinematicIntroProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const skipRef = useRef<HTMLButtonElement>(null);
@@ -106,38 +114,47 @@ export default function CinematicIntro({ replayToken = 0, onActiveChange }: Cine
   return (
     <dialog ref={dialogRef} className="cinematic-intro" data-static={staticCard} aria-labelledby="cinematic-title" aria-describedby="cinematic-description">
       <div className="cinematic-scene">
-        <p id="cinematic-description" className="cinematic-sr-only">现代软件工程实践平台。无声开场将在约五秒后结束，可按 Escape 或点击按钮跳过。</p>
-        <div className="cinematic-film-rail cinematic-film-rail-left" aria-hidden="true" />
-        <div className="cinematic-film-rail cinematic-film-rail-right" aria-hidden="true" />
-        <div className="cinematic-grid" aria-hidden="true" />
-        <div className="cinematic-orbit" aria-hidden="true"><i /><i /><span /></div>
+        <p id="cinematic-description" className="cinematic-sr-only">发现 SE Lab 工程宇宙：五颗星球分别通往代码统计、四则运算、工程实践、个人主页与项目档案。无声开场将在约五秒后结束，可按 Escape 或点击按钮跳过。</p>
+        <div className="cinematic-nebula" aria-hidden="true" />
+        <svg className="cinematic-starfield cinematic-starfield-far" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          {distantStars.map((star, index) => <circle key={index} cx={star.x} cy={star.y} r={star.radius} fill="currentColor" fillOpacity={star.opacity} />)}
+        </svg>
+        <svg className="cinematic-starfield cinematic-starfield-near" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <circle cx="180" cy="255" r="1.8" /><circle cx="1390" cy="345" r="1.6" /><circle cx="1040" cy="132" r="1.8" /><circle cx="565" cy="792" r="1.7" /><circle cx="1430" cy="815" r="1.2" /><circle cx="350" cy="565" r="1.2" />
+        </svg>
 
-        <div className="cinematic-topline" aria-hidden="true">
-          <span><i /> SE / LAB <b>ORIGINAL OPENING</b></span>
-          <span className="cinematic-edition">VOL. 01 <i /> EST. 2026</span>
+        <div className="cinematic-system" aria-hidden="true">
+          <svg className="cinematic-gravity-lines" viewBox="0 0 1000 500" preserveAspectRatio="none">
+            <path d="M-150 440C80 395 190 160 500 250" /><path d="M1150 40C920 95 830 390 500 250" /><path d="M40-90C140 90 345 140 500 250" />
+          </svg>
+          <div className="cinematic-orbit cinematic-orbit-one" />
+          <div className="cinematic-orbit cinematic-orbit-two" />
+          <div className="cinematic-orbit cinematic-orbit-three" />
+          <div className="cinematic-sun"><span /></div>
+          <div className="cinematic-planet cinematic-planet-data"><PlanetOrb kind="data" /><span>DATA</span></div>
+          <div className="cinematic-planet cinematic-planet-logic"><PlanetOrb kind="logic" /><span>LOGIC</span></div>
+          <div className="cinematic-planet cinematic-planet-build"><PlanetOrb kind="build" /><span>BUILD</span></div>
+          <div className="cinematic-planet cinematic-planet-origin"><PlanetOrb kind="origin" /><span>ORIGIN</span></div>
+          <div className="cinematic-planet cinematic-planet-archive"><PlanetOrb kind="archive" /><span>ARCHIVE</span></div>
+          <span className="cinematic-system-coordinate">SE LAB / 00.01</span>
         </div>
 
-        <div className="cinematic-countdown" aria-hidden="true">
-          <div className="cinematic-countdown-cross" />
-          <span className="cinematic-count cinematic-count-three">3</span>
-          <span className="cinematic-count cinematic-count-two">2</span>
-          <span className="cinematic-count cinematic-count-one">1</span>
-          <small>A NEW TAKE ON LEARNING</small>
+        <div className="cinematic-topline" aria-hidden="true">
+          <span><i /> SE / LAB <b>AN ENGINEERING UNIVERSE</b></span>
+          <span className="cinematic-edition">DISCOVERY 001 <i /> EST. 2026</span>
         </div>
 
         <div className="cinematic-title-card">
-          <p className="cinematic-kicker"><span /> EVERY GREAT IDEA BEGINS WITH A FIRST FRAME <span /></p>
-          <h2 id="cinematic-title">SE <em>LAB</em><span className="cinematic-title-dot">.</span></h2>
-          <p className="cinematic-motto">BUILD <i /> LEARN <i /> IMPROVE</p>
-          <div className="cinematic-divider" aria-hidden="true"><span /><svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="m8 5-6 7 6 7M16 5l6 7-6 7M14 3l-4 18" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></svg><span /></div>
-          <p className="cinematic-caption">让每一次构建，都有迹可循。</p>
-          <p className="cinematic-subcaption">现代软件工程 · 从想法到作品</p>
+          <p className="cinematic-kicker"><span /> A UNIVERSE OF POSSIBILITIES <span /></p>
+          <h2 id="cinematic-title">SE <em>LAB</em></h2>
+          <p className="cinematic-caption">每一个想法，都有自己的引力。</p>
+          <p className="cinematic-subcaption">探索 · 构建 · 让想法成为现实</p>
         </div>
 
         <div className="cinematic-bottomline">
-          <div className="cinematic-production"><span className="cinematic-production-label">A SMALL TEAM. AN OPEN POSSIBILITY.</span><span>原创片头 <i /> 无声播放</span></div>
-          <button ref={skipRef} type="button" className="cinematic-skip" onClick={() => stopRef.current?.()} aria-label={staticCard ? "进入 SE Lab 实验室" : "跳过开场动画，进入 SE Lab 实验室"}>
-            <span>{staticCard ? "进入实验室" : "跳过片头"}</span><svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><kbd>ESC</kbd>
+          <div className="cinematic-production"><span className="cinematic-production-label">FIVE WORLDS. ONE SHARED CURIOSITY.</span><span>工程宇宙 <i /> 无声探索</span></div>
+          <button ref={skipRef} type="button" className="cinematic-skip" onClick={() => stopRef.current?.()} aria-label={staticCard ? "进入 SE Lab 工程宇宙" : "跳过开场动画，进入 SE Lab 工程宇宙"}>
+            <span>{staticCard ? "进入宇宙" : "跳过片头"}</span><svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><kbd>ESC</kbd>
           </button>
         </div>
         <div className="cinematic-progress" aria-hidden="true"><span /></div>

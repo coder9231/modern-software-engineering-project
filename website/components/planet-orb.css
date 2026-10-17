@@ -1,0 +1,28 @@
+.se-planet { --planet-color: #70b5ff; position: relative; display: block; width: 100%; height: 100%; isolation: isolate; }
+.se-planet__glow { position: absolute; inset: -28%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--planet-color) 21%, transparent) 0, color-mix(in srgb, var(--planet-color) 7%, transparent) 38%, transparent 67%); }
+.se-planet__sphere { position: absolute; inset: 0; overflow: hidden; border-radius: 50%; background: radial-gradient(circle at 28% 24%, #9fd8ed 0, #317ca6 22%, #0b365b 58%, #030a18 91%); box-shadow: inset 2px 1px 3px #b8e7ff96, inset -9px -5px 12px #01060dda, 0 0 0 1px #8fcde330, -3px -1px 9px #6bbcf64a, 12px 15px 26px #0005; }
+.se-planet__terrain, .se-planet__cloud, .se-planet__shade { position: absolute; inset: 0; border-radius: 50%; }
+.se-planet__terrain { opacity: .75; background: repeating-linear-gradient(161deg, transparent 0 4%, #71bec235 5%, transparent 7% 11%, #06274480 12% 16%, transparent 19% 25%); }
+.se-planet__cloud { background: radial-gradient(ellipse at 24% 31%, #c6f2ff6e 0 4%, transparent 19%), radial-gradient(ellipse at 57% 21%, #cff7ff45 0 2%, transparent 10%), repeating-linear-gradient(170deg, transparent 0 13%, #e2fcff16 14% 17%, transparent 19% 34%); transform: rotate(-14deg); mix-blend-mode: screen; }
+.se-planet__shade { background: radial-gradient(ellipse at 20% 20%, #ffffff21 0, transparent 42%), linear-gradient(105deg, transparent 24%, #01071210 42%, #010712c9 83%, #010712f0 100%); }
+.se-planet__ring { position: absolute; left: -31%; top: 35%; width: 162%; height: 31%; border: 7px solid #a8cae747; border-radius: 50%; transform: rotate(-29deg); box-shadow: 0 0 0 2px #9fcee82b, 0 0 0 6px #9fcee812, inset 0 0 0 2px #dae9ff25; }
+.se-planet__ring--back { z-index: -1; }
+.se-planet__ring--front { clip-path: polygon(-10% 50%, 110% 50%, 110% 150%, -10% 150%); }
+.se-planet--logic { --planet-color: #f0c47b; }
+.se-planet--logic .se-planet__sphere { background: radial-gradient(circle at 25% 25%, #fae0ab 0, #c39752 29%, #795c30 54%, #261c18 81%, #090b14 100%); box-shadow: inset 2px 1px 3px #ffe9bdad, inset -9px -5px 13px #110b09d9, 0 0 0 1px #f8cf8452, -3px -1px 10px #e6b86542, 12px 15px 26px #0005; }
+.se-planet--logic .se-planet__terrain { background: repeating-linear-gradient(171deg, #efc78030 0 7%, transparent 9% 11%, #422d2570 13% 15%, transparent 18% 25%, #f9e2b62e 27% 34%, transparent 36% 43%); }
+.se-planet--logic .se-planet__ring { border-color: #d9bd8380; border-width: 6px; box-shadow: 0 0 0 2px #a58e5c45, 0 0 0 5px #c9b07819, inset 0 0 0 2px #f8e8ba45; transform: rotate(-26deg); left: -44%; width: 188%; height: 36%; top: 33%; }
+.se-planet--logic .se-planet__cloud { opacity: .4; }
+.se-planet--build { --planet-color: #69e2c3; }
+.se-planet--build .se-planet__sphere { background: radial-gradient(circle at 26% 23%, #baedce 0, #479d8a 25%, #185c59 57%, #072b32 75%, #030e1c 96%); box-shadow: inset 2px 1px 3px #b6f0d7ad, inset -9px -5px 13px #030d17ed, 0 0 0 1px #7fdcc740, -3px -1px 9px #87f7c936, 12px 15px 26px #0005; }
+.se-planet--build .se-planet__terrain { background: conic-gradient(from 36deg at 31% 41%, #012a3b10 0 13%, #8cb79970 14% 18%, transparent 18% 32%, #3b8a7977 32% 39%, #06363888 39% 56%, transparent 56% 77%, #9cd4a766 77% 83%, transparent 83% 100%); }
+.se-planet--build .se-planet__cloud { background: radial-gradient(ellipse at 20% 42%, #c8fde959 0 5%, transparent 19%), radial-gradient(ellipse at 60% 19%, #c8fde929 0 3%, transparent 15%); }
+.se-planet__satellite { position: absolute; width: 8%; height: 8%; background: radial-gradient(circle at 30% 20%, #effff6, #8ba9a2 50%, #162f37 85%); border-radius: 50%; right: -23%; top: 15%; box-shadow: 0 0 12px #78d9b51f; }
+.se-planet--origin { --planet-color: #b8c695; }
+.se-planet--origin .se-planet__sphere { background: radial-gradient(circle at 29% 24%, #d3e7be 0, #79a997 19%, #37636f 47%, #0d293a 73%, #030d1b 96%); }
+.se-planet--origin .se-planet__terrain { background: radial-gradient(ellipse at 31% 29%, #d7c69c 0 7%, #b6b78d 9% 15%, transparent 17%), radial-gradient(ellipse at 45% 53%, #a2a377 0 11%, transparent 14%), radial-gradient(ellipse at 69% 67%, #7d9971 0 13%, transparent 16%), radial-gradient(ellipse at 22% 66%, #b6b78d 0 9%, transparent 11%); transform: rotate(21deg); opacity: .8; }
+.se-planet--origin .se-planet__cloud { background: linear-gradient(165deg, transparent 0 24%, #eef8ee60 26% 29%, transparent 32% 44%, #eef8ee30 46% 49%, transparent 52% 64%, #eef8ee50 67% 70%, transparent 74%); opacity: .5; }
+.se-planet--archive { --planet-color: #b5a4e8; }
+.se-planet--archive .se-planet__sphere { background: radial-gradient(circle at 27% 24%, #ded6f3 0, #8a81aa 26%, #494866 54%, #1d233c 80%, #070d1c 96%); box-shadow: inset 2px 1px 3px #eee2ffaa, inset -8px -5px 13px #060915dc, 0 0 0 1px #cabced42, -3px -1px 9px #c4aff13b, 12px 15px 26px #0005; }
+.se-planet--archive .se-planet__terrain { background: radial-gradient(circle at 32% 31%, #4b46675e 0 7%, #c5bcda59 8% 9%, transparent 10%), radial-gradient(circle at 55% 63%, #34365370 0 12%, #c5bcda44 13% 14%, transparent 16%), radial-gradient(circle at 24% 69%, #34365360 0 6%, #c5bcda44 7% 8%, transparent 10%), radial-gradient(circle at 62% 21%, #34365360 0 3%, #c5bcda44 4% 5%, transparent 7%); }
+.se-planet--archive .se-planet__cloud { opacity: .15; }

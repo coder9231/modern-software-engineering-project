@@ -1,0 +1,33 @@
+body { background:#060c18; }
+.space-shell { min-height:100vh; background:radial-gradient(ellipse at 80% 0,#122235 0,transparent 55%),#060c18; }
+.space-shell .sidebar { background:#0b1421; border-color:#253142; }
+.space-shell .sidebar .brand-mark { background:transparent; border:1px solid #4b706c; border-radius:50%; box-shadow:0 0 18px #74b6ad18; color:#8bc9ba; }
+.space-shell .sidebar .brand strong { color:#e1e9ec; }.space-shell .sidebar .brand small { color:#8192a0; }
+.space-shell .workspace-label { color:#8a9aa9; }
+.space-shell .nav-item { color:#98a9b8; }.space-shell .nav-item:hover { background:#152335; color:#e1eee9; }
+.space-shell .nav-item.active { background:#193032; color:#a3dbca; }.space-shell .nav-item.active::before { background:#89cfb9; }
+.space-shell .nav-item > span:not(.nav-badge) { display:flex; flex-direction:column; align-items:flex-start; gap:4px; }.space-shell .nav-item small { color:#738b99; font-size:9px; font-weight:400; letter-spacing:1px; }
+.space-shell .nav-badge { background:#244139; color:#a2c5b7; }
+.space-shell .sidebar-project { background:#101f2a; border-color:#233946; }.space-shell .sidebar-project p { color:#c1d3d6; }.space-shell .sidebar-project > span { color:#8c9ea8; }.space-shell .sidebar-project::after { border-color:#294444; box-shadow:0 0 0 14px #24413b20,0 0 0 28px #24413b10; }
+.space-shell .project-symbol,.space-shell .sidebar-project button { color:#81b6a5; }.space-shell .sidebar-repo { color:#9aabb7; }.space-shell .sidebar-footer { border-color:#263441; color:#c3cdd2; }.space-shell .sidebar-footer small { color:#81949d; }.space-shell .avatar { background:#203735; color:#a5cbbd; }
+.space-shell .topbar { background:#0b1421e8; border-color:#263344; color:#a6bac7; }
+.space-shell .breadcrumb,.space-shell .breadcrumb svg { color:#8398aa; }.space-shell .breadcrumb strong { color:#ccdce3; }.space-shell .breadcrumb > button { color:#9cb7bb; }
+.space-shell .intro-replay-button { background:transparent; border-color:#324252; color:#b1c7c8; }.space-shell .intro-replay-button:hover { background:#152a33; border-color:#5d857e; }
+.space-shell .course-tag { background:#132330; border-color:#293c4b; color:#99afba; }.space-shell .service-status { color:#93b8ad; }.space-shell .service-status i { background:#82c9b0; box-shadow:0 0 0 3px #24463b55; }
+.space-shell .topbar-end { gap:16px; }.space-shell .workspace { margin:26px auto 0; width:calc(100% - 44px); max-width:1400px; background:#f7f9f8; border-radius:18px 18px 0 0; padding:28px 30px 0; min-height:calc(100vh - 94px); }
+.planet-arrival { display:flex; align-items:center; gap:15px; margin:-4px 0 27px; padding-bottom:19px; border-bottom:1px solid #dfe7e3; }
+.planet-arrival > .se-planet { width:39px; height:39px; flex:0 0 39px; }.planet-arrival > div { display:flex; align-items:baseline; gap:12px; flex:1; }
+.planet-arrival strong { font-size:14px; color:#35564b; font-weight:550; }.planet-arrival span { font:9px ui-monospace,monospace; color:#83958c; letter-spacing:1.7px; }
+.planet-return { display:flex; align-items:center; gap:7px; border:1px solid #cddfd4; color:#3e7460; background:transparent; border-radius:6px; padding:8px 11px; font-size:11px; }
+.space-shell.is-universe .sidebar { display:none; }.space-shell.is-universe .main-shell { margin-left:0; }
+.space-shell.is-universe .topbar { padding-inline:clamp(22px,5vw,80px); background:#070e1bed; position:relative; z-index:4; }
+.universe-brand-link { display:flex; gap:11px; align-items:center; color:#d9e6e9; background:transparent; border:0; font:17px Georgia,serif; letter-spacing:1px; }.universe-brand-link svg { color:#96cfbe; }.universe-brand-link small { border-left:1px solid #3c4e5a; margin-left:5px; padding-left:15px; font:10px var(--font-sans); color:#8097aa; letter-spacing:1.5px; }
+.space-shell.is-universe .workspace { padding:0; margin:0; max-width:none; width:100%; border-radius:0; background:transparent; min-height:calc(100vh - 68px); }
+.space-shell.is-universe .universe-map { max-width:1560px; margin:0 auto; padding:34px clamp(22px,4.7vw,74px) 20px; }
+.space-shell.is-universe .workspace-footer { margin:0; padding:22px clamp(22px,5vw,80px); color:#6e8498; border-color:#1c2c40; background:#060d19; }.space-shell.is-universe .footer-brand { color:#8eadb3; }
+.space-shell .nav-scrim { background:#0106119c; }
+.space-shell .workspace:focus { outline:none; }
+@media(max-width:660px) { .space-shell .sidebar { visibility:hidden; }.space-shell .sidebar.sidebar-open { visibility:visible; } }
+@media(max-width:900px) { .space-shell .workspace { width:calc(100% - 24px); padding-inline:24px; }.space-shell.is-universe .workspace { width:100%; padding:0; } }
+@media(max-width:660px) { .space-shell .topbar { padding-inline:17px; }.space-shell .workspace { margin-top:12px; width:calc(100% - 16px); padding:21px 16px 0; border-radius:13px 13px 0 0; }.space-shell .topbar-end { gap:9px; }.space-shell .service-status { display:none; }.space-shell.is-universe .workspace { margin-top:0; width:100%; padding:0; border-radius:0; }.universe-brand-link { font-size:16px; }.universe-brand-link small { font-size:8px; padding-left:10px; margin-left:0; }.planet-arrival { gap:10px; margin-bottom:22px; }.planet-arrival > div { flex-direction:column; gap:5px; }.planet-return { padding:8px; font-size:10px; }.planet-arrival > .se-planet { width:32px; height:32px; flex-basis:32px; } }
+@media print { body,.space-shell { background:white !important; }.space-shell .workspace { width:100%; background:white; }.planet-arrival { display:none !important; } }

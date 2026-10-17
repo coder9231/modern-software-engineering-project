@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from "react";
-import { ArrowDownToLine, ArrowRight, ArrowUpRight, BarChart3, BookOpen, Calculator, Check, ChevronLeft, ChevronRight, CircleAlert, Code2, Download, FileCode2, Files, FolderOpen, GitBranch as Github, Info, Layers, LayoutDashboard, LoaderCircle, Menu, Play, RotateCcw, Search, Settings2, ShieldCheck, Terminal, Upload, X } from "lucide-react";
+import { ArrowDownToLine, ArrowRight, ArrowUpRight, BarChart3, BookOpen, Calculator, Check, Orbit, UserRound, ArrowLeft, ChevronLeft, ChevronRight, CircleAlert, Code2, Download, FileCode2, Files, FolderOpen, GitBranch as Github, Info, Layers, LoaderCircle, Menu, Play, RotateCcw, Search, Settings2, ShieldCheck, Terminal, Upload, X } from "lucide-react";
 import { formatReport } from "../lib/code-counter/report.mjs";
 import MathWorkspace from "../components/math-workspace";
 import CinematicIntro from "../components/cinematic-intro";
+import UniverseMap from "../components/universe-map";
+import OriginProfile from "../components/origin-profile";
+import { PlanetOrb } from "../components/planet-orb";
+import "../components/universe-shell.css";
 
 type Counts = { files: number; total: number; code: number; comment: number; blank: number };
 type FileCount = Omit<Counts, "files"> & { path: string; language: string };
@@ -13,7 +17,7 @@ type Report = { version: 1; input: string; generatedAt: string; totals: Counts; 
 type Config = { languages: { name: string; extensions: string[] }[]; defaultExcludes: string[]; limits: { maxFilesPerBatch: number; maxBytesPerBatch: number; maxFileBytes: number }; rules: string[] };
 type Selected = { path: string; file: File };
 type Recent = { name: string; date: string; files: number; code: number };
-type Section = "counter" | "math" | "overview" | "practice" | "about";
+type Section = "counter" | "math" | "overview" | "practice" | "about" | "profile";
 const zero: Counts = { files: 0, total: 0, code: 0, comment: 0, blank: 0 };
 const repo = "https://github.com/coder9231/modern-software-engineering-project";
 const storageKey = "se-lab-count-history-v1";
@@ -55,7 +59,8 @@ function toBase64(buffer: ArrayBuffer) {
 export default function Home() {
   const [introReplay, setIntroReplay] = useState(0);
   const [introActive, setIntroActive] = useState(false);
-  const [section, setSection] = useState<Section>("counter");
+  const [section, setSection] = useState<Section>("overview");
+  const [mapVisit, setMapVisit] = useState(0);
   const [mobileNav, setMobileNav] = useState(false);
   const [config, setConfig] = useState<Config | null>(null);
   const [configError, setConfigError] = useState(false);
@@ -83,11 +88,13 @@ export default function Home() {
   const filesInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const workspaceRef = useRef<HTMLElement>(null);
+  const navigationFrame = useRef<number | null>(null);
 
   useEffect(() => {
     const restoreSection = () => {
       const target = window.location.hash.slice(1);
-      setSection(target === "math" || target === "overview" || target === "practice" || target === "about" ? target : "counter");
+      setSection(target === "counter" || target === "math" || target === "practice" || target === "about" || target === "profile" ? target : "overview");
       setMobileNav(false);
     };
     const frame = window.requestAnimationFrame(restoreSection);
@@ -115,7 +122,7 @@ export default function Home() {
         if (Array.isArray(saved)) setHistory(saved.filter((item) => item && typeof item.name === "string" && typeof item.date === "string" && Number.isFinite(item.files) && Number.isFinite(item.code)).slice(0, 4));
       } catch { /* Browsers may disable local storage. Counting remains available. */ }
     });
-    return () => { window.cancelAnimationFrame(frame); abortRef.current?.abort(); };
+    return () => { window.cancelAnimationFrame(frame); if (navigationFrame.current !== null) window.cancelAnimationFrame(navigationFrame.current); abortRef.current?.abort(); };
   }, []);
 
   const selectedBytes = useMemo(() => selected.reduce((total, item) => total + item.file.size, 0), [selected]);
@@ -131,10 +138,13 @@ export default function Home() {
   const distribution = report && report.totals.total > 0 ? `conic-gradient(#217c65 0 ${(report.totals.code / report.totals.total) * 100}%, #72ac99 ${(report.totals.code / report.totals.total) * 100}% ${((report.totals.code + report.totals.comment) / report.totals.total) * 100}%, #e1e8e5 ${((report.totals.code + report.totals.comment) / report.totals.total) * 100}% 100%)` : "#edf1ef";
 
   function navigate(next: Section) {
+    setMapVisit((visit) => visit + 1);
     setSection(next);
     setMobileNav(false);
     if (window.location.hash !== `#${next}`) window.history.pushState(window.history.state, "", `${window.location.pathname}${window.location.search}#${next}`);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
+    if (navigationFrame.current !== null) window.cancelAnimationFrame(navigationFrame.current);
+    navigationFrame.current = window.requestAnimationFrame(() => { workspaceRef.current?.focus({ preventScroll: true }); navigationFrame.current = null; });
   }
 
   function pickFiles(fileList: FileList | File[], folder = false) {
@@ -319,29 +329,32 @@ export default function Home() {
   }
 
   const navItems = [
-    { id: "overview" as Section, label: "项目概览", icon: LayoutDashboard },
-    { id: "counter" as Section, label: "代码统计", icon: BarChart3 },
-    { id: "math" as Section, label: "四则运算", icon: Calculator },
-    { id: "practice" as Section, label: "工程实践", icon: BookOpen },
-    { id: "about" as Section, label: "关于项目", icon: Info },
+    { id: "overview" as Section, label: "星系总览", planet: "SE LAB UNIVERSE", icon: Orbit },
+    { id: "counter" as Section, label: "代码统计", planet: "数据星", icon: BarChart3 },
+    { id: "math" as Section, label: "四则运算", planet: "逻辑星", icon: Calculator },
+    { id: "practice" as Section, label: "工程实践", planet: "建造星", icon: BookOpen },
+    { id: "profile" as Section, label: "个人主页", planet: "起源星", icon: UserRound },
+    { id: "about" as Section, label: "关于项目", planet: "档案星", icon: Info },
   ];
   const activeLabel = navItems.find((item) => item.id === section)?.label;
+  const currentPlanet = ({ counter: { name: "数据星", kind: "data", sector: "01 / DATA" }, math: { name: "逻辑星", kind: "logic", sector: "02 / LOGIC" }, practice: { name: "建造星", kind: "build", sector: "03 / BUILD" }, profile: { name: "起源星", kind: "origin", sector: "04 / ORIGIN" }, about: { name: "档案星", kind: "archive", sector: "05 / ARCHIVE" } } as const)[section === "overview" ? "counter" : section];
 
-  return <><CinematicIntro replayToken={introReplay} onActiveChange={setIntroActive} /><div className="app-shell" id="se-lab-content">
+  return <><CinematicIntro replayToken={introReplay} onActiveChange={setIntroActive} /><div className={`app-shell space-shell ${section === "overview" ? "is-universe" : "in-planet"}`} id="se-lab-content">
     {mobileNav && <button className="nav-scrim" aria-label="关闭导航" onClick={() => setMobileNav(false)} />}
-    <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
-      <button className="brand" onClick={() => navigate("overview")} aria-label="SE Lab 项目概览"><span className="brand-mark"><Code2 size={25} strokeWidth={2} /></span><span><strong>SE Lab<span className="brand-dot">.</span></strong><small>软件工程实践平台</small></span></button>
-      <div className="workspace-label">工作空间 <span>WORKSPACE</span></div>
-      <nav aria-label="主导航">{navItems.map(({ id, label, icon: Icon }) => <button key={id} className={`nav-item ${section === id ? "active" : ""}`} onClick={() => navigate(id)} aria-current={section === id ? "page" : undefined}><Icon size={19} /><span>{label}</span>{id === "counter" && <span className="nav-badge">工具</span>}</button>)}</nav>
-      <div className="sidebar-project"><div className="project-symbol"><Layers size={19} /></div><p>从想法到软件</p><span>在每一次迭代中，<br />留下工程实践的痕迹。</span><button onClick={() => navigate("practice")}>查看实践路线 <ArrowUpRight size={15} /></button></div>
+    <aside id="planet-navigation" className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
+      <button className="brand" onClick={() => navigate("overview")} aria-label="返回 SE Lab 星系总览"><span className="brand-mark"><Code2 size={25} strokeWidth={2} /></span><span><strong>SE Lab<span className="brand-dot">.</span></strong><small>软件工程 · 探索宇宙</small></span></button>
+      <div className="workspace-label">探索目的地 <span>DESTINATIONS</span></div>
+      <nav aria-label="主导航">{navItems.map(({ id, label, planet, icon: Icon }) => <button key={id} className={`nav-item ${section === id ? "active" : ""}`} onClick={() => navigate(id)} aria-current={section === id ? "page" : undefined}><Icon size={19} /><span>{label}<small>{planet}</small></span>{id === "counter" && <span className="nav-badge">工具</span>}</button>)}</nav>
+      <div className="sidebar-project"><div className="project-symbol"><Orbit size={19} /></div><p>让想法，拥有自己的引力。</p><span>每一次工程迭代，<br />点亮一片新的星域。</span><button onClick={() => navigate("practice")}>查看实践路线 <ArrowUpRight size={15} /></button></div>
       <a className="sidebar-repo" href={repo} target="_blank" rel="noreferrer"><Github size={18} /><span>项目代码仓库</span><ArrowUpRight size={14} /></a>
       <div className="sidebar-footer"><span className="avatar"><Code2 size={17} /></span><div><strong>现代软件工程</strong><small>课程团队项目</small></div><span className="footer-dot" /></div>
     </aside>
 
     <div className="main-shell">
-      <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" onClick={() => setMobileNav(!mobileNav)} aria-label="打开导航"><Menu size={20} /></button><span>工作空间</span><ChevronRight size={13} /><strong>{activeLabel}</strong></div><div className="topbar-end"><button className="intro-replay-button" type="button" onClick={() => setIntroReplay((value) => value + 1)} aria-expanded={introActive} aria-haspopup="dialog" title="重播电影感开场"><Play size={13} /><span>重播开场</span></button><span className={`service-status ${configError ? "offline" : ""}`}><i />{config ? "统计服务已就绪" : configError ? "服务暂不可用" : "连接统计服务"}</span><span className="course-tag">现代软件工程 · 实践</span></div></header>
+      <header className="topbar">{section === "overview" ? <button className="universe-brand-link" onClick={() => navigate("overview")} aria-label="SE Lab 星系总览"><Orbit size={23} /><span>SE LAB.</span><small>工程宇宙</small></button> : <div className="breadcrumb"><button className="mobile-menu icon-button" onClick={() => setMobileNav(!mobileNav)} aria-label={mobileNav ? "关闭导航" : "打开导航"} aria-expanded={mobileNav} aria-controls="planet-navigation"><Menu size={20} /></button><button className="icon-button" onClick={() => navigate("overview")} aria-label="返回星图"><Orbit size={18} /></button><span>{currentPlanet.name}</span><ChevronRight size={13} /><strong>{activeLabel}</strong></div>}<div className="topbar-end"><button className="intro-replay-button" type="button" onClick={() => setIntroReplay((value) => value + 1)} aria-label="重播星系开场" aria-expanded={introActive} aria-haspopup="dialog" title="重播星系开场"><Play size={13} /><span>重播开场</span></button><span className={`service-status ${configError ? "offline" : ""}`}><i />{config ? "工作空间已就绪" : configError ? "统计服务暂不可用" : "正在连接工作空间"}</span><span className="course-tag">现代软件工程 · 实践</span></div></header>
 
-      <main className="workspace">
+      <main className="workspace" ref={workspaceRef} tabIndex={-1} aria-label={section === "overview" ? "SE Lab 宇宙星图" : `${currentPlanet.name} · ${activeLabel}`}>
+        {section !== "overview" && <div className="planet-arrival"><PlanetOrb kind={currentPlanet.kind} /><div><strong>{currentPlanet.name}</strong><span>{currentPlanet.sector}</span></div><button className="planet-return" onClick={() => navigate("overview")}><ArrowLeft size={14} />返回星图</button></div>}
         <MathWorkspace active={section === "math"} />
         {section === "counter" ? <>
           <div className="page-heading"><div><div className="eyebrow"><span /> DEVELOPER TOOLKIT</div><div className="title-row"><h1>代码统计</h1><span className="version-tag">v1.0</span></div><p>读懂代码规模，让每一次工程实践都有据可循。</p></div><button className="button secondary demo-button" onClick={loadDemo} disabled={busy}><Play size={15} />体验示例项目<ArrowUpRight size={14} /></button></div>
@@ -389,12 +402,7 @@ export default function Home() {
           </div>
 
           <div className="bottom-grid"><section className="panel rules-panel"><div className="small-panel-heading"><ShieldCheck size={17} /><h3>清晰的规则，可信的结果</h3></div><p>按物理行分类，每一行只计入一种类型。</p><ul>{(config?.rules?.length ? config.rules : ["同一行同时包含代码和注释，归为代码行。", "注释中的空行按空白行处理。", "不支持的类型与二进制文件会单独记录。"]).map((rule, index) => <li key={index}><Check size={13} /><span>{rule}</span></li>)}</ul></section><section className="panel recent-panel"><div className="small-panel-heading"><Terminal size={17} /><h3>最近统计</h3>{history.length > 0 && <button onClick={() => { setHistory([]); try { localStorage.removeItem(storageKey); } catch { /* Optional storage. */ } }} className="clear-history">清空</button>}</div><p>仅在当前浏览器保存摘要，不保存源码。</p>{history.length ? <div className="recent-list">{history.map((item, index) => <div key={`${item.date}-${index}`}><span className="recent-icon"><FolderOpen size={15} /></span><div><strong title={item.name}>{item.name}</strong><small>{when(item.date)} · {number(item.files)} 个文件</small></div><span>{number(item.code)} <small>代码行</small></span></div>)}</div> : <div className="recent-empty">完成一次项目统计后，摘要会显示在这里。</div>}</section></div>
-        </> : section === "overview" ? <>
-          <div className="page-heading"><div><div className="eyebrow"><span /> MODERN SOFTWARE ENGINEERING</div><h1>把每一次实践，变成一次成长。</h1><p>以真实项目为载体，记录从需求、设计到验证与迭代的全过程。</p></div></div>
-          <section className="overview-hero"><div><span className="hero-kicker">SE LAB / 工程实践工作空间</span><h2>从可运行的程序，<br />走向可演进的软件。</h2><p>围绕课程逐步构建工具与应用，让功能实现、团队协作和工程思考共同成长。</p><button className="button primary" onClick={() => navigate("counter")}>使用代码统计工具 <ArrowRight size={17} /></button></div><div className="hero-code" aria-hidden="true"><div><span /><span /><span /></div><pre><span className="code-muted">{"// 每一次迭代，都有迹可循"}</span>{"\n\n"}<span>需求</span>{" → 设计\n"}<span>实现</span>{" → 验证\n"}<span>反馈</span>{" → 下一次迭代\n\n"}<span className="code-muted">build. learn. improve.</span></pre></div></section>
-          <div className="section-label"><h2>我们的项目路线</h2><span>循序推进，持续交付</span></div><div className="roadmap-grid">{[{ icon: BarChart3, status: "当前可用", title: "代码量统计工具", text: "上传文件或项目目录，分析代码、注释和空白行，导出可追溯的统计报告。", target: "counter" as Section }, { icon: Calculator, status: "当前可用", title: "四则运算练习", text: "定制并生成不重复的题目，在线作答、核对答案、计时与打印，用共享数学模块挑战 24 点。", target: "math" as Section }, { icon: LayoutDashboard, status: "规划中", title: "个人主页与成果展示", text: "逐步整理项目成果、学习记录与工程实践，为最终展示建立清晰的叙事。", target: null }].map(({ icon: Icon, status, title, text, target }, index) => <section className="panel roadmap-card" key={title}><div className="roadmap-top"><span className="roadmap-icon"><Icon size={23} /></span><span className={`status-pill ${target ? "green" : ""}`}>{status}</span></div><small>阶段 0{index + 1}</small><h3>{title}</h3><p>{text}</p>{target ? <button onClick={() => navigate(target)}>开始使用 <ArrowRight size={15} /></button> : <span className="planned-note">随课程与团队决策持续完善</span>}</section>)}</div>
-          <section className="panel overview-note"><BookOpen size={25} /><div><h3>课程知识，落在具体的设计决策里。</h3><p>从需求与验收、任务估算到测试和复盘，保留每个阶段的依据，让团队能理解软件为什么这样构建。</p></div><button className="button secondary" onClick={() => navigate("practice")}>查看工程实践 <ArrowRight size={15} /></button></section>
-        </> : section === "practice" ? <>
+        </> : section === "overview" ? <UniverseMap key={mapVisit} onNavigate={navigate} /> : section === "profile" ? <OriginProfile onNavigate={navigate} /> : section === "practice" ? <>
           <div className="page-heading"><div><div className="eyebrow"><span /> BUILD WITH INTENTION</div><h1>让工程思想，成为日常做法。</h1><p>以课程照片与项目需求为依据，在每一轮迭代中积累可检验的成果。</p></div></div>
           <div className="practice-grid">{[{ n: "01", title: "需求与验收", text: "说明谁在什么场景使用功能，并写出怎样才算完成。", example: "四则运算：按配置出题，答案可独立核验；默认规则可生成一万道不重复题目。" }, { n: "02", title: "任务拆分与估算", text: "把目标拆成可交付的小任务，对照预计与实际耗时调整下一轮计划。", example: "将出题核心、接口、练习界面与识别服务拆开交付，保留各阶段的验证结果。" }, { n: "03", title: "模块化与复用", text: "让领域逻辑与界面分离，明确模块之间的输入、输出和职责。", example: "命令行和网站共享出题核心；逆波兰求值与精确分数计算也用于 24 点的答案验证。" }, { n: "04", title: "测试与质量", text: "通过明确的样例和边界情况验证行为，记录失败与异常，保留问题证据。", example: "覆盖括号与优先级、分数、除零和非法输入；服务端根据算式重新计算答案。" }, { n: "05", title: "版本与协作", text: "使用 Git 和仓库中的 Issue、PR 模板记录需求、变更原因和验证结果。", example: "公开仓库采用 MIT 许可，借助自动检查与清晰的变更说明共同完善功能。" }, { n: "06", title: "反馈与持续迭代", text: "从真实使用中收集反馈，逐步扩展能力，复盘设计与估算上的偏差。", example: "先验证功能与本地请求表现，再根据实测数据评估更多用户同时访问的能力。" }].map((item) => <section className="panel practice-card" key={item.n}><span className="practice-number">{item.n}</span><h2>{item.title}</h2><p>{item.text}</p><div>{item.example}</div></section>)}</div>
           <section className="panel course-case"><span className="status-pill">课程案例 · 持续实现</span><h2>四则运算：一次需求演进的练习</h2><p>基础出题 → 答案与正确性 → 去重与可定制 → 网站练习与打印 →「24点」复用。AI 识别需配置服务后使用。</p><div className="case-facts"><div><strong>300 道</strong><span>每周练习题的起始场景</span></div><div><strong>10,000 道</strong><span>默认规则支持的不重复题目数量</span></div><div><strong>上万并发</strong><span>课程中的服务扩展场景，尚未验证</span></div></div><p className="tiny-note">一万道题、一万名学生每天使用与上万用户同时访问是不同指标。当前提供题目生成与练习功能，不代表已达到上万并发服务能力。</p></section>

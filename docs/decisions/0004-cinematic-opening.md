@@ -39,7 +39,7 @@
 
 2026-10-16 官方 `build-site.mjs` 生产构建成功，client、SSR 与 RSC 均编译；Sites 源码提交为 `379e04bb21931149be168e57829ec953e2554801`。网站第 3 版已部署至[软件工程实践站](https://se-practice-coder9231.a0910663736.chatgpt.site)，部署 `appgdep_6ad1d929b3f08191b4fde35e9b675ab1` 状态为 `succeeded`。
 
-真实线上页面已观察到首次访问片头，并手动重播核对片名字卡阶段；截图为本地 `reports/cinematic-opening-live.jpg`，不随公开源码分发。同版本数学 8 项与统计 6 项 HTTP 测试全部通过，完整版本号见[测试记录](../arithmetic-test-results.md)。新版本 GitHub Actions 结果尚未核实。
+真实线上页面已观察到首次访问片头，并手动重播核对片名字卡阶段；截图为本地 `reports/cinematic-opening-live.jpg`，不随公开源码分发。同版本数学 8 项与统计 6 项 HTTP 测试全部通过，完整版本号见[测试记录](../arithmetic-test-results.md)。第 3 版源码对应 GitHub 提交 `4364638`，已核实 [GitHub Actions 38871181200](https://github.com/coder9231/modern-software-engineering-project/actions/runs/38871181200) 成功；此结果仅作为宇宙导航迭代前的基线，不代表后续版本已通过。
 
 ## 与课程工程思想的关联
 
