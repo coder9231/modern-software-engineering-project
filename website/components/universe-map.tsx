@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { ArrowUpRight, Compass, CornerDownRight, Crosshair, Orbit } from "lucide-react";
+import { ArrowUpRight, Compass, CornerDownRight, Crosshair, Orbit, Pause, Play } from "lucide-react";
 import { PlanetOrb, type PlanetKind } from "./planet-orb";
 import "./universe-map.css";
 
@@ -26,6 +26,9 @@ const STARS = [
 export default function UniverseMap({ onNavigate }: { onNavigate: (destination: Destination) => void }) {
   const [highlighted, setHighlighted] = useState<Destination>("counter");
   const [travelling, setTravelling] = useState<Destination | null>(null);
+  const [animationEnabled, setAnimationEnabled] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pending = useRef(false);
   const destination = WORLDS.find(world => world.id === highlighted) ?? WORLDS[0];
@@ -38,14 +41,30 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
       pending.current = false;
       setTravelling(null);
     };
-    const onVisibility = () => { if (document.hidden) cancel(); };
+    const onVisibility = () => {
+      setPageVisible(!document.hidden);
+      if (document.hidden) cancel();
+    };
+    const initialVisibility = window.requestAnimationFrame(onVisibility);
     window.addEventListener("hashchange", cancel);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
+      window.cancelAnimationFrame(initialVisibility);
       if (timer.current !== null) clearTimeout(timer.current);
       pending.current = false;
       window.removeEventListener("hashchange", cancel);
       document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(preference.matches);
+    const initialPreference = window.requestAnimationFrame(updatePreference);
+    preference.addEventListener("change", updatePreference);
+    return () => {
+      window.cancelAnimationFrame(initialPreference);
+      preference.removeEventListener("change", updatePreference);
     };
   }, []);
 
@@ -66,14 +85,14 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
   }
 
   return (
-    <section className={`universe-map${travelling ? " universe-map--travelling" : ""}`} aria-labelledby="universe-heading" style={{ "--flight-x": `${flight?.x ?? 50}%`, "--flight-y": `${flight?.y ?? 50}%` } as CSSProperties}>
+    <section className={`universe-map${travelling ? " universe-map--travelling" : ""}${!animationEnabled || !pageVisible || reducedMotion ? " universe-map--paused" : ""}`} aria-labelledby="universe-heading" style={{ "--flight-x": `${flight?.x ?? 50}%`, "--flight-y": `${flight?.y ?? 50}%` } as CSSProperties}>
       <header className="universe-heading">
         <div>
           <p className="universe-eyebrow"><span /> SE LAB / THE ENGINEERING UNIVERSE</p>
           <h1 id="universe-heading">从一个想法，<span>探索无限可能。</span></h1>
           <p className="universe-introduction">选择一颗星球，开启你的下一次探索。</p>
         </div>
-        <div className="universe-map-badge"><Compass size={15} strokeWidth={1.3} /><span>工程宇宙<small>INTERACTIVE STAR MAP</small></span></div>
+        <div className="universe-map-badge"><Compass size={15} strokeWidth={1.3} /><span>工程宇宙<small>LIVING STAR MAP</small></span></div>
       </header>
 
       <div className="universe-stage">
@@ -81,9 +100,12 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
         <div className="universe-stage-corner universe-stage-corner--bottom" aria-hidden="true" />
         <div className="universe-map-caption"><Crosshair size={12} strokeWidth={1.2} /><span>星图导航</span><i /><small>5 个目的地</small></div>
         <span className="universe-map-coordinate" aria-hidden="true">SE–001 / EXPLORATION FIELD</span>
+        <button type="button" className="universe-motion-toggle" onClick={() => setAnimationEnabled(enabled => !enabled)} disabled={reducedMotion || travelling !== null} aria-label={reducedMotion ? "星系保持静止，已遵循系统减少动态效果设置" : animationEnabled ? "暂停星系动画" : "播放星系动画"} title={reducedMotion ? "已遵循系统减少动态效果设置" : "悬停或聚焦星球时，动画会暂时停下，方便选择。"}>
+          {animationEnabled && !reducedMotion ? <Pause size={12} strokeWidth={1.5} /> : <Play size={12} strokeWidth={1.5} />}<span>{reducedMotion ? "静止模式" : animationEnabled ? "暂停动画" : "播放动画"}</span>
+        </button>
         <div className="universe-world">
           <div className="universe-nebula" aria-hidden="true" />
-          <div className="universe-stars" aria-hidden="true">{STARS.map(([x, y, size], index) => <i key={index} style={{ left: `${x}%`, top: `${y}%`, width: size, height: size, opacity: .2 + (index % 5) * .13 }} />)}</div>
+          <div className="universe-stars" aria-hidden="true">{STARS.map(([x, y, size], index) => <i key={index} style={{ left: `${x}%`, top: `${y}%`, width: size, height: size, "--star-opacity": .2 + (index % 5) * .13, "--star-duration": `${4 + index % 5}s`, "--star-delay": `${-index * .73}s` } as CSSProperties} />)}</div>
           <svg className="universe-orbits" viewBox="0 0 900 560" preserveAspectRatio="none" aria-hidden="true">
             <defs><linearGradient id="se-map-orbit" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#8ac4d1" stopOpacity=".04" /><stop offset=".48" stopColor="#8ac4d1" stopOpacity=".3" /><stop offset="1" stopColor="#d7c39c" stopOpacity=".07" /></linearGradient></defs>
             <g fill="none" stroke="url(#se-map-orbit)" strokeWidth=".8">
@@ -93,11 +115,19 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
               <path d="M450 275 207 157M450 275 675 129M450 275 729 364M450 275 450 442M450 275 171 386" strokeDasharray="2 8" strokeOpacity=".28" />
             </g>
             <g fill="#9bd4d3" opacity=".55"><circle cx="393" cy="97" r="2" /><circle cx="628" cy="381" r="1.6" /><circle cx="345" cy="459" r="1.5" /></g>
+            <g className="universe-orbit-travellers" fill="none" transform="rotate(-19 450 275)" strokeLinecap="round">
+              {[{ rx: 325, ry: 157, duration: 32, delay: -8, color: "#9ddad5" }, { rx: 230, ry: 106, duration: 23, delay: -13, color: "#edcd91" }, { rx: 400, ry: 204, duration: 43, delay: -27, color: "#aebfe8" }].map(orbit => (
+                <g key={orbit.rx} style={{ "--orbit-duration": `${orbit.duration}s`, "--orbit-delay": `${orbit.delay}s` } as CSSProperties} stroke={orbit.color}>
+                  <ellipse className="universe-orbit-motion universe-orbit-motion--trail" cx="450" cy="275" rx={orbit.rx} ry={orbit.ry} pathLength="100" strokeWidth="1.2" strokeDasharray="6 94" />
+                  <ellipse className="universe-orbit-motion universe-orbit-motion--point" cx="450" cy="275" rx={orbit.rx} ry={orbit.ry} pathLength="100" strokeWidth="3.3" strokeDasharray=".08 99.92" />
+                </g>
+              ))}
+            </g>
           </svg>
           <div className="universe-sun" aria-hidden="true"><span className="universe-sun-halo" /><span className="universe-sun-core" /><span className="universe-sun-line" /><div><span className="universe-sun-label">YOUR IDEAS. IN ORBIT.</span><strong>SE <em>LAB</em><b>✦</b></strong><span className="universe-sun-subtitle">每个世界，都始于一个想法</span></div></div>
           {WORLDS.map((world, index) => (
-            <button key={world.id} type="button" className={`universe-planet universe-planet--${world.kind}${highlighted === world.id ? " universe-planet--highlighted" : ""}`} style={{ "--planet-x": `${world.x}%`, "--planet-y": `${world.y}%`, "--planet-size": `${world.size}px`, "--destination-color": world.color } as CSSProperties} onMouseEnter={() => { if (!pending.current) setHighlighted(world.id); }} onFocus={() => { if (!pending.current) setHighlighted(world.id); }} onClick={() => navigate(world.id)} disabled={travelling !== null} aria-label={`${world.name}：${world.title}，进入${world.title}`}>
-              <span className="universe-planet-visual"><PlanetOrb kind={world.kind} /><span className="universe-planet-selector" />{world.id === "math" && <span className="universe-moon"><i /><span>24</span></span>}</span>
+            <button key={world.id} type="button" className={`universe-planet universe-planet--${world.kind}${highlighted === world.id ? " universe-planet--highlighted" : ""}`} style={{ "--planet-x": `${world.x}%`, "--planet-y": `${world.y}%`, "--planet-size": `${world.size}px`, "--destination-color": world.color, "--drift-duration": `${20 + index * 3}s`, "--drift-delay": `${-index * 4.1}s`, "--drift-x": `${9 + index % 3 * 3}px`, "--drift-y": `${6 + index % 2 * 3}px`, "--surface-duration": `${40 + index * 9}s` } as CSSProperties} onMouseEnter={() => { if (!pending.current) setHighlighted(world.id); }} onFocus={() => { if (!pending.current) setHighlighted(world.id); }} onClick={() => navigate(world.id)} disabled={travelling !== null} aria-label={`${world.name}：${world.title}，进入${world.title}`}>
+              <span className="universe-planet-visual"><span className="universe-planet-drift"><PlanetOrb kind={world.kind} />{world.id === "math" && <span className="universe-moon"><i /><span>24</span></span>}</span><span className="universe-planet-selector" /></span>
               <span className="universe-planet-label"><span className="universe-planet-number">0{index + 1}</span><span><strong>{world.name}<ArrowUpRight size={12} strokeWidth={1.3} /></strong><small>{world.title}</small></span></span>
               <span className="universe-planet-mobile-description">{world.description}</span>
             </button>
