@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { ArrowUpRight, Compass, CornerDownRight, Crosshair, Orbit, Pause, Play } from "lucide-react";
+import { ArrowUpRight, Calculator, CornerDownRight, Crosshair, Orbit, Pause, Play } from "lucide-react";
 import { PlanetOrb, type PlanetKind } from "./planet-orb";
 import "./universe-map.css";
 
@@ -24,6 +24,13 @@ const STARS = [
 ];
 
 const motionStorageKey = "se-lab-universe-motion-v1";
+const summaries: Record<Destination, string> = {
+  counter: "源码规模，一目了然",
+  math: "定制练习，检验答案",
+  practice: "让设计与验证有迹可循",
+  profile: "作品与学习的起点",
+  about: "了解项目与开源协作",
+};
 
 export default function UniverseMap({ onNavigate }: { onNavigate: (destination: Destination) => void }) {
   const [highlighted, setHighlighted] = useState<Destination>("counter");
@@ -117,17 +124,21 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
     <section className={`universe-map${travelling ? " universe-map--travelling" : ""}${!animationEnabled || !pageVisible || reducedMotion ? " universe-map--paused" : ""}`} aria-labelledby="universe-heading" style={{ "--flight-x": `${flightOrigin.x}%`, "--flight-y": `${flightOrigin.y}%` } as CSSProperties}>
       <header className="universe-heading">
         <div>
-          <p className="universe-eyebrow"><span /> SE LAB / THE ENGINEERING UNIVERSE</p>
-          <h1 id="universe-heading">从一个想法，<span>探索无限可能。</span></h1>
-          <p className="universe-introduction">选择一颗星球，开启你的下一次探索。</p>
+          <p className="universe-eyebrow"><span /> SE LAB / 工程实践空间</p>
+          <h1 id="universe-heading">让想法，<span>拥有自己的引力。</span></h1>
+          <p className="universe-introduction">在代码、练习与作品之间，探索属于你的工程宇宙。</p>
         </div>
-        <div className="universe-map-badge"><Compass size={15} strokeWidth={1.3} /><span>工程宇宙<small>LIVING STAR MAP</small></span></div>
+        <div className="universe-hero-actions">
+          <button type="button" className="universe-hero-primary" onClick={() => navigate("counter")} disabled={travelling !== null}>开始代码统计<ArrowUpRight size={17} /></button>
+          <button type="button" className="universe-hero-secondary" onClick={() => navigate("math")} disabled={travelling !== null}><Calculator size={16} />四则运算练习</button>
+        </div>
       </header>
 
+      <div className="universe-exploration">
       <div className="universe-stage" ref={stageRef}>
         <div className="universe-stage-corner universe-stage-corner--top" aria-hidden="true" />
         <div className="universe-stage-corner universe-stage-corner--bottom" aria-hidden="true" />
-        <div className="universe-map-caption"><Crosshair size={12} strokeWidth={1.2} /><span>星图导航</span><i /><small>5 个目的地</small></div>
+        <div className="universe-map-caption"><Crosshair size={14} strokeWidth={1.2} /><span>探索星图</span><i /><small>5 个目的地</small></div>
         <span className="universe-map-coordinate" aria-hidden="true">SE–001 / EXPLORATION FIELD</span>
         <button type="button" className="universe-motion-toggle" onClick={toggleAnimation} disabled={reducedMotion || travelling !== null} aria-label={reducedMotion ? "星系保持静止，已遵循系统减少动态效果设置" : animationEnabled ? "暂停星系动画" : "播放星系动画"} title={reducedMotion ? "已遵循系统减少动态效果设置" : "悬停或聚焦时稳住所选星球的位置，背景继续运行。"}>
           {animationEnabled && !reducedMotion ? <Pause size={12} strokeWidth={1.5} /> : <Play size={12} strokeWidth={1.5} />}<span>{reducedMotion ? "静止模式" : animationEnabled ? "暂停动画" : "播放动画"}</span>
@@ -157,22 +168,25 @@ export default function UniverseMap({ onNavigate }: { onNavigate: (destination: 
           {WORLDS.map((world, index) => (
             <button key={world.id} type="button" data-destination={world.id} className={`universe-planet universe-planet--${world.kind}${highlighted === world.id ? " universe-planet--highlighted" : ""}`} style={{ "--planet-x": `${world.x}%`, "--planet-y": `${world.y}%`, "--planet-size": `${world.size}px`, "--destination-color": world.color, "--drift-duration": `${24 + index * 3}s`, "--drift-delay": `${-index * 4.1}s`, "--drift-x": `${6 + index % 3 * 2}px`, "--drift-y": `${5 + index % 2 * 2}px`, "--surface-duration": `${55 + index * 11}s` } as CSSProperties} onMouseEnter={() => { if (!pending.current) setHighlighted(world.id); }} onFocus={() => { if (!pending.current) setHighlighted(world.id); }} onClick={() => navigate(world.id)} disabled={travelling !== null} aria-label={`${world.name}：${world.title}，进入${world.title}`}>
               <span className="universe-planet-visual"><span className="universe-planet-drift"><PlanetOrb kind={world.kind} />{world.id === "math" && <span className="universe-moon"><i /><span>24</span></span>}</span><span className="universe-planet-selector" /></span>
-              <span className="universe-planet-label"><span className="universe-planet-number">0{index + 1}</span><span><strong>{world.name}<ArrowUpRight size={12} strokeWidth={1.3} /></strong><small>{world.title}</small></span></span>
-              <span className="universe-planet-mobile-description">{world.description}</span>
+              <span className="universe-planet-label"><span className="universe-planet-number">0{index + 1}</span><span><strong>{world.title}<ArrowUpRight size={13} strokeWidth={1.3} /></strong><small>{world.name}</small></span></span>
+              <span className="universe-planet-mobile-description">{summaries[world.id]}</span>
             </button>
           ))}
         </div>
         <div className="universe-stage-instruction"><Orbit size={13} strokeWidth={1.2} /><span>点击星球，进入它的世界</span><span className="universe-stage-instruction-line" /></div>
       </div>
 
-      <div className="universe-readout" style={{ "--destination-color": destination.color } as CSSProperties}>
-        <div className="universe-readout-symbol" aria-hidden="true"><Orbit size={28} strokeWidth={.8} /></div>
-        <div className="universe-readout-content"><p>{destination.coordinates}</p><h2>{destination.name}<span>/</span><small>{destination.title}</small></h2><p className="universe-readout-description">{destination.description}</p></div>
+      <aside className="universe-readout" aria-labelledby="universe-destination-heading" style={{ "--destination-color": destination.color } as CSSProperties}>
+        <div className="universe-readout-heading"><span>目的地档案</span><span>{String(WORLDS.indexOf(destination) + 1).padStart(2, "0")} / 05</span></div>
+        <div className="universe-readout-symbol"><PlanetOrb kind={destination.kind} /></div>
+        <div className="universe-readout-content"><p>{destination.coordinates}</p><h2 id="universe-destination-heading">{destination.title}<small>{destination.name}</small></h2><p className="universe-readout-description">{destination.description}</p></div>
         <div className="universe-readout-features">{destination.features.map(feature => <span key={feature}>{feature}</span>)}</div>
-        <button type="button" className="universe-enter" onClick={() => navigate(destination.id)} disabled={travelling !== null}>进入{destination.name}<ArrowUpRight size={16} strokeWidth={1.4} /></button>
+        <button type="button" className="universe-enter" onClick={() => navigate(destination.id)} disabled={travelling !== null}>进入{destination.title}<ArrowUpRight size={17} strokeWidth={1.4} /></button>
+        <p className="universe-readout-note">选择一颗星球，发现下一段旅程。</p>
+      </aside>
       </div>
 
-      <nav className="universe-direct-navigation" aria-label="直接进入功能"><span><CornerDownRight size={13} /> 快速抵达</span>{WORLDS.map(world => <button type="button" key={world.id} onClick={() => navigate(world.id)} disabled={travelling !== null}>{world.title}<ArrowUpRight size={11} /></button>)}</nav>
+      <nav className="universe-direct-navigation" aria-label="直接进入功能"><span><CornerDownRight size={14} /> 或直接前往</span>{WORLDS.map(world => <button type="button" key={world.id} onClick={() => navigate(world.id)} disabled={travelling !== null}>{world.title}<ArrowUpRight size={13} /></button>)}</nav>
       <p className="universe-flight-status" role="status" aria-live="polite">{flight ? `正在前往${flight.name}，即将进入${flight.title}。` : ""}</p>
     </section>
   );

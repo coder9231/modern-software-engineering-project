@@ -1,33 +1,92 @@
-body { background:#060c18; }
-.space-shell { min-height:100vh; background:radial-gradient(ellipse at 80% 0,#122235 0,transparent 55%),#060c18; }
-.space-shell .sidebar { background:#0b1421; border-color:#253142; }
-.space-shell .sidebar .brand-mark { background:transparent; border:1px solid #4b706c; border-radius:50%; box-shadow:0 0 18px #74b6ad18; color:#8bc9ba; }
-.space-shell .sidebar .brand strong { color:#e1e9ec; }.space-shell .sidebar .brand small { color:#8192a0; }
-.space-shell .workspace-label { color:#8a9aa9; }
-.space-shell .nav-item { color:#98a9b8; }.space-shell .nav-item:hover { background:#152335; color:#e1eee9; }
-.space-shell .nav-item.active { background:#193032; color:#a3dbca; }.space-shell .nav-item.active::before { background:#89cfb9; }
-.space-shell .nav-item > span:not(.nav-badge) { display:flex; flex-direction:column; align-items:flex-start; gap:4px; }.space-shell .nav-item small { color:#738b99; font-size:9px; font-weight:400; letter-spacing:1px; }
-.space-shell .nav-badge { background:#244139; color:#a2c5b7; }
-.space-shell .sidebar-project { background:#101f2a; border-color:#233946; }.space-shell .sidebar-project p { color:#c1d3d6; }.space-shell .sidebar-project > span { color:#8c9ea8; }.space-shell .sidebar-project::after { border-color:#294444; box-shadow:0 0 0 14px #24413b20,0 0 0 28px #24413b10; }
-.space-shell .project-symbol,.space-shell .sidebar-project button { color:#81b6a5; }.space-shell .sidebar-repo { color:#9aabb7; }.space-shell .sidebar-footer { border-color:#263441; color:#c3cdd2; }.space-shell .sidebar-footer small { color:#81949d; }.space-shell .avatar { background:#203735; color:#a5cbbd; }
-.space-shell .topbar { background:#0b1421e8; border-color:#263344; color:#a6bac7; }
-.space-shell .breadcrumb,.space-shell .breadcrumb svg { color:#8398aa; }.space-shell .breadcrumb strong { color:#ccdce3; }.space-shell .breadcrumb > button { color:#9cb7bb; }
-.space-shell .intro-replay-button { background:transparent; border-color:#324252; color:#b1c7c8; }.space-shell .intro-replay-button:hover { background:#152a33; border-color:#5d857e; }
-.space-shell .course-tag { background:#132330; border-color:#293c4b; color:#99afba; }.space-shell .service-status { color:#93b8ad; }.space-shell .service-status i { background:#82c9b0; box-shadow:0 0 0 3px #24463b55; }
-.space-shell .topbar-end { gap:16px; }.space-shell .workspace { margin:26px auto 0; width:calc(100% - 44px); max-width:1400px; background:#f7f9f8; border-radius:18px 18px 0 0; padding:28px 30px 0; min-height:calc(100vh - 94px); }
-.planet-arrival { display:flex; align-items:center; gap:15px; margin:-4px 0 27px; padding-bottom:19px; border-bottom:1px solid #dfe7e3; }
-.planet-arrival > .se-planet { width:39px; height:39px; flex:0 0 39px; }.planet-arrival > div { display:flex; align-items:baseline; gap:12px; flex:1; }
-.planet-arrival strong { font-size:14px; color:#35564b; font-weight:550; }.planet-arrival span { font:9px ui-monospace,monospace; color:#83958c; letter-spacing:1.7px; }
-.planet-return { display:flex; align-items:center; gap:7px; border:1px solid #cddfd4; color:#3e7460; background:transparent; border-radius:6px; padding:8px 11px; font-size:11px; }
-.space-shell.is-universe .sidebar { display:none; }.space-shell.is-universe .main-shell { margin-left:0; }
-.space-shell.is-universe .topbar { padding-inline:clamp(22px,5vw,80px); background:#070e1bed; position:relative; z-index:4; }
-.universe-brand-link { display:flex; gap:11px; align-items:center; color:#d9e6e9; background:transparent; border:0; font:17px Georgia,serif; letter-spacing:1px; }.universe-brand-link svg { color:#96cfbe; }.universe-brand-link small { border-left:1px solid #3c4e5a; margin-left:5px; padding-left:15px; font:10px var(--font-sans); color:#8097aa; letter-spacing:1.5px; }
-.space-shell.is-universe .workspace { padding:0; margin:0; max-width:none; width:100%; border-radius:0; background:transparent; min-height:calc(100vh - 68px); }
-.space-shell.is-universe .universe-map { max-width:1560px; margin:0 auto; padding:34px clamp(22px,4.7vw,74px) 20px; }
-.space-shell.is-universe .workspace-footer { margin:0; padding:22px clamp(22px,5vw,80px); color:#6e8498; border-color:#1c2c40; background:#060d19; }.space-shell.is-universe .footer-brand { color:#8eadb3; }
-.space-shell .nav-scrim { background:#0106119c; }
-.space-shell .workspace:focus { outline:none; }
-@media(max-width:660px) { .space-shell .sidebar { visibility:hidden; }.space-shell .sidebar.sidebar-open { visibility:visible; } }
-@media(max-width:900px) { .space-shell .workspace { width:calc(100% - 24px); padding-inline:24px; }.space-shell.is-universe .workspace { width:100%; padding:0; } }
-@media(max-width:660px) { .space-shell .topbar { padding-inline:17px; }.space-shell .workspace { margin-top:12px; width:calc(100% - 16px); padding:21px 16px 0; border-radius:13px 13px 0 0; }.space-shell .topbar-end { gap:9px; }.space-shell .service-status { display:none; }.space-shell.is-universe .workspace { margin-top:0; width:100%; padding:0; border-radius:0; }.universe-brand-link { font-size:16px; }.universe-brand-link small { font-size:8px; padding-left:10px; margin-left:0; }.planet-arrival { gap:10px; margin-bottom:22px; }.planet-arrival > div { flex-direction:column; gap:5px; }.planet-return { padding:8px; font-size:10px; }.planet-arrival > .se-planet { width:32px; height:32px; flex-basis:32px; } }
-@media print { body,.space-shell { background:white !important; }.space-shell .workspace { width:100%; background:white; }.planet-arrival { display:none !important; } }
+body { background: #07101e; }
+.space-shell { min-height: 100vh; background: radial-gradient(ellipse at 85% 0, #172e40 0, transparent 52%), #07101e; }
+.space-shell .sidebar { background: #0c1726; border-color: #2b3b4c; }
+.space-shell .sidebar .brand-mark { background: transparent; border: 1px solid #5b897f; border-radius: 50%; box-shadow: 0 0 18px #74b6ad18; color: #a2dfc9; }
+.space-shell .sidebar .brand strong { color: #eff5f5; }
+.space-shell .sidebar .brand small { color: #9fb4c2; }
+.space-shell .workspace-label { color: #a2b4c3; }
+.space-shell .nav-item { color: #b3c4cf; }
+.space-shell .nav-item:hover { background: #182c3c; color: #effaf5; }
+.space-shell .nav-item.active { background: #1d3a3a; color: #c0f1df; }
+.space-shell .nav-item.active::before { background: #a4e6cd; }
+.space-shell .nav-item > span:not(.nav-badge) { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+.space-shell .nav-item small { color: #8fa9b8; font-size: 10px; font-weight: 400; letter-spacing: .8px; }
+.space-shell .nav-badge { background: #2b4942; color: #c0dfcf; }
+.space-shell .sidebar-project { background: #112432; border-color: #2d4653; }
+.space-shell .sidebar-project p { color: #d1e1e4; }
+.space-shell .sidebar-project > span { color: #a5b9c3; }
+.space-shell .sidebar-project::after { border-color: #355a58; box-shadow: 0 0 0 14px #24413b20, 0 0 0 28px #24413b10; }
+.space-shell .project-symbol, .space-shell .sidebar-project button { color: #a1d6c2; }
+.space-shell .sidebar-repo { color: #b5c7d2; }
+.space-shell .sidebar-footer { border-color: #2b3b4b; color: #d6e2e6; }
+.space-shell .sidebar-footer small { color: #a0b5c0; }
+.space-shell .avatar { background: #2b4944; color: #c2e7d6; }
+.space-shell .topbar { background: #0c1726eb; border-color: #2b3d4d; color: #bfd3dc; }
+.space-shell .breadcrumb, .space-shell .breadcrumb svg { color: #a2bdca; }
+.space-shell .breadcrumb strong { color: #e0edf0; }
+.space-shell .breadcrumb > button { color: #b3d8d4; }
+.space-shell .intro-replay-button { min-height: 36px; padding: 8px 12px; border-color: #3d5666; border-radius: 8px; background: transparent; color: #bed8da; font-size: 11px; }
+.space-shell .intro-replay-button:hover { background: #18343d; border-color: #76a99b; }
+.space-shell .intro-replay-button:focus-visible, .universe-brand-link:focus-visible, .universe-top-nav :is(button, a):focus-visible, .planet-return:focus-visible { outline: 2px solid #a4e6d2; outline-offset: 4px; }
+.space-shell .course-tag { background: #18303e; border-color: #365061; color: #b5cbd5; }
+.space-shell .service-status { color: #b3dbc9; }
+.space-shell .service-status i { background: #a0e3c6; box-shadow: 0 0 0 3px #24463b55; }
+.space-shell .topbar-end { gap: 16px; }
+.space-shell .workspace { margin: 26px auto 0; width: calc(100% - 44px); max-width: 1400px; background: #f7f9f8; border-radius: 18px 18px 0 0; padding: 28px 30px 0; min-height: calc(100vh - 94px); }
+.planet-arrival { display: flex; align-items: center; gap: 15px; margin: -4px 0 27px; padding: 15px 17px; border: 1px solid #d9e5df; border-radius: 12px; background: #fff; box-shadow: 0 3px 12px #23473503; }
+.planet-arrival > .se-planet { width: 39px; height: 39px; flex: 0 0 39px; }
+.planet-arrival > div { display: flex; align-items: baseline; gap: 12px; flex: 1; min-width: 0; }
+.planet-arrival strong { color: #355f52; font-size: 14px; font-weight: 550; }
+.planet-arrival span { color: #718b82; font: 10px ui-monospace, monospace; letter-spacing: 1.3px; }
+.planet-return { display: flex; align-items: center; gap: 7px; min-height: 38px; border: 1px solid #c2d9cc; border-radius: 8px; padding: 9px 12px; color: #366d58; background: #f6faf7; font-size: 12px; white-space: nowrap; }
+.planet-return:hover { background: #edf5ef; border-color: #9abda8; }
+.space-shell.is-universe .sidebar { display: none; }
+.space-shell.is-universe .main-shell { margin-left: 0; }
+.space-shell.is-universe .topbar { position: relative; z-index: 4; height: 72px; padding-inline: clamp(24px, 4.4vw, 72px); background: #091321ed; border-bottom-color: #8eb2bc24; }
+.universe-brand-link { display: flex; align-items: center; gap: 11px; border: 0; background: transparent; color: #ecf6f5; font: 19px Georgia, serif; letter-spacing: 1px; white-space: nowrap; }
+.universe-brand-link svg { color: #abe4cd; }
+.universe-brand-link small { border-left: 1px solid #4b6471; margin-left: 5px; padding-left: 15px; color: #abc0cd; font: 11px var(--font-sans); letter-spacing: 1.3px; }
+.universe-top-nav { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 27px; }
+.universe-top-nav :is(button, a) { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border: 0; background: transparent; color: #b2c7d3; font-size: 13px; text-decoration: none; white-space: nowrap; transition: color .2s; }
+.universe-top-nav :is(button, a):hover { color: #d0f2e3; }
+.space-shell.is-universe .service-status, .space-shell.is-universe .course-tag { display: none; }
+.space-shell.is-universe .workspace { padding: 0; margin: 0; max-width: none; width: 100%; border-radius: 0; background: transparent; min-height: calc(100vh - 72px); }
+.space-shell.is-universe .universe-map { max-width: 1560px; margin: 0 auto; padding: 38px clamp(24px, 4.4vw, 72px) 31px; }
+.space-shell.is-universe .workspace-footer { margin: 0; padding: 24px clamp(24px, 4.4vw, 72px); border-color: #8fb7bc26; background: #08121f; color: #9bb2c1 !important; font-size: 11px; }
+.space-shell.is-universe .footer-brand { color: #b8dacf; }
+.space-shell .nav-scrim { background: #0106119c; }
+.space-shell .workspace:focus { outline: none; }
+@media (max-width: 900px) {
+  .space-shell .workspace { width: calc(100% - 24px); padding-inline: 24px; }
+  .space-shell.is-universe .workspace { width: 100%; padding: 0; }
+  .universe-top-nav { gap: 18px; left: auto; right: 165px; transform: none; }
+  .universe-top-nav :is(button, a) { font-size: 12px; }
+  .universe-brand-link small { display: none; }
+}
+@media (max-width: 680px) {
+  .universe-top-nav { display: none; }
+  .space-shell.is-universe .topbar { height: 64px; padding-inline: 23px; }
+  .space-shell.is-universe .universe-map { padding: 31px 22px 28px; }
+  .universe-brand-link { gap: 9px; font-size: 18px; }
+  .universe-brand-link small { display: inline; font-size: 10px; padding-left: 12px; margin-left: 2px; }
+  .space-shell.is-universe .workspace { min-height: calc(100vh - 64px); }
+  .space-shell.is-universe .workspace-footer { padding: 21px 23px; font-size: 10px; line-height: 1.8; }
+}
+@media (max-width: 660px) {
+  .space-shell .sidebar { visibility: hidden; }
+  .space-shell .sidebar.sidebar-open { visibility: visible; }
+  .space-shell .topbar { padding-inline: 17px; }
+  .space-shell .workspace { margin-top: 12px; width: calc(100% - 16px); padding: 21px 16px 0; border-radius: 13px 13px 0 0; }
+  .space-shell .topbar-end { gap: 9px; }
+  .space-shell .service-status { display: none; }
+  .space-shell.is-universe .workspace { margin-top: 0; width: 100%; padding: 0; border-radius: 0; }
+  .planet-arrival { gap: 11px; margin-bottom: 22px; padding: 13px; }
+  .planet-arrival > div { flex-direction: column; gap: 5px; }
+  .planet-return { min-height: 38px; padding: 8px; font-size: 11px; }
+  .planet-arrival > .se-planet { width: 32px; height: 32px; flex-basis: 32px; }
+}
+@media print {
+  body, .space-shell { background: white !important; }
+  .space-shell .workspace { width: 100%; background: white; }
+  .planet-arrival { display: none !important; }
+}

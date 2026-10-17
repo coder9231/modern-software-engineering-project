@@ -1,79 +1,93 @@
-.universe-map { color: #e0e8ed; padding: 1px 0 10px; --destination-color: #8cc8ed; }
-.universe-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 21px; }
-.universe-eyebrow { display: flex; align-items: center; gap: 8px; color: #81949e; font-size: 9px; letter-spacing: 2px; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; margin-bottom: 14px; }
-.universe-eyebrow > span { width: 5px; height: 5px; border-radius: 50%; background: #9edccf; box-shadow: 0 0 9px #8ae1c76b; }
-.universe-heading h1 { font-size: clamp(23px, 2.4vw, 32px); line-height: 1.5; font-weight: 450; color: #edf1f4; letter-spacing: .2px; }
-.universe-heading h1 > span { color: #a0afb9; }
-.universe-introduction { color: #768d9b; font-size: 11px; letter-spacing: .65px; margin-top: 9px; line-height: 1.8; }
-.universe-map-badge { display: flex; align-items: center; gap: 11px; color: #91b6b3; padding-left: 23px; border-left: 1px solid #7ca6ae24; flex-shrink: 0; margin-top: 13px; }
-.universe-map-badge > span { font-size: 11px; letter-spacing: 2px; }
-.universe-map-badge small { display: block; font-size: 7px; letter-spacing: 1px; margin-top: 6px; color: #5d7889; }
-.universe-stage { position: relative; isolation: isolate; width: 100%; height: clamp(490px, 48vw, 590px); min-height: 490px; overflow: hidden; background: radial-gradient(ellipse at 45% 47%, #0e263644, transparent 58%), linear-gradient(158deg, #0a1421, #060e1a 65%, #091321); border: 1px solid #65879a1c; border-radius: 12px; }
-.universe-stage::after { content: ""; pointer-events: none; position: absolute; inset: 0; z-index: 3; background: radial-gradient(ellipse at 50% 48%, transparent 55%, #050c1440 100%); }
-.universe-stage-corner { position: absolute; width: 14px; height: 14px; z-index: 4; pointer-events: none; }
-.universe-stage-corner--top { top: 13px; left: 13px; border-left: 1px solid #83abb854; border-top: 1px solid #83abb854; }
-.universe-stage-corner--bottom { bottom: 13px; right: 13px; border-right: 1px solid #83abb854; border-bottom: 1px solid #83abb854; }
-.universe-map-caption { position: absolute; top: 23px; left: 27px; z-index: 4; display: flex; align-items: center; gap: 8px; color: #8fa6b3; font-size: 9px; letter-spacing: 1px; pointer-events: none; }
-.universe-map-caption svg { color: #7594a4; }
-.universe-map-caption i { display: block; height: 10px; width: 1px; background: #6d8e9a40; margin: 0 4px; }
-.universe-map-caption small { font-size: 8px; color: #5e7b8d; }
-.universe-map-coordinate { position: absolute; right: 26px; top: 27px; z-index: 4; color: #4f6a7c; font-size: 7px; letter-spacing: 1.3px; font-family: ui-monospace, Consolas, monospace; pointer-events: none; }
+.universe-map { --destination-color: #8cc8ed; color: #e7eff3; padding: 1px 0 12px; }
+.universe-heading { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
+.universe-heading > div:first-child { min-width: 0; }
+.universe-eyebrow { display: flex; align-items: center; gap: 9px; color: #9fb8c7; font: 10px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 1.8px; margin-bottom: 13px; }
+.universe-eyebrow > span { width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: #a0e1ce; box-shadow: 0 0 12px #8ae1c750; }
+.universe-heading h1 { color: #f1f6f7; font-size: clamp(36px, 3.1vw, 44px); line-height: 1.35; font-weight: 520; letter-spacing: -.7px; }
+.universe-heading h1 > span { color: #a7d5cf; }
+.universe-introduction { color: #a0b2c1; font-size: 14px; line-height: 1.8; margin-top: 12px; max-width: 620px; }
+.universe-hero-actions { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.universe-hero-actions button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: 9px; padding: 11px 17px; font-size: 13px; font-weight: 550; white-space: nowrap; transition: background .2s, border-color .2s, color .2s, transform .2s; }
+.universe-hero-primary { color: #092a29; background: #b4e5d6; border-color: #b4e5d6 !important; box-shadow: 0 5px 24px #8ce6cc14; }
+.universe-hero-primary:hover:not(:disabled) { background: #d0f5e8; border-color: #d0f5e8 !important; transform: translateY(-1px); }
+.universe-hero-secondary { color: #c9dbe3; background: #10202e; border-color: #314653 !important; }
+.universe-hero-secondary:hover:not(:disabled) { color: #ecf9f4; background: #18333d; border-color: #5a867d !important; }
+.universe-hero-actions button:focus-visible { outline: 2px solid #adedd7; outline-offset: 4px; }
+.universe-exploration { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.universe-stage { position: relative; isolation: isolate; width: 100%; height: 500px; min-width: 0; overflow: hidden; background: radial-gradient(ellipse at 45% 47%, #183d4d4d, transparent 63%), linear-gradient(158deg, #0d1b2a, #08121f 65%, #0d1a29); border: 1px solid #7897aa29; border-radius: 20px; box-shadow: inset 0 1px 0 #c5e1e706, 0 20px 60px #00000012; }
+.universe-stage::after { content: ""; pointer-events: none; position: absolute; inset: 0; z-index: 3; background: radial-gradient(ellipse at 50% 48%, transparent 57%, #050c1436 100%); }
+.universe-stage-corner { position: absolute; width: 15px; height: 15px; z-index: 4; pointer-events: none; }
+.universe-stage-corner--top { top: 16px; left: 16px; border-left: 1px solid #92bdc34d; border-top: 1px solid #92bdc34d; }
+.universe-stage-corner--bottom { bottom: 16px; right: 16px; border-right: 1px solid #92bdc34d; border-bottom: 1px solid #92bdc34d; }
+.universe-map-caption { position: absolute; top: 26px; left: 29px; z-index: 4; display: flex; align-items: center; gap: 9px; color: #b1c6d1; font-size: 12px; letter-spacing: .5px; pointer-events: none; }
+.universe-map-caption svg { color: #96c7c2; }
+.universe-map-caption i { display: block; height: 11px; width: 1px; background: #7898a34d; margin: 0 3px; }
+.universe-map-caption small { color: #93aab9; font-size: 11px; }
+.universe-map-coordinate { position: absolute; right: 174px; top: 30px; z-index: 4; color: #8099a9; font: 9px ui-monospace, Consolas, monospace; letter-spacing: 1px; pointer-events: none; }
+.universe-motion-toggle { position: absolute; z-index: 5; right: 21px; top: 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 9px 12px; border: 1px solid #668b9959; border-radius: 8px; background: #0e2430ed; color: #b7d5d8; font-size: 12px; }
+.universe-motion-toggle:hover:not(:disabled) { color: #e3fff5; border-color: #8bc9bd99; background: #163b44; }
+.universe-motion-toggle:focus-visible { outline: 2px solid #a4e6d2; outline-offset: 4px; }
+.universe-motion-toggle:disabled { cursor: default; opacity: .7; }
 .universe-world { position: absolute; inset: 0; transform-origin: var(--flight-x) var(--flight-y); transition: transform 650ms cubic-bezier(.6, .05, .35, 1), opacity 580ms ease, filter 650ms ease; }
 .universe-nebula { position: absolute; width: 95%; height: 65%; left: 0; top: 11%; opacity: .8; transform: rotate(-24deg); background: radial-gradient(ellipse at 60% 46%, #2c656315, transparent 56%), radial-gradient(ellipse at 28% 54%, #285a8022, transparent 54%), radial-gradient(ellipse at 69% 50%, #4d426313, transparent 40%); filter: blur(18px); pointer-events: none; }
 .universe-stars { position: absolute; inset: 0; pointer-events: none; }
 .universe-stars i { display: block; position: absolute; border-radius: 50%; background: #d7e7f5; box-shadow: 0 0 4px #d7e7f54d; }
 .universe-stars i:nth-child(7n) { width: 2px !important; height: 2px !important; box-shadow: 0 0 6px #bfe5ff80, 0 0 14px #bfe5ff24; }
-.universe-orbits { position: absolute; width: 100%; height: 100%; left: 0; top: 0; pointer-events: none; opacity: .88; }
+.universe-orbits { position: absolute; width: 100%; height: 100%; left: 0; top: 0; pointer-events: none; opacity: .8; }
 .universe-sun { position: absolute; width: 210px; height: 150px; left: 50%; top: 46%; transform: translate(-50%, -50%); display: grid; place-items: center; pointer-events: none; }
 .universe-sun > div { position: relative; text-align: center; margin-top: 12px; }
-.universe-sun-label { display: block; color: #81aaa9; font-size: 7px; font-family: ui-monospace, Consolas, monospace; letter-spacing: 2.2px; margin-bottom: 8px; }
+.universe-sun-label { display: block; color: #96beba; font: 8px ui-monospace, Consolas, monospace; letter-spacing: 1.8px; margin-bottom: 8px; }
 .universe-sun strong { display: block; color: #eef5f4; font-size: 36px; font-weight: 400; line-height: 1.2; letter-spacing: 3px; text-shadow: 0 0 28px #9fdfd349; }
-.universe-sun em { font-style: normal; font-weight: 250; color: #b6c9ce; }
+.universe-sun em { font-style: normal; font-weight: 250; color: #bfd6da; }
 .universe-sun b { display: inline-block; font-size: 13px; color: #e0c68f; font-weight: 400; vertical-align: top; margin: 1px 0 0 2px; letter-spacing: 0; }
-.universe-sun-subtitle { display: block; font-size: 8px; letter-spacing: 1.5px; color: #668493; margin-top: 14px; }
+.universe-sun-subtitle { display: block; font-size: 10px; letter-spacing: .7px; color: #9bb3c0; margin-top: 14px; }
 .universe-sun-halo { position: absolute; width: 360px; height: 260px; top: -55px; left: -75px; background: radial-gradient(ellipse, #5fa9a614 0, #4c8a9310 23%, #376b8808 40%, transparent 70%); }
 .universe-sun-core { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #effff5; top: 7px; left: 102px; box-shadow: 0 0 9px 3px #b3f1e55b, 0 0 28px 9px #5baba34a, 0 0 80px 36px #417a7924; }
 .universe-sun-line { position: absolute; top: 10px; height: 1px; width: 155px; left: 27px; background: linear-gradient(90deg, transparent, #92cfc04f 42%, #d4f4debb 50%, #92cfc04f 58%, transparent); }
-.universe-planet { --planet-size: 100px; position: absolute; z-index: 4; width: calc(var(--planet-size) + 65px); left: var(--planet-x); top: var(--planet-y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; padding: 0; border: 0; background: transparent; color: #c9d8df; text-align: left; -webkit-tap-highlight-color: transparent; }
+.universe-planet { --planet-size: 100px; position: absolute; z-index: 4; width: calc(var(--planet-size) + 65px); left: var(--planet-x); top: var(--planet-y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; padding: 0; border: 0; background: transparent; color: #d4e2e8; text-align: left; -webkit-tap-highlight-color: transparent; }
 .universe-planet-visual { position: relative; display: block; width: var(--planet-size); height: var(--planet-size); transition: transform .35s cubic-bezier(.2, .65, .3, 1), filter .35s; }
-.universe-planet-selector { position: absolute; width: 14px; height: 14px; right: -14px; top: -4px; border-top: 1px solid var(--destination-color); border-right: 1px solid var(--destination-color); opacity: 0; transform: translate(-5px, 5px); transition: opacity .25s, transform .25s; }
+.universe-planet-selector { position: absolute; width: 15px; height: 15px; right: -14px; top: -4px; border-top: 1px solid var(--destination-color); border-right: 1px solid var(--destination-color); opacity: 0; transform: translate(-5px, 5px); transition: opacity .25s, transform .25s; }
 .universe-planet-selector::after { content: ""; position: absolute; width: 3px; height: 3px; background: var(--destination-color); top: -2px; right: -2px; box-shadow: 0 0 8px var(--destination-color); }
 .universe-planet:hover .universe-planet-visual, .universe-planet:focus-visible .universe-planet-visual { transform: translateY(-4px) scale(1.045); filter: brightness(1.1); }
-.universe-planet--highlighted .universe-planet-selector { opacity: .75; transform: translate(0, 0); }
-.universe-planet:focus-visible { outline: 1px solid color-mix(in srgb, var(--destination-color) 65%, transparent); outline-offset: 13px; border-radius: 7px; }
-.universe-planet-label { display: flex; align-items: flex-start; gap: 8px; margin-top: 16px; min-width: 91px; }
-.universe-planet-number { font-size: 7px; font-family: ui-monospace, Consolas, monospace; color: #4e6a7e; padding-top: 3px; transition: color .2s; }
-.universe-planet-label strong { display: flex; align-items: center; gap: 9px; color: #c9d7df; font-weight: 450; font-size: 13px; letter-spacing: 1.6px; line-height: 1.4; transition: color .2s; }
+.universe-planet--highlighted .universe-planet-selector { opacity: .85; transform: translate(0, 0); }
+.universe-planet:focus-visible { outline: 2px solid color-mix(in srgb, var(--destination-color) 80%, transparent); outline-offset: 10px; border-radius: 9px; }
+.universe-planet-label { display: flex; align-items: flex-start; gap: 8px; margin-top: 17px; min-width: 106px; }
+.universe-planet-number { color: #8ca5b6; font: 10px ui-monospace, Consolas, monospace; padding-top: 4px; transition: color .2s; }
+.universe-planet-label strong { display: flex; align-items: center; gap: 8px; color: #dce8ed; font-size: 15px; font-weight: 500; letter-spacing: .5px; line-height: 1.4; transition: color .2s; }
 .universe-planet-label strong svg { color: var(--destination-color); opacity: 0; transform: translate(-3px, 3px); transition: opacity .2s, transform .2s; }
 .universe-planet--highlighted .universe-planet-label strong { color: var(--destination-color); }
 .universe-planet--highlighted .universe-planet-label strong svg { opacity: 1; transform: translate(0, 0); }
-.universe-planet--highlighted .universe-planet-number { color: var(--destination-color); opacity: .65; }
-.universe-planet-label small { display: block; color: #668293; font-size: 9px; letter-spacing: .75px; margin-top: 6px; }
+.universe-planet--highlighted .universe-planet-number { color: var(--destination-color); }
+.universe-planet-label small { display: block; color: #97afbd; font-size: 12px; letter-spacing: .6px; margin-top: 5px; }
 .universe-planet-mobile-description { display: none; }
-.universe-moon { position: absolute; display: flex; gap: 5px; align-items: center; right: -43px; top: -15px; color: #b4a07b; font-size: 7px; font-family: ui-monospace, Consolas, monospace; }
+.universe-moon { position: absolute; display: flex; gap: 5px; align-items: center; right: -43px; top: -15px; color: #d2bc8e; font: 9px ui-monospace, Consolas, monospace; }
 .universe-moon i { width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 29% 24%, #f1e5cd, #8d8069 43%, #20283a 82%); box-shadow: -1px 0 4px #f3dbad2b; }
-.universe-stage-instruction { position: absolute; z-index: 4; bottom: 20px; left: 27px; right: 27px; display: flex; align-items: center; gap: 7px; color: #536f81; font-size: 8px; letter-spacing: 1px; pointer-events: none; }
-.universe-stage-instruction svg { color: #6d958d; }
-.universe-stage-instruction-line { height: 1px; background: linear-gradient(90deg, #5d829c26, transparent); width: 83px; margin-left: 7px; }
-.universe-readout { position: relative; display: flex; align-items: center; gap: 20px; min-height: 113px; margin-top: 14px; padding: 22px 24px; border: 1px solid #5772812b; border-radius: 9px; background: linear-gradient(115deg, #12243175, #0d182461); }
-.universe-readout::before { content: ""; position: absolute; top: 26px; bottom: 26px; left: -1px; width: 2px; background: var(--destination-color); opacity: .6; box-shadow: 0 0 10px color-mix(in srgb, var(--destination-color) 20%, transparent); }
-.universe-readout-symbol { flex-shrink: 0; display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid #809da21a; border-radius: 50%; color: var(--destination-color); background: #7cbbbb06; }
-.universe-readout-content { min-width: 0; flex: 1; }
-.universe-readout-content > p:first-child { color: #688896; font-size: 7px; font-family: ui-monospace, Consolas, monospace; letter-spacing: 1.6px; margin-bottom: 6px; }
-.universe-readout h2 { color: #dde9ed; font-size: 16px; font-weight: 450; letter-spacing: 1px; line-height: 1.5; }
-.universe-readout h2 > span { color: #3f5a6c; font-size: 12px; margin: 0 10px; }
-.universe-readout h2 > small { color: #9badb8; font-size: 11px; font-weight: 400; }
-.universe-readout-description { color: #7d94a4; font-size: 10px; line-height: 1.9; margin-top: 6px; max-width: 430px; }
-.universe-readout-features { display: flex; flex-direction: column; gap: 7px; padding: 0 24px; border-left: 1px solid #6c8b9e20; font-size: 8px; letter-spacing: .5px; color: #6e8a9b; flex-shrink: 0; }
-.universe-readout-features > span::before { content: ""; display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--destination-color); margin: 0 7px 2px 0; opacity: .55; }
-.universe-enter { display: inline-flex; justify-content: space-between; gap: 14px; align-items: center; padding: 11px 14px; min-height: 40px; border-radius: 5px; border: 1px solid #90b3b43d; background: #93bdb40d; color: #b4d6ce; font-size: 10px; letter-spacing: .5px; flex-shrink: 0; transition: color .2s, border-color .2s, background .2s; }
-.universe-enter:hover:not(:disabled) { background: #a5e5d615; border-color: #8cc3b96e; color: #defff5; }
-.universe-enter:focus-visible, .universe-direct-navigation button:focus-visible { outline: 2px solid #90d8c8; outline-offset: 4px; }
-.universe-direct-navigation { display: flex; align-items: center; justify-content: flex-end; gap: 21px; padding: 21px 3px 0; flex-wrap: wrap; }
-.universe-direct-navigation > span { display: inline-flex; align-items: center; gap: 6px; color: #4e6c7d; font-size: 9px; margin-right: auto; }
-.universe-direct-navigation button { display: flex; align-items: center; gap: 5px; background: transparent; border: 0; padding: 6px 0; color: #8296a4; font-size: 9px; transition: color .2s; }
-.universe-direct-navigation button:hover:not(:disabled) { color: #c1dfd8; }
-.universe-direct-navigation button svg { color: #526c7d; }
+.universe-stage-instruction { position: absolute; z-index: 4; bottom: 23px; left: 29px; right: 29px; display: flex; align-items: center; gap: 8px; color: #97b1be; font-size: 11px; letter-spacing: .5px; pointer-events: none; }
+.universe-stage-instruction svg { color: #9ccbbd; }
+.universe-stage-instruction-line { height: 1px; background: linear-gradient(90deg, #8db6c145, transparent); width: 83px; margin-left: 7px; }
+.universe-readout { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 13px 22px; min-width: 0; padding: 23px 26px; border: 1px solid #6589983d; border-radius: 18px; background: linear-gradient(135deg, #132b38b3, #0d1d2bc9); box-shadow: inset 0 1px 0 #d5f0e909; }
+.universe-readout::before { content: ""; position: absolute; top: 28px; bottom: 28px; left: -1px; width: 2px; background: var(--destination-color); opacity: .75; box-shadow: 0 0 12px color-mix(in srgb, var(--destination-color) 20%, transparent); }
+.universe-readout-heading { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 14px; color: #a5bec9; font-size: 11px; letter-spacing: 1px; padding-bottom: 14px; margin-bottom: 2px; border-bottom: 1px solid #6a8a982b; }
+.universe-readout-heading > :last-child { color: #d8c496; font: 10px ui-monospace, Consolas, monospace; letter-spacing: 1.5px; }
+.universe-readout-symbol { grid-column: 1; grid-row: 2 / 4; flex-shrink: 0; display: grid; place-items: center; width: 64px; height: 64px; margin-top: 3px; color: var(--destination-color); }
+.universe-readout-symbol > .se-planet { width: 60px; height: 60px; }
+.universe-readout-content { grid-column: 2; grid-row: 2; min-width: 0; }
+.universe-readout-content > p:first-child { color: #95b5c3; font: 9px ui-monospace, Consolas, monospace; letter-spacing: 1px; margin-bottom: 8px; line-height: 1.6; }
+.universe-readout h2 { color: #edf6f6; font-size: 23px; font-weight: 500; line-height: 1.35; letter-spacing: -.3px; }
+.universe-readout h2 > span { display: none; }
+.universe-readout h2 > small { display: inline-block; margin-left: 12px; color: #adc5cd; font-size: 13px; font-weight: 400; letter-spacing: .5px; }
+.universe-readout-description { color: #b5c8d2; font-size: 14px; line-height: 1.85; margin-top: 10px; max-width: 600px; }
+.universe-readout-features { grid-column: 2; grid-row: 3; display: flex; flex-wrap: wrap; gap: 8px 17px; color: #aac2ce; font-size: 13px; line-height: 1.6; }
+.universe-readout-features > span::before { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--destination-color); margin: 0 7px 3px 0; opacity: .8; }
+.universe-enter { grid-column: 3; grid-row: 2 / 4; align-self: center; display: inline-flex; justify-content: space-between; gap: 14px; align-items: center; min-height: 46px; padding: 12px 16px; border-radius: 9px; border: 1px solid #99d4c670; background: #a4e0cf14; color: #c5eee0; font-size: 13px; font-weight: 500; white-space: nowrap; transition: color .2s, border-color .2s, background .2s; }
+.universe-enter:hover:not(:disabled) { background: #a5e5d62b; border-color: #9addc8b3; color: #effff8; }
+.universe-enter:focus-visible, .universe-direct-navigation button:focus-visible { outline: 2px solid #a4e6d2; outline-offset: 4px; }
+.universe-readout-note { grid-column: 2 / -1; grid-row: 4; color: #8ea9ba; font-size: 12px; line-height: 1.8; }
+.universe-direct-navigation { display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: wrap; padding: 18px 0 0; margin-top: 23px; border-top: 1px solid #55718436; }
+.universe-direct-navigation > span { display: inline-flex; align-items: center; gap: 8px; color: #a6bdc8; font-size: 12px; margin-right: auto; }
+.universe-direct-navigation button { display: inline-flex; align-items: center; justify-content: space-between; gap: 15px; min-height: 42px; padding: 10px 13px; border: 1px solid #526f823d; border-radius: 8px; background: #0e1e2c80; color: #b6cbd7; font-size: 13px; transition: color .2s, background .2s, border-color .2s; }
+.universe-direct-navigation button:hover:not(:disabled) { color: #e5fff3; background: #17313c; border-color: #729e9680; }
+.universe-direct-navigation button svg { color: #93bdb9; }
 .universe-flight-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .universe-map--travelling .universe-world { transform: scale(3.1); opacity: 0; filter: blur(3px); pointer-events: none; }
 .universe-map--travelling .universe-planet:disabled { opacity: 1; }
@@ -82,11 +96,6 @@
 /* Continuous motion stays inside the homepage; navigation targets and labels remain fixed. */
 .universe-map { --universe-motion-state: running; }
 .universe-map--paused, .universe-map--travelling { --universe-motion-state: paused; }
-.universe-map .universe-map-coordinate { right: 151px; }
-.universe-map .universe-motion-toggle { position: absolute; z-index: 5; right: 20px; top: 17px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 30px; padding: 6px 10px; border: 1px solid #82adbb35; border-radius: 5px; background: #0b1a28e6; color: #9db8c4; font-size: 10px; letter-spacing: .4px; }
-.universe-map .universe-motion-toggle:hover:not(:disabled) { color: #d0ece4; border-color: #8bc9bd80; background: #112b36; }
-.universe-map .universe-motion-toggle:focus-visible { outline: 2px solid #90d8c8; outline-offset: 4px; }
-.universe-map .universe-motion-toggle:disabled { cursor: default; opacity: .7; }
 .universe-map .universe-planet-drift { display: block; position: relative; width: 100%; height: 100%; animation: se-map-drift calc(var(--drift-duration, 25s) * 1.15) var(--drift-delay, 0s) ease-in-out infinite; }
 /* Two identical texture tiles slide behind the fixed spherical mask and lighting.
    Translating one tile width gives a continuous loop without rotating the disc. */
@@ -120,67 +129,111 @@
 @keyframes se-map-corona { 0%, 100% { transform: scale(.98); opacity: .76; } 50% { transform: scale(1.04); opacity: .94; } }
 @keyframes se-map-beacon { 0%, 100% { opacity: .78; } 50% { opacity: .96; } }
 @keyframes se-map-orbit { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -100; } }
-@media (min-width: 1500px) { .universe-stage { height: 590px; } .universe-planet { --planet-size: 106px; } }
-@media (max-width: 1120px) { .universe-readout { gap: 16px; padding: 20px; } .universe-readout-features { display: none; } .universe-map-badge { display: none; } }
-@media (max-width: 800px) and (min-width: 681px) { .universe-planet--data { --planet-size: 102px !important; } .universe-planet--logic { --planet-size: 84px !important; } .universe-planet--build { --planet-size: 70px !important; } .universe-sun { transform: translate(-50%, -50%) scale(.85); } }
-@media (max-width: 680px) {
-  .universe-heading { margin-bottom: 21px; }
-  .universe-eyebrow { font-size: 7px; letter-spacing: 1.2px; margin-bottom: 12px; }
-  .universe-heading h1 { font-size: 23px; letter-spacing: 0; }
-  .universe-heading h1 > span { display: block; }
-  .universe-introduction { font-size: 10px; margin-top: 10px; }
-  .universe-stage { height: auto; min-height: 0; padding: 45px 0 0; background: radial-gradient(ellipse at 50% 12%, #17314255, transparent 43%), #08121f; }
-  .universe-stage::after { background: radial-gradient(ellipse at 50% 30%, transparent 70%, #040c1633); }
-  .universe-map-caption { top: 20px; left: 20px; font-size: 8px; }
+@media (min-width: 1200px) {
+  .universe-heading { margin-bottom: 31px; }
+  .universe-hero-actions { flex-direction: row; }
+  .universe-exploration { grid-template-columns: minmax(0, 1fr) 280px; gap: 22px; }
+  .universe-stage { height: auto; min-height: 560px; }
+  .universe-readout { display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 24px; }
+  .universe-readout-heading { width: 100%; padding-bottom: 17px; margin-bottom: 29px; }
+  .universe-readout-symbol { width: 72px; height: 72px; margin: 0 0 24px; }
+  .universe-readout-symbol > .se-planet { width: 68px; height: 68px; }
+  .universe-readout h2 { font-size: 26px; }
+  .universe-readout h2 > small { display: block; margin: 8px 0 0; }
+  .universe-readout-description { margin-top: 17px; font-size: 14px; }
+  .universe-readout-features { flex-direction: column; gap: 8px; margin: 22px 0 25px; }
+  .universe-enter { margin-top: auto; width: 100%; }
+  .universe-readout-note { margin-top: 14px; }
   .universe-map-coordinate { display: none; }
-  .universe-map .universe-motion-toggle { top: 12px; right: 13px; font-size: 9px; min-height: 29px; padding: 6px 8px; gap: 5px; }
+}
+@media (max-width: 850px) and (min-width: 681px) {
+  .universe-heading { gap: 18px; }
+  .universe-heading h1 { font-size: 32px; }
+  .universe-introduction { font-size: 13px; max-width: 390px; }
+  .universe-eyebrow { font-size: 9px; letter-spacing: 1px; }
+  .universe-hero-actions button { padding-inline: 13px; }
+  .universe-map-coordinate { display: none; }
+  .universe-planet--data { --planet-size: 102px !important; }
+  .universe-planet--logic { --planet-size: 84px !important; }
+  .universe-planet--build { --planet-size: 70px !important; }
+  .universe-sun { transform: translate(-50%, -50%) scale(.9); }
+  .universe-readout { grid-template-columns: 54px minmax(0, 1fr) auto; gap: 12px 16px; padding: 22px; }
+  .universe-readout-symbol, .universe-readout-symbol > .se-planet { width: 52px; height: 52px; }
+  .universe-enter { padding-inline: 13px; }
+}
+@media (max-width: 680px) {
+  .universe-heading { flex-direction: column; align-items: stretch; gap: 22px; margin-bottom: 26px; }
+  .universe-eyebrow { font-size: 8px; letter-spacing: 1.1px; margin-bottom: 14px; }
+  .universe-heading h1 { font-size: 32px; line-height: 1.4; letter-spacing: -.5px; }
+  .universe-heading h1 > span { display: block; }
+  .universe-introduction { margin-top: 13px; font-size: 14px; line-height: 1.8; max-width: 350px; }
+  .universe-hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .universe-hero-actions button { gap: 7px; min-width: 0; min-height: 46px; padding: 11px 9px; font-size: 13px; }
+  .universe-hero-actions button svg { flex-shrink: 0; width: 15px; }
+  .universe-exploration { gap: 16px; }
+  .universe-stage { height: auto; padding: 52px 0 0; border-radius: 16px; background: radial-gradient(ellipse at 50% 12%, #23485555, transparent 43%), #0b1826; }
+  .universe-stage::after { background: radial-gradient(ellipse at 50% 30%, transparent 70%, #040c1633); }
+  .universe-stage-corner--top { top: 13px; left: 13px; }
+  .universe-stage-corner--bottom { bottom: 13px; right: 13px; }
+  .universe-map-caption { top: 25px; left: 18px; gap: 7px; font-size: 11px; }
+  .universe-map-caption i, .universe-map-caption small, .universe-map-coordinate { display: none; }
+  .universe-motion-toggle { top: 15px; right: 14px; min-height: 36px; padding: 8px 10px; gap: 6px; font-size: 11px; }
   .universe-map .universe-planet-drift { animation: none; transform: none; }
-  .universe-world { position: relative; inset: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 133px 15px 37px; transform-origin: var(--flight-x) var(--flight-y); }
+  .universe-world { position: relative; inset: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; padding: 124px 10px 45px; transform-origin: var(--flight-x) var(--flight-y); }
   .universe-nebula { top: 0; height: 40%; }
   .universe-orbits { top: -40px; height: 280px; width: 160%; left: -30%; opacity: .65; }
   .universe-sun { width: 190px; height: 110px; top: 4px; left: 50%; transform: translateX(-50%); }
-  .universe-sun-label { font-size: 6px; }
-  .universe-sun strong { font-size: 29px; }
-  .universe-sun-subtitle { font-size: 7px; margin-top: 9px; }
+  .universe-sun-label { font-size: 7px; letter-spacing: 1.5px; }
+  .universe-sun strong { font-size: 30px; }
+  .universe-sun-subtitle { font-size: 9px; margin-top: 10px; }
   .universe-sun-core { left: 92px; top: 0; width: 5px; height: 5px; }
   .universe-sun-line { left: 17px; top: 2px; }
   .universe-sun-halo { left: -80px; top: -70px; }
-  .universe-planet { position: relative; inset: auto; left: auto; top: auto; width: 100%; transform: none; padding: 20px 12px 21px; min-height: 204px; border-radius: 8px; z-index: 4; }
-  .universe-planet--data { --planet-size: 84px !important; }
-  .universe-planet--logic { --planet-size: 74px !important; }
-  .universe-planet--build { --planet-size: 72px !important; }
-  .universe-planet--origin { --planet-size: 73px !important; }
-  .universe-planet--archive { --planet-size: 78px !important; grid-column: 1 / -1; min-height: 185px; }
-  .universe-planet-visual { min-height: 73px; }
-  .universe-planet--logic .universe-planet-visual { margin-top: 5px; margin-bottom: 5px; }
-  .universe-planet--build .universe-planet-visual { margin-top: 6px; margin-bottom: 6px; }
-  .universe-planet--origin .universe-planet-visual { margin-top: 5px; margin-bottom: 6px; }
+  .universe-planet { position: relative; inset: auto; left: auto; top: auto; width: 100%; transform: none; padding: 20px 8px; min-height: 206px; border-radius: 12px; z-index: 4; }
+  .universe-planet--data { --planet-size: 80px !important; }
+  .universe-planet--logic { --planet-size: 72px !important; }
+  .universe-planet--build { --planet-size: 70px !important; }
+  .universe-planet--origin { --planet-size: 71px !important; }
+  .universe-planet--archive { --planet-size: 68px !important; grid-column: 1 / -1; display: grid; grid-template-columns: 80px minmax(0, 1fr); grid-template-areas: "visual label" "visual description"; column-gap: 16px; row-gap: 3px; align-items: center; min-height: 125px; padding: 24px 27px 16px; text-align: left; }
+  .universe-planet-visual { min-height: 70px; }
+  .universe-planet--logic .universe-planet-visual { margin-block: 4px; }
+  .universe-planet--build .universe-planet-visual { margin-block: 5px; }
+  .universe-planet--origin .universe-planet-visual { margin-block: 5px 4px; }
   .universe-planet-label { margin-top: 17px; min-width: 0; gap: 6px; }
-  .universe-planet-label strong { font-size: 13px; }
-  .universe-planet-label small { font-size: 11px; margin-top: 5px; color: #91a7b6; }
-  .universe-planet-mobile-description { display: block; font-size: 11px; line-height: 1.8; margin-top: 11px; width: 100%; max-width: 150px; color: #8fa5b5; text-align: center; overflow-wrap: anywhere; }
-  .universe-planet--archive .universe-planet-mobile-description { max-width: 240px; }
-  .universe-planet-selector { width: 10px; height: 10px; right: -12px; }
+  .universe-planet-label strong { font-size: 14px; letter-spacing: 0; gap: 5px; }
+  .universe-planet-label small { font-size: 12px; margin-top: 5px; color: #a1bbc8; }
+  .universe-planet-number { font-size: 9px; }
+  .universe-planet-mobile-description { display: block; width: 100%; max-width: 154px; margin-top: 10px; color: #a6bdcb; font-size: 13px; line-height: 1.7; text-align: center; overflow-wrap: anywhere; }
+  .universe-planet--archive .universe-planet-visual { grid-area: visual; }
+  .universe-planet--archive .universe-planet-label { grid-area: label; align-self: end; margin-top: 0; }
+  .universe-planet--archive .universe-planet-mobile-description { grid-area: description; align-self: start; margin-top: 7px; max-width: none; text-align: left; font-size: 12px; }
+  .universe-planet-selector { width: 12px; height: 12px; right: -10px; }
   .universe-planet:focus-visible { outline-offset: -3px; }
-  .universe-moon { right: -30px; top: -16px; font-size: 6px; }
+  .universe-moon { right: -28px; top: -16px; font-size: 8px; }
   .universe-moon i { width: 8px; height: 8px; }
-  .universe-stage-instruction { left: 20px; bottom: 17px; right: 20px; font-size: 7px; }
-  .universe-readout { padding: 18px; margin-top: 12px; gap: 12px; flex-wrap: wrap; }
-  .universe-readout-symbol { display: none; }
-  .universe-readout-content { flex-basis: 100%; }
-  .universe-readout h2 { font-size: 15px; }
-  .universe-readout-content > p:first-child { font-size: 6px; letter-spacing: 1.1px; }
-  .universe-readout-description { font-size: 10px; }
-  .universe-enter { font-size: 10px; padding: 9px 12px; min-height: 36px; margin-top: 2px; }
-  .universe-direct-navigation { justify-content: flex-start; gap: 8px 18px; padding-top: 17px; }
-  .universe-direct-navigation > span { width: 100%; margin-bottom: 2px; }
-  .universe-direct-navigation button { font-size: 10px; }
+  .universe-stage-instruction { left: 19px; bottom: 20px; right: 19px; font-size: 10px; }
+  .universe-stage-instruction-line { width: 35px; }
+  .universe-readout { grid-template-columns: 49px minmax(0, 1fr); gap: 12px 16px; padding: 21px; border-radius: 16px; }
+  .universe-readout-heading { padding-bottom: 14px; margin-bottom: 3px; font-size: 11px; }
+  .universe-readout-symbol { width: 49px; height: 49px; grid-row: 2; margin-top: 7px; }
+  .universe-readout-symbol > .se-planet { width: 47px; height: 47px; }
+  .universe-readout-content { grid-column: 2; }
+  .universe-readout-content > p:first-child { font-size: 8px; letter-spacing: .7px; }
+  .universe-readout h2 { font-size: 22px; }
+  .universe-readout h2 > small { margin-left: 9px; font-size: 12px; }
+  .universe-readout-description { margin-top: 11px; font-size: 13px; line-height: 1.85; }
+  .universe-readout-features { grid-column: 1 / -1; grid-row: 3; gap: 7px 14px; padding-top: 5px; font-size: 12px; }
+  .universe-enter { grid-column: 1 / -1; grid-row: 4; width: 100%; min-height: 46px; margin-top: 5px; font-size: 13px; }
+  .universe-readout-note { grid-column: 1 / -1; grid-row: 5; font-size: 11px; }
+  .universe-direct-navigation { justify-content: flex-start; gap: 9px; padding-top: 20px; margin-top: 22px; }
+  .universe-direct-navigation > span { width: 100%; margin-bottom: 6px; font-size: 12px; }
+  .universe-direct-navigation button { justify-content: space-between; flex: 1 0 calc(50% - 9px); min-height: 44px; padding: 11px 12px; font-size: 13px; }
   .universe-map--travelling .universe-world { transform: scale(1.14); filter: blur(2px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .universe-map, .universe-map * { animation: none !important; }
   .universe-map .universe-planet-drift { transform: none; }
-  .universe-world, .universe-planet-visual, .universe-planet-selector, .universe-planet-label strong, .universe-planet-label strong svg, .universe-planet-number, .universe-enter, .universe-direct-navigation button, .universe-readout, .universe-direct-navigation { transition: none !important; animation: none !important; }
+  .universe-world, .universe-planet-visual, .universe-planet-selector, .universe-planet-label strong, .universe-planet-label strong svg, .universe-planet-number, .universe-enter, .universe-direct-navigation button, .universe-readout, .universe-direct-navigation, .universe-hero-actions button { transition: none !important; animation: none !important; }
   .universe-planet:hover .universe-planet-visual, .universe-planet:focus-visible .universe-planet-visual { transform: none; }
   .universe-map--travelling .universe-world { transform: none; filter: none; }
 }

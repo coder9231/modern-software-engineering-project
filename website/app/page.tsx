@@ -351,7 +351,19 @@ export default function Home() {
     </aside>
 
     <div className="main-shell">
-      <header className="topbar">{section === "overview" ? <button className="universe-brand-link" onClick={() => navigate("overview")} aria-label="SE Lab 星系总览"><Orbit size={23} /><span>SE LAB.</span><small>工程宇宙</small></button> : <div className="breadcrumb"><button className="mobile-menu icon-button" onClick={() => setMobileNav(!mobileNav)} aria-label={mobileNav ? "关闭导航" : "打开导航"} aria-expanded={mobileNav} aria-controls="planet-navigation"><Menu size={20} /></button><button className="icon-button" onClick={() => navigate("overview")} aria-label="返回星图"><Orbit size={18} /></button><span>{currentPlanet.name}</span><ChevronRight size={13} /><strong>{activeLabel}</strong></div>}<div className="topbar-end"><button className="intro-replay-button" type="button" onClick={() => setIntroReplay((value) => value + 1)} aria-label="重播星系开场" aria-expanded={introActive} aria-haspopup="dialog" title="重播星系开场"><Play size={13} /><span>重播开场</span></button><span className={`service-status ${configError ? "offline" : ""}`}><i />{config ? "工作空间已就绪" : configError ? "统计服务暂不可用" : "正在连接工作空间"}</span><span className="course-tag">现代软件工程 · 实践</span></div></header>
+      <header className="topbar">
+        {section === "overview" ? <button className="universe-brand-link" onClick={() => navigate("overview")} aria-label="SE Lab 星系总览"><Orbit size={23} /><span>SE LAB.</span><small>工程宇宙</small></button> : <div className="breadcrumb"><button className="mobile-menu icon-button" onClick={() => setMobileNav(!mobileNav)} aria-label={mobileNav ? "关闭导航" : "打开导航"} aria-expanded={mobileNav} aria-controls="planet-navigation"><Menu size={20} /></button><button className="icon-button" onClick={() => navigate("overview")} aria-label="返回星图"><Orbit size={18} /></button><span>{currentPlanet.name}</span><ChevronRight size={13} /><strong>{activeLabel}</strong></div>}
+        {section === "overview" && <nav className="universe-top-nav" aria-label="首页快捷导航">
+          <button type="button" onClick={() => navigate("counter")}>代码统计</button>
+          <button type="button" onClick={() => navigate("math")}>四则运算</button>
+          <a href={repo} target="_blank" rel="noreferrer">GitHub<ArrowUpRight size={13} /></a>
+        </nav>}
+        <div className="topbar-end">
+          <button className="intro-replay-button" type="button" onClick={() => setIntroReplay((value) => value + 1)} aria-label="重播星系开场" aria-expanded={introActive} aria-haspopup="dialog" title="重播星系开场"><Play size={13} /><span>重播开场</span></button>
+          <span className={`service-status ${configError ? "offline" : ""}`}><i />{config ? "工作空间已就绪" : configError ? "统计服务暂不可用" : "正在连接工作空间"}</span>
+          <span className="course-tag">现代软件工程 · 实践</span>
+        </div>
+      </header>
 
       <main className="workspace" ref={workspaceRef} tabIndex={-1} aria-label={section === "overview" ? "SE Lab 宇宙星图" : `${currentPlanet.name} · ${activeLabel}`}>
         {section !== "overview" && <div className="planet-arrival"><PlanetOrb kind={currentPlanet.kind} /><div><strong>{currentPlanet.name}</strong><span>{currentPlanet.sector}</span></div><button className="planet-return" onClick={() => navigate("overview")}><ArrowLeft size={14} />返回星图</button></div>}
