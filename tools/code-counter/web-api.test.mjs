@@ -27,6 +27,24 @@ test('live demo is analyzed by the server', async () => {
     { files: 2, total: 14, code: 8, comment: 4, blank: 2 });
 });
 
+test('live Worker classifies spliced comments, class division and f-string expression comments', async () => {
+  const response = await post('/api/code-count', {
+    files: [
+      file('continued.c', ['// comment \\', 'not_code();', 'int actual = 1;'].join('\n')),
+      file('ratio.ts', ['const ratio = class {} / 2; /* block', 'end */', '// last'].join('\n')),
+      file('format.py', ['value = f"""{', '# expression comment', '1 + 2', '}"""', '# last'].join('\n')),
+    ],
+  }, { Origin: base });
+  assert.equal(response.status, 200);
+  const report = await response.json();
+  assert.deepEqual(report.totals, { files: 3, total: 11, code: 5, comment: 6, blank: 0 });
+  assert.deepEqual(report.files.map(({ path, total, code, comment, blank }) => ({ path, total, code, comment, blank })), [
+    { path: 'continued.c', total: 3, code: 1, comment: 2, blank: 0 },
+    { path: 'format.py', total: 5, code: 3, comment: 2, blank: 0 },
+    { path: 'ratio.ts', total: 3, code: 1, comment: 2, blank: 0 },
+  ]);
+});
+
 test('live uploads preserve Unicode, UTF-16 and explicit GB18030', async () => {
   const little = Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from('# 中文\nx=1\n', 'utf16le')]);
   const big = Buffer.from(little).swap16();

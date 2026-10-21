@@ -8,7 +8,7 @@ import { formatReport } from './report.mjs';
 const HELP = `代码量统计工具 v0.1.0
 
 用法：node tools/code-counter/cli.mjs [文件或目录] [选项]
-默认统计当前目录，无需安装第三方依赖。
+默认统计当前目录；首次使用前请在 website 目录运行 npm ci 安装共享解析依赖。
 
   --details                   显示文件明细和跳过原因
   --format text|json|csv       输出格式，默认 text

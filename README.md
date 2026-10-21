@@ -50,9 +50,10 @@ CLI 与网站共用数学核心，用调度场算法、逆波兰表达式及精�
 
 ## 运行代码量统计工具
 
-需要 Node.js 20 或以上，无需安装第三方依赖。在本仓库根目录执行：
+建议 Node.js 22.13 或以上。首次使用先安装网站与命令行共用的解析依赖，在本仓库根目录执行：
 
 ```powershell
+npm --prefix website ci
 node tools/code-counter/cli.mjs . --details
 node tools/code-counter/cli.mjs tools/code-counter/examples --details
 ```
@@ -62,7 +63,7 @@ node tools/code-counter/cli.mjs tools/code-counter/examples --details
 运行自动测试：
 
 ```powershell
-node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
+node --test tools/code-counter/analyzer.test.mjs tools/code-counter/c-family.test.mjs tools/code-counter/javascript.test.mjs tools/code-counter/python-fstring.test.mjs tools/code-counter/language-integration.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
 ```
 
 ## 项目方向

@@ -1,6 +1,6 @@
 # 代码量统计工具
 
-首版命令行工具，运行要求 Node.js 20 或以上，无第三方依赖。统计核心、文件扫描、报告格式和命令行入口分别位于 `analyzer.mjs`、`scanner.mjs`、`report.mjs`、`cli.mjs`，便于以后复用到网站或客户端。
+命令行与网站后端共用统计核心；建议使用 Node.js 22.13 或以上。JS/TS 使用锁定版本的 `@babel/parser` 处理语法上下文，首次使用在仓库根目录执行 `npm --prefix website ci`。统计核心、文件扫描、报告格式和命令行入口分别组织，源文件只被分析，不会执行。
 
 ## 直接运行
 
@@ -56,7 +56,7 @@ node tools/code-counter/cli.mjs --languages
 - C/C++、Java、JS/TS 识别 `//` 和 `/* */`；CSS 识别 `/* */`；Python 识别 `#`。JSON 的非空白行全部计为代码，不校验 JSON 是否有效。
 - JS/TS 支持常见正则表达式、模板字符串及模板插值；C++ 支持原始字符串，Java 支持文本块。
 
-这是词法统计器，未使用完整编译器语法树：JS/TS 的少数正则与除法歧义、Python f-string 内部表达式、C/C++ 预处理及反斜杠拼接行等复杂情况仍有局限。统计的是源码行数，文件能否编译以及代码质量需另行验证。
+语言分类分工如下：C/C++ 在注释识别前处理反斜杠续行并映射回原始物理行；Python 按 3.12 / PEP 701 用状态栈区分 f-string 字面量、替换表达式和格式说明；JS/TS 用 Babel 语法解析器的 token 与注释范围识别正则、除法和模板。为限制 AST 分配，JS/TS 解析预算为每文件 64 KiB（按 UTF-8 计算）；超预算、未支持的语法或无法恢复的语法错误会回退到原词法扫描，此时仍可能有上下文误判，结果为尽力统计。C/C++ 不展开宏或判断条件编译，不翻译旧式 trigraph；Python 不做完整语法验证，也未新增 3.14 t-string。统计的是源码行数，文件能否编译以及代码质量需另行验证。
 
 ## 扫描与排除
 
@@ -74,7 +74,7 @@ node tools/code-counter/cli.mjs --languages
 
 ```powershell
 node tools/code-counter/cli.mjs tools/code-counter/examples --details
-node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
+node --test tools/code-counter/analyzer.test.mjs tools/code-counter/c-family.test.mjs tools/code-counter/javascript.test.mjs tools/code-counter/python-fstring.test.mjs tools/code-counter/language-integration.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
 ```
 
 示例目录只有两个源文件，人工预期如下：

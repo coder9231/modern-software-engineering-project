@@ -11,6 +11,8 @@
 
 通过 npm 安装的依赖遵循各自软件包的许可证。依赖声明与锁定版本见 `website/package.json` 和 `website/package-lock.json`；依赖目录不提交到本仓库。
 
+代码统计核心使用 `@babel/parser` 7.29.3（MIT）解析 JavaScript / TypeScript 的语法上下文；该运行依赖由网站与 CLI 共用。其许可随 npm 软件包提供，不将该第三方实现声明为项目自行编写。
+
 ## 本地课程与测试材料
 
 `testcase1/`、`testcase2/`、`testcase3/`、生成的 `reports/`、原始课堂照片和课件转录文档仅用于本地课程学习与验证，不随本仓库公开分发，也不包含在项目 MIT 授权范围中。其内容可能包含第三方代码或课程材料，不能因本项目开源而推定可以重新授权或分发。

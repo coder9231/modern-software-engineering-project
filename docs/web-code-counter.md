@@ -43,7 +43,8 @@ npm start
 - Python 三引号字符串和文档字符串、Java 文本块归为代码；JSON 非空行归为代码，不验证 JSON 语法。
 - 自动编码识别 UTF-8、UTF-16LE/BE 的 BOM；没有 BOM 时严格使用 UTF-8。GB18030 需要手动选择，BOM 优先于手动编码。
 - 二进制签名、NUL 字符、无法解码的内容、未支持的扩展名等会记录为跳过，不作为有效源码计数。
-- 该工具是词法分析器。JS/TS 正则与除法通过上下文启发式判断；不解析 C 预处理续行、Python f-string 内部表达式等完整语言语法。
+- C/C++ 在识别注释前处理反斜杠续行，并保留物理行映射；Python 按 3.12 / PEP 701 区分 f-string 字面量、替换表达式和格式说明；JS/TS 使用 Babel 语法解析器的 token 与注释范围进行分类。JS/TS 每文件超过 64 KiB UTF-8 解析预算、包含未支持语法或发生无法恢复的语法错误时回退到原词法扫描，仍可能有上下文误判，结果为尽力统计。
+- 不展开 C/C++ 宏，不进行完整编译或 Python 语法验证；JSX、TSX、SCSS 仍未支持。具体支持边界与回归证据见[语法边界修复记录](code-counter-lexical-fixes.md)。
 
 默认排除目录名：`.git`、`.svn`、`.hg`、`node_modules`、`.venv`、`venv`、`__pycache__`、`dist`、`build`、`target`、`coverage`、`reports`。可关闭默认排除或添加 glob，例如 `**/*.test.js`、`src/generated`、`fixtures/**`。
 
@@ -105,7 +106,8 @@ errors: [{ path, message }]
 在课程仓库根目录执行：
 
 ```powershell
-node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
+npm --prefix website ci
+node --test tools/code-counter/analyzer.test.mjs tools/code-counter/c-family.test.mjs tools/code-counter/javascript.test.mjs tools/code-counter/python-fstring.test.mjs tools/code-counter/language-integration.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
 node --test website/lib/code-count-service.test.mjs
 ```
 

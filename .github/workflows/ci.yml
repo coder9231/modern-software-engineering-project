@@ -17,17 +17,17 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: website/package-lock.json
-      - name: Verify shared counters, arithmetic and API services
-        run: node --test tools/code-counter/analyzer.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs website/lib/code-count-service.test.mjs website/lib/math/core.test.mjs website/lib/math-service.test.mjs website/lib/math-ocr.test.mjs tools/arithmetic/cli.test.mjs
       - name: Install website dependencies
         working-directory: website
         run: npm ci
+      - name: Verify shared counters, arithmetic and API services
+        run: node --test tools/code-counter/analyzer.test.mjs tools/code-counter/c-family.test.mjs tools/code-counter/javascript.test.mjs tools/code-counter/python-fstring.test.mjs tools/code-counter/language-integration.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs website/lib/code-count-service.test.mjs website/lib/math/core.test.mjs website/lib/math-service.test.mjs website/lib/math-ocr.test.mjs tools/arithmetic/cli.test.mjs
       - name: Check website types
         working-directory: website
         run: npx tsc --noEmit
       - name: Lint application code
         working-directory: website
-        run: npx eslint app components/cinematic-intro.tsx components/universe-map.tsx components/planet-orb.tsx components/origin-profile.tsx "components/math-*.tsx" lib/math "lib/math-*.mjs" "lib/math-*.mts" lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
+        run: npx eslint app components/cinematic-intro.tsx components/universe-map.tsx components/planet-orb.tsx components/origin-profile.tsx "components/math-*.tsx" lib/math "lib/math-*.mjs" "lib/math-*.mts" lib/code-counter lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
       - name: Build website
         working-directory: website
         run: npm run build

@@ -1,6 +1,9 @@
 import { extname } from 'node:path';
+import { analyzeCFamily } from './c-family.mjs';
+import { analyzeJavaScript } from './javascript.mjs';
+import { analyzePython } from './python.mjs';
 
-/** First-version languages. Extensions are matched without regard to case. */
+/** Supported languages. Extensions are matched without regard to case. */
 export const LANGUAGES = Object.freeze([
   { name: 'C', extensions: ['.c', '.h'] },
   { name: 'C++', extensions: ['.cpp', '.cc', '.cxx', '.hpp', '.hh', '.hxx'] },
@@ -19,7 +22,7 @@ const extensionLanguages = new Map(
   LANGUAGES.flatMap(({ name, extensions }) => extensions.map((extension) => [extension, name])),
 );
 const languageNames = new Set(LANGUAGES.map(({ name }) => name));
-const cStyleLineComments = new Set(['C', 'C++', 'Java', 'JavaScript', 'TypeScript']);
+const cStyleLineComments = new Set(['Java', 'JavaScript', 'TypeScript']);
 const scriptLanguages = new Set(['JavaScript', 'TypeScript']);
 const expressionKeywords = new Set([
   'return', 'throw', 'case', 'yield', 'await', 'void', 'typeof', 'delete',
@@ -62,12 +65,11 @@ function finishValue(frame) {
  * otherwise a comment line is comment. Whitespace-only lines are always blank.
  * Python triple strings/docstrings and Java text blocks are code, not comments.
  *
- * This is a lexical scanner, not a language parser. JavaScript/TypeScript use a
- * token-context heuristic to distinguish regex literals from division; unusual
- * grammar contexts can remain ambiguous. C preprocessing/line splicing and
- * Python f-string expressions are not parsed. JSX, TSX and SCSS extensions are
- * unsupported. JSON counts every nonblank line as code, without validation.
- * Source is never evaluated. Malformed input is counted on a best-effort basis.
+ * C/C++ splice lines with physical-source mapping; Python tracks f-string
+ * replacement fields; JS/TS use parser token ranges to resolve lexical goals.
+ * Unrecoverable JS/TS syntax falls back to the scanner below. This does not
+ * compile source or expand C macros. JSX, TSX and SCSS remain unsupported.
+ * JSON counts nonblank lines without validation. Source is never evaluated.
  */
 export function analyzeText(text, language) {
   if (typeof text !== 'string') throw new TypeError('text must be a string');
@@ -75,6 +77,12 @@ export function analyzeText(text, language) {
 
   const counts = { total: 0, code: 0, comment: 0, blank: 0 };
   if (text.length === 0) return counts;
+  if (language === 'C' || language === 'C++') return analyzeCFamily(text, language);
+  if (language === 'Python') return analyzePython(text);
+  if (scriptLanguages.has(language)) {
+    const parsed = analyzeJavaScript(text, language);
+    if (parsed) return parsed;
+  }
 
   const lines = text.split(/\r\n|\n|\r/u);
   // A final newline terminates its preceding physical line; it adds no extra line.
@@ -183,15 +191,11 @@ export function analyzeText(text, language) {
         index += 1;
         continue;
       }
-      if (language === 'Python' && character === '#') {
-        hasComment = true;
-        break;
-      }
       if (hasSlashComments && line.startsWith('//', index)) {
         hasComment = true;
         break;
       }
-      if (language !== 'Python' && line.startsWith('/*', index)) {
+      if (line.startsWith('/*', index)) {
         hasComment = true;
         frames.push({ kind: 'blockComment' });
         index += 2;
@@ -199,32 +203,6 @@ export function analyzeText(text, language) {
       }
 
       hasCode = true;
-      if (language === 'C++') {
-        // Standard raw strings, including u8R/uR/UR/LR prefixes and delimiters.
-        const rawStart = /^(?:u8|u|U|L)?R"([^ ()\\\t\v\f\r\n]{0,16})\(/u.exec(line.slice(index));
-        if (rawStart) {
-          frames.push({ kind: 'rawString', ending: `)${rawStart[1]}"` });
-          index += rawStart[0].length;
-          continue;
-        }
-        // Apostrophes inside C++ numeric literals are digit separators, not
-        // character-string delimiters (for example 1'000 or 0xAB'CD).
-        if (/[0-9]/u.test(character)) {
-          index += 1;
-          while (index < line.length) {
-            if (/[\w.]/u.test(line[index])) index += 1;
-            else if (line[index] === "'" && /[0-9a-f]/iu.test(line[index - 1])
-                && /[0-9a-f]/iu.test(line[index + 1] ?? '')) index += 1;
-            else break;
-          }
-          continue;
-        }
-      }
-      if (language === 'Python' && (line.startsWith('"""', index) || line.startsWith("'''", index))) {
-        frames.push({ kind: 'tripleString', ending: line.slice(index, index + 3), escaped: false });
-        index += 3;
-        continue;
-      }
       if (language === 'Java' && line.startsWith('"""', index)) {
         frames.push({ kind: 'tripleString', ending: '"""', escaped: false });
         index += 3;
