@@ -208,3 +208,155 @@
   .math-print-questions > div { break-inside: avoid; page-break-inside: avoid; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; color: black; }
   .math-print-sheet footer { font-size: 9px; color: #555; border-top: 1px solid #aaa; margin-top: 30px; padding-top: 10px; overflow-wrap: anywhere; }
 }
+
+/* Match the opening's warm light and violet workspace without tinting paper output. */
+@media screen {
+  .in-workspace .math-workspace {
+    --math-green: var(--work-accent);
+    --math-ink: var(--work-text);
+    --math-muted: var(--work-muted);
+    --math-border: var(--work-border);
+    color: var(--work-text);
+  }
+  .in-workspace .math-heading h1,
+  .in-workspace .math-panel-title h2,
+  .in-workspace .math-practice-heading h2,
+  .in-workspace .math-history-info h3,
+  .in-workspace .math-blank h3 { color: var(--work-text); }
+  .in-workspace .math-eyebrow,
+  .in-workspace .math-kicker { color: var(--work-violet); }
+  .in-workspace .math-heading h1 > span,
+  .in-workspace .math-step { background: #392a3f; border-color: #634657; color: var(--work-accent); }
+  .in-workspace .math-btn-primary { color: #2c1d25; background: var(--work-accent); border-color: var(--work-accent); box-shadow: 0 3px 16px #f3ac8712; }
+  .in-workspace .math-btn-primary:hover:not(:disabled) { background: var(--work-accent-strong); border-color: var(--work-accent-strong); }
+  .in-workspace .math-btn-soft { background: var(--work-panel); border-color: var(--work-border); color: var(--work-muted); }
+  .in-workspace .math-btn-soft:hover:not(:disabled) { background: var(--work-panel-muted); border-color: #9a748f; color: var(--work-text); }
+  .in-workspace .math-tabs { background: var(--work-input); border-color: var(--work-border); }
+  .in-workspace .math-tabs button { color: var(--work-muted); }
+  .in-workspace .math-tabs button:hover:not(.active) { background: #d2b1ed0c; color: var(--work-text); }
+  .in-workspace .math-tabs button.active { background: #3c2c42; color: var(--work-accent); box-shadow: 0 1px 7px #0b071a33; }
+  .in-workspace .math-tabs button > span { background: #50364d; color: #f6d9d8; }
+  .in-workspace .math-panel { background: var(--work-panel); border-color: var(--work-border); }
+  .in-workspace .math-panel-title p,
+  .in-workspace .math-panel-title > :last-child:not(:first-child):not(div),
+  .in-workspace .math-field > label,
+  .in-workspace .math-checkboxes label { color: var(--work-muted); }
+  .in-workspace .math-field input,
+  .in-workspace .math-field select,
+  .in-workspace .math-question > input,
+  .in-workspace .math-24-form input,
+  .in-workspace .math-print-options select { color-scheme: dark; background: var(--work-input); border-color: var(--work-border); color: var(--work-text); }
+  .in-workspace .math-workspace input[type="checkbox"] { accent-color: var(--work-accent); }
+  .in-workspace .math-field input::placeholder,
+  .in-workspace .math-question > input::placeholder,
+  .in-workspace .math-24-form input::placeholder { color: var(--work-dim); }
+  .in-workspace .math-count-input > span,
+  .in-workspace .math-help,
+  .in-workspace .math-settings-note,
+  .in-workspace .math-worksheet-toolbar > span,
+  .in-workspace .math-submit-row > p,
+  .in-workspace .math-history-info p,
+  .in-workspace .math-history-info small,
+  .in-workspace .math-history-score > span,
+  .in-workspace .math-blank p { color: var(--work-dim); }
+  .in-workspace .math-presets button,
+  .in-workspace .math-operators button,
+  .in-workspace .math-worksheet-toolbar button,
+  .in-workspace .math-pagination button { background: var(--work-input); border-color: var(--work-border); color: var(--work-muted); }
+  .in-workspace .math-presets button:hover:not(:disabled),
+  .in-workspace .math-operators button:hover:not(:disabled),
+  .in-workspace .math-worksheet-toolbar button:hover:not(:disabled),
+  .in-workspace .math-pagination button:hover:not(:disabled) { border-color: #9a748f; color: var(--work-text); }
+  .in-workspace .math-presets button.selected,
+  .in-workspace .math-operators button.selected,
+  .in-workspace .math-worksheet-toolbar button.active { background: #483342; border-color: #9b6d78; color: var(--work-accent); }
+  .in-workspace .math-checkboxes,
+  .in-workspace .math-advanced,
+  .in-workspace .math-submit-row,
+  .in-workspace .math-downloads,
+  .in-workspace .math-engine-note,
+  .in-workspace .math-history-list article,
+  .in-workspace .math-24-form { border-color: var(--work-border); }
+  .in-workspace .math-advanced summary,
+  .in-workspace .math-inline,
+  .in-workspace .math-downloads .math-inline,
+  .in-workspace .math-question-bottom button { color: var(--work-accent); }
+  .in-workspace .math-timer { background: var(--work-panel-muted); border-color: var(--work-border); color: var(--work-violet); }
+  .in-workspace .math-timer strong { color: var(--work-accent); }
+  .in-workspace .math-timer > span { color: var(--work-muted); }
+  .in-workspace .math-empty-practice { background: radial-gradient(ellipse at 50% 40%, #4c334833, transparent 70%), var(--work-panel); border-color: #64455f; }
+  .in-workspace .math-mini-paper { background: #2a2031; border-color: #634d71; color: var(--work-muted); box-shadow: 5px 12px 35px #0a071536; }
+  .in-workspace .math-mini-paper i { border-color: #765e83; }
+  .in-workspace .math-mini-paper b { background: #4b3545; color: var(--work-accent); border-color: var(--work-panel); }
+  .in-workspace .math-floating-symbol,
+  .in-workspace .math-floating-plus { color: #b78bc8; }
+  .in-workspace .math-empty-practice h3 { color: var(--work-text); }
+  .in-workspace .math-empty-practice > p,
+  .in-workspace .math-empty-features span { color: var(--work-muted); }
+  .in-workspace .math-session-bar { background: #302332; border-color: #59405e; color: var(--work-muted); }
+  .in-workspace .math-session-bar b { color: var(--work-accent); }
+  .in-workspace .math-question { background: var(--work-panel); border-color: var(--work-border); }
+  .in-workspace .math-question-top,
+  .in-workspace .math-question-bottom,
+  .in-workspace .math-pagination { color: var(--work-dim); }
+  .in-workspace .math-expression { color: var(--work-text); }
+  .in-workspace .math-expression > span { color: var(--work-muted); }
+  .in-workspace .math-question > input:disabled { background: #251e2e; color: var(--work-muted); }
+  .in-workspace .math-question.is-correct { border-color: #548274; }
+  .in-workspace .math-result-tag,
+  .in-workspace .math-question-bottom b { color: var(--work-success); }
+  .in-workspace .math-question.is-wrong { background: #30212d; border-color: #995b72; }
+  .in-workspace .math-question.is-wrong .math-result-tag,
+  .in-workspace .math-answer-note { color: var(--work-danger); }
+  .in-workspace .math-grade-summary { background: #302432; border-color: #73505b; }
+  .in-workspace .math-score-ring { background: conic-gradient(var(--work-accent) var(--score), #4b3c54 var(--score)); }
+  .in-workspace .math-score-ring::before { background: #302432; }
+  .in-workspace .math-score-ring strong { color: var(--work-accent); }
+  .in-workspace .math-grade-summary > div:nth-child(2) > span,
+  .in-workspace .math-grade-summary p { color: #c0d0c8; }
+  .in-workspace .math-grade-summary h3,
+  .in-workspace .math-grade-summary > svg,
+  .in-workspace .math-all-correct,
+  .in-workspace .math-all-correct h3 { color: var(--work-success); }
+  .in-workspace .math-all-correct { border-color: #665168; background: #30243240; }
+  .in-workspace .math-export-panel { background: var(--work-panel-muted); border-color: var(--work-border); }
+  .in-workspace .math-export-panel h3,
+  .in-workspace .math-engine-note h3 { color: var(--work-violet); }
+  .in-workspace .math-export-panel > div > p,
+  .in-workspace .math-print-options label,
+  .in-workspace .math-downloads > code,
+  .in-workspace .math-engine-note,
+  .in-workspace .math-engine-note p { color: var(--work-muted); }
+  .in-workspace .math-error { background: #34222f; color: var(--work-danger); border-color: #86526c; }
+  .in-workspace .math-notice { background: #302638; color: var(--work-success); border-color: #64516c; }
+  .in-workspace .math-loading { background: #302537; color: var(--work-violet); border-color: #685075; }
+  .in-workspace .math-history .math-panel-title > svg,
+  .in-workspace .math-history .math-panel-title > button,
+  .in-workspace .math-history-score strong { color: var(--work-accent); }
+  .in-workspace .math-history-icon { background: #3c2b43; color: var(--work-violet); }
+  .in-workspace .math-icon-button,
+  .in-workspace .math-blank { color: var(--work-muted); }
+  .in-workspace .math-playing-card { background: #2b2334; color: var(--work-violet); border-color: #71547e; box-shadow: 1px 5px 20px #09051335; }
+  .in-workspace .math-playing-card.red { color: var(--work-accent); }
+  .in-workspace .math-24-form label { color: var(--work-text); }
+  .in-workspace .math-24-form > p,
+  .in-workspace .math-24-note > p,
+  .in-workspace .math-24-note > div,
+  .in-workspace .math-seed-label { color: var(--work-muted); }
+  .in-workspace .math-24-note { background: var(--work-panel-muted); border-color: var(--work-border); }
+  .in-workspace .math-24-note h3 { color: var(--work-text); }
+  .in-workspace .math-24-note > div > span { color: var(--work-accent); border-color: #755364; }
+  .in-workspace .math-card-result.correct { background: #25332f; color: var(--work-success); border-color: #47695d; }
+  .in-workspace .math-card-result.incorrect { background: #34222f; color: var(--work-danger); border-color: #86526c; }
+  .in-workspace .math-hint { background: #302537; border-color: #685075; color: var(--work-violet); }
+  .in-workspace .math-hint span { color: var(--work-muted); }
+  .in-workspace .math-hint strong { color: var(--work-accent); }
+  .in-workspace .math-modal-backdrop { background: #0e0912b8; }
+  .in-workspace .math-modal { background: var(--work-panel); border-color: #785c81; box-shadow: 0 18px 80px #07040c80; }
+  .in-workspace .math-modal .math-panel-title,
+  .in-workspace .math-modal > h3 { color: var(--work-violet); }
+  .in-workspace .math-evaluation-expression { color: var(--work-text); }
+  .in-workspace .math-evaluation-expression b { color: var(--work-accent); }
+  .in-workspace .math-modal > code { background: var(--work-input); border-color: var(--work-border); color: var(--work-violet); }
+  .in-workspace .math-modal > p { color: var(--work-muted); }
+}

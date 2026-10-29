@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SE Lab · 工程宇宙",
-  description: "在 SE Lab 工程宇宙中探索代码统计、四则运算、24 点挑战和软件工程实践。每一颗星球，都是一个正在成长的作品。",
+  title: "SE Lab · 工程实践空间",
+  description: "在 SE Lab 工程实践空间中使用代码统计、四则运算与 24 点挑战，了解项目的需求、设计、验证和持续迭代。",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

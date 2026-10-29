@@ -1,33 +1,33 @@
-body { background: #07101e; }
-.space-shell { min-height: 100vh; background: radial-gradient(ellipse at 85% 0, #172e40 0, transparent 52%), #07101e; }
-.space-shell .sidebar { background: #0c1726; border-color: #2b3b4c; }
-.space-shell .sidebar .brand-mark { background: transparent; border: 1px solid #5b897f; border-radius: 50%; box-shadow: 0 0 18px #74b6ad18; color: #a2dfc9; }
+body { background: #17121c; }
+.space-shell { min-height: 100vh; background: #17121c; }
+.space-shell .sidebar { background: #1b1522; border-color: #3b2d48; }
+.space-shell .sidebar .brand-mark { background: transparent; border: 1px solid #8e6bab; border-radius: 10px; color: #d8c4ec; }
 .space-shell .sidebar .brand strong { color: #eff5f5; }
 .space-shell .sidebar .brand small { color: #9fb4c2; }
 .space-shell .workspace-label { color: #a2b4c3; }
 .space-shell .nav-item { color: #b3c4cf; }
-.space-shell .nav-item:hover { background: #182c3c; color: #effaf5; }
-.space-shell .nav-item.active { background: #1d3a3a; color: #c0f1df; }
-.space-shell .nav-item.active::before { background: #a4e6cd; }
+.space-shell .nav-item:hover { background: #30223d; color: #fff4ed; }
+.space-shell .nav-item.active { background: #372545; color: #f2d1bf; }
+.space-shell .nav-item.active::before { background: #eab79d; }
 .space-shell .nav-item > span:not(.nav-badge) { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 .space-shell .nav-item small { color: #8fa9b8; font-size: 10px; font-weight: 400; letter-spacing: .8px; }
-.space-shell .nav-badge { background: #2b4942; color: #c0dfcf; }
-.space-shell .sidebar-project { background: #112432; border-color: #2d4653; }
+.space-shell .nav-badge { background: #4c3358; color: #f0d3ea; }
+.space-shell .sidebar-project { background: #241b2e; border-color: #493357; }
 .space-shell .sidebar-project p { color: #d1e1e4; }
 .space-shell .sidebar-project > span { color: #a5b9c3; }
-.space-shell .sidebar-project::after { border-color: #355a58; box-shadow: 0 0 0 14px #24413b20, 0 0 0 28px #24413b10; }
-.space-shell .project-symbol, .space-shell .sidebar-project button { color: #a1d6c2; }
+.space-shell .sidebar-project::after { display: none; }
+.space-shell .project-symbol, .space-shell .sidebar-project button { color: #e0b8d7; }
 .space-shell .sidebar-repo { color: #b5c7d2; }
 .space-shell .sidebar-footer { border-color: #2b3b4b; color: #d6e2e6; }
 .space-shell .sidebar-footer small { color: #a0b5c0; }
 .space-shell .avatar { background: #2b4944; color: #c2e7d6; }
-.space-shell .topbar { background: #0c1726eb; border-color: #2b3d4d; color: #bfd3dc; }
+.space-shell .topbar { background: #1b1522eb; border-color: #3b2d48; color: #ddd0e6; }
 .space-shell .breadcrumb, .space-shell .breadcrumb svg { color: #a2bdca; }
 .space-shell .breadcrumb strong { color: #e0edf0; }
 .space-shell .breadcrumb > button { color: #b3d8d4; }
-.space-shell .intro-replay-button { min-height: 36px; padding: 8px 12px; border-color: #3d5666; border-radius: 8px; background: transparent; color: #bed8da; font-size: 11px; }
-.space-shell .intro-replay-button:hover { background: #18343d; border-color: #76a99b; }
-.space-shell .intro-replay-button:focus-visible, .universe-brand-link:focus-visible, .universe-top-nav :is(button, a):focus-visible, .planet-return:focus-visible { outline: 2px solid #a4e6d2; outline-offset: 4px; }
+.space-shell .intro-replay-button { min-height: 40px; padding: 9px 13px; border-color: #65516e; border-radius: 8px; background: transparent; color: #e2cce8; font-size: 11px; }
+.space-shell .intro-replay-button:hover { background: #382641; border-color: #aa7bb6; }
+.space-shell .intro-replay-button:focus-visible, .universe-brand-link:focus-visible, .universe-top-nav :is(button, a):focus-visible, .planet-return:focus-visible { outline: 2px solid #edc1aa; outline-offset: 4px; }
 .space-shell .course-tag { background: #18303e; border-color: #365061; color: #b5cbd5; }
 .space-shell .service-status { color: #b3dbc9; }
 .space-shell .service-status i { background: #a0e3c6; box-shadow: 0 0 0 3px #24463b55; }
@@ -35,6 +35,7 @@ body { background: #07101e; }
 .space-shell .workspace { margin: 26px auto 0; width: calc(100% - 44px); max-width: 1400px; background: #f7f9f8; border-radius: 18px 18px 0 0; padding: 28px 30px 0; min-height: calc(100vh - 94px); }
 .planet-arrival { display: flex; align-items: center; gap: 15px; margin: -4px 0 27px; padding: 15px 17px; border: 1px solid #d9e5df; border-radius: 12px; background: #fff; box-shadow: 0 3px 12px #23473503; }
 .planet-arrival > .se-planet { width: 39px; height: 39px; flex: 0 0 39px; }
+.planet-arrival > .arrival-symbol { display:grid; place-items:center; width:39px; height:39px; flex:0 0 39px; color:#805f96; background:#f3edf7; border:1px solid #e6d9ed; border-radius:9px; }
 .planet-arrival > div { display: flex; align-items: baseline; gap: 12px; flex: 1; min-width: 0; }
 .planet-arrival strong { color: #355f52; font-size: 14px; font-weight: 550; }
 .planet-arrival span { color: #718b82; font: 10px ui-monospace, monospace; letter-spacing: 1.3px; }
@@ -56,6 +57,23 @@ body { background: #07101e; }
 .space-shell.is-universe .footer-brand { color: #b8dacf; }
 .space-shell .nav-scrim { background: #0106119c; }
 .space-shell .workspace:focus { outline: none; }
+
+/* The spatial homepage occupies the full canvas; tool workspaces keep their
+   established side navigation. Their shared materials live in workspace-theme. */
+.space-shell.is-universe.is-spatial { background:#17121c; }
+.space-shell.is-universe.is-spatial .sidebar { display:none; }
+.space-shell.is-universe.is-spatial .main-shell { margin-left:0; }
+.space-shell.is-universe.is-spatial .topbar { height:74px; background:#17121cf2; border-bottom:1px solid #b99dc21c; padding-inline:clamp(24px,4.2vw,70px); gap:20px; }
+.space-shell.is-universe.is-spatial .universe-brand-link { font-family:var(--font-sans); font-size:18px; font-weight:600; letter-spacing:1.5px; color:#fff2e9; }
+.space-shell.is-universe.is-spatial .universe-brand-link svg { color:#cda9e6; }
+.space-shell.is-universe.is-spatial .universe-brand-link small { color:#bbacc6; border-color:#68516f; }
+.space-shell.is-universe.is-spatial .universe-top-nav { position:static; left:auto; right:auto; transform:none; margin-left:auto; gap:25px; }
+.space-shell.is-universe.is-spatial .universe-top-nav :is(button,a) { color:#c5b4cf; }
+.space-shell.is-universe.is-spatial .universe-top-nav :is(button,a):hover { color:#ffd8ba; }
+.space-shell.is-universe.is-spatial .topbar-end { gap:0; }
+.space-shell.is-universe.is-spatial .workspace { margin:0; width:100%; max-width:none; padding:0; border-radius:0; background:transparent; min-height:calc(100svh - 74px); }
+.space-shell.is-universe.is-spatial .workspace-footer { padding:21px clamp(24px,4.2vw,70px); background:#17121c; border-color:#b99dc21c; color:#b0a0bd !important; }
+.space-shell.is-universe.is-spatial .footer-brand { color:#dfc1d5; }
 @media (max-width: 900px) {
   .space-shell .workspace { width: calc(100% - 24px); padding-inline: 24px; }
   .space-shell.is-universe .workspace { width: 100%; padding: 0; }
@@ -71,6 +89,9 @@ body { background: #07101e; }
   .universe-brand-link small { display: inline; font-size: 10px; padding-left: 12px; margin-left: 2px; }
   .space-shell.is-universe .workspace { min-height: calc(100vh - 64px); }
   .space-shell.is-universe .workspace-footer { padding: 21px 23px; font-size: 10px; line-height: 1.8; }
+  .space-shell.is-universe.is-spatial .topbar { height:64px; padding-inline:22px; }
+  .space-shell.is-universe.is-spatial .universe-top-nav { display:none; }
+  .space-shell.is-universe.is-spatial .workspace { min-height:calc(100svh - 64px); }
 }
 @media (max-width: 660px) {
   .space-shell .sidebar { visibility: hidden; }
@@ -84,6 +105,7 @@ body { background: #07101e; }
   .planet-arrival > div { flex-direction: column; gap: 5px; }
   .planet-return { min-height: 38px; padding: 8px; font-size: 11px; }
   .planet-arrival > .se-planet { width: 32px; height: 32px; flex-basis: 32px; }
+  .planet-arrival > .arrival-symbol { width:32px; height:32px; flex-basis:32px; }
 }
 @media print {
   body, .space-shell { background: white !important; }

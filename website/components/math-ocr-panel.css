@@ -55,3 +55,41 @@
 .math-ocr-results li > p span { color: #b29a73; }
 @media (max-width: 1000px) { .math-ocr-layout { grid-template-columns: 1fr; } .math-ocr-placeholder { padding: 23px 20px; } .math-ocr-placeholder p { max-width: 480px; } }
 @media (max-width: 560px) { .math-ocr-service, .math-ocr-manual { padding: 19px; } .math-ocr-submit { align-items: stretch; flex-direction: column; } .math-ocr-submit > p { max-width: none; } .math-ocr-submit .math-btn { width: 100%; } .math-ocr-input-footer { align-items: flex-start; } }
+
+@media screen {
+  .in-workspace .math-ocr-placeholder { background: var(--work-panel-muted); border-color: #6c4f76; color: var(--work-violet); }
+  .in-workspace .math-ocr-placeholder > span,
+  .in-workspace .math-ocr-manual form > label,
+  .in-workspace .math-ocr-upload label { color: var(--work-text); }
+  .in-workspace .math-ocr-placeholder p,
+  .in-workspace .math-ocr-upload p,
+  .in-workspace .math-ocr-upload small,
+  .in-workspace .math-ocr-privacy,
+  .in-workspace .math-ocr-input-help,
+  .in-workspace .math-ocr-input-footer,
+  .in-workspace .math-ocr-submit > p { color: var(--work-muted); }
+  .in-workspace .math-ocr-status,
+  .in-workspace .math-ocr-review { background: #382b2d; border-color: #7b5a48; color: var(--work-warning); }
+  .in-workspace .math-ocr-upload input,
+  .in-workspace .math-ocr-manual textarea { background: var(--work-input); border-color: var(--work-border); color: var(--work-text); color-scheme: dark; }
+  .in-workspace .math-ocr-upload input:focus-visible,
+  .in-workspace .math-ocr-manual textarea:focus-visible { outline-color: var(--work-accent); }
+  .in-workspace .math-ocr-upload input[type="file"]::file-selector-button { background: #463141; color: var(--work-accent); }
+  .in-workspace .math-ocr-manual textarea::placeholder { color: var(--work-dim); }
+  .in-workspace .math-ocr-privacy,
+  .in-workspace .math-ocr-submit { border-color: var(--work-border); }
+  .in-workspace .math-ocr-input-footer .is-over-limit { color: var(--work-danger); }
+  .in-workspace .math-ocr-summary { background: #302432; border-color: #73505b; }
+  .in-workspace .math-ocr-summary span,
+  .in-workspace .math-ocr-summary p { color: #c0d0c8; }
+  .in-workspace .math-ocr-summary h3 { color: var(--work-success); }
+  .in-workspace .math-ocr-summary > strong { color: var(--work-accent); }
+  .in-workspace .math-ocr-results li { background: var(--work-panel); border-color: #4d7568; }
+  .in-workspace .math-ocr-results li.is-wrong { background: #30212d; border-color: #995b72; }
+  .in-workspace .math-ocr-row-state { color: var(--work-success); }
+  .in-workspace .math-ocr-results .is-wrong .math-ocr-row-state,
+  .in-workspace .math-ocr-results li > p span { color: var(--work-danger); }
+  .in-workspace .math-ocr-row-expression { color: var(--work-text); }
+  .in-workspace .math-ocr-results li > p { color: var(--work-muted); }
+  .in-workspace .math-ocr-results li > p strong { color: var(--work-accent); }
+}

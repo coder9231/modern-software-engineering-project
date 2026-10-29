@@ -1,0 +1,68 @@
+.spatial-scene {
+  --scene-play: running;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  pointer-events: none;
+  overflow: visible;
+}
+.spatial-scene[data-paused="true"], .spatial-scene[data-inactive="true"] { --scene-play: paused; }
+.spatial-scene__art { position: absolute; top: 50%; left: 50%; width: min(114%, 1160px); aspect-ratio: 1200 / 850; transform: translate(-50%, -50%); }
+.spatial-scene__drawing { display: block; width: 100%; height: 100%; overflow: visible; }
+.spatial-scene__floor { opacity: .8; }
+.spatial-scene__platform { transform-origin: 600px 530px; animation: spatial-deck-open 1.8s cubic-bezier(.2,.7,.15,1) both; animation-play-state: var(--scene-play); }
+.spatial-scene__foundation { transform-origin: 600px 520px; animation: spatial-foundation-open 1.5s .65s cubic-bezier(.2,.7,.15,1) both; animation-play-state: var(--scene-play); }
+.spatial-scene__module { transform-box: fill-box; transform-origin: 50% 100%; animation: spatial-module-open 1.2s 1.8s cubic-bezier(.2,.7,.15,1) both; animation-play-state: var(--scene-play); transition: filter .35s; }
+.spatial-scene__module--front { animation-delay: 2.25s; }
+.spatial-scene [data-node="about"] { animation-delay: 2s; }
+.spatial-scene [data-node="math"] { animation-delay: 2.5s; }
+.spatial-scene [data-node="profile"] { animation-delay: 2.8s; }
+.spatial-scene[data-active="counter"] [data-node="counter"],
+.spatial-scene[data-active="math"] [data-node="math"],
+.spatial-scene[data-active="practice"] [data-node="practice"],
+.spatial-scene[data-active="profile"] [data-node="profile"],
+.spatial-scene[data-active="about"] [data-node="about"] { filter: brightness(1.3) drop-shadow(0 0 10px #f7b4b63b); }
+.spatial-scene__markers { animation: spatial-markers-open 1s 3s both; animation-play-state: var(--scene-play); }
+.spatial-scene__deck-sweep { transform-origin: 600px 530px; animation: spatial-deck-sweep 18s linear infinite; animation-play-state: var(--scene-play); opacity: .55; }
+.spatial-scene__ring-position { position: absolute; top: 36%; left: 50%; width: 29%; aspect-ratio: 1; transform: translate(-50%, -50%); perspective: 750px; }
+.spatial-scene__ring-reveal { position: absolute; inset: 0; transform-style: preserve-3d; animation: spatial-ring-open 2.2s .3s cubic-bezier(.18,.65,.15,1) both; animation-play-state: var(--scene-play); }
+.spatial-scene__ring-turn { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-12deg) rotateY(-24deg) rotateZ(-19deg); animation: spatial-ring-turn 24s linear infinite; animation-play-state: var(--scene-play); }
+.spatial-scene__ring-svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 4px #ffc09c38) drop-shadow(0 0 22px #bd7eda29); }
+.spatial-scene__inner-ring { position: absolute; inset: 0; transform: rotateX(27deg) rotateY(43deg); animation: spatial-inner-ring-turn 30s linear infinite; animation-play-state: var(--scene-play); }
+.spatial-scene__inner-ring svg { width: 100%; height: 100%; }
+.spatial-scene__core { position: absolute; width: 30px; height: 30px; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); border: 1px solid #edc0ed; background: linear-gradient(135deg,#f6c1a6,#6f4b85); box-shadow: 0 0 30px #efa1bb4d; }
+.spatial-scene__core span { position: absolute; inset: 5px; border: 1px solid #f8ddc7; }
+.spatial-scene__core i { position: absolute; inset: -12px; border: 1px solid #ac7ea147; }
+.spatial-scene__core b { position: absolute; inset: 12px; border-radius: 50%; background: #ffedc8; box-shadow: 0 0 14px #ffd6ae; }
+.spatial-scene__signal { position: absolute; top: 60%; left: 50%; width: 26%; aspect-ratio: 2.08; border: 1px solid #efb6f46b; border-radius: 50%; transform: translate(-50%, -50%); opacity: 0; animation: spatial-signal 6.6s 2.6s ease-out infinite; animation-play-state: var(--scene-play); }
+.spatial-scene__signal--two { animation-delay: 5.9s; border-color: #ffcc9b6b; }
+.spatial-scene[data-entered="true"] .spatial-scene__platform,
+.spatial-scene[data-entered="true"] .spatial-scene__foundation,
+.spatial-scene[data-entered="true"] .spatial-scene__module,
+.spatial-scene[data-entered="true"] .spatial-scene__ring-reveal { animation: none; opacity: 1; transform: none; }
+.spatial-scene[data-entered="true"] .spatial-scene__markers { animation: none; opacity: .6; }
+@keyframes spatial-deck-open { from { opacity: 0; transform: scale(.08); } 34% { opacity: .85; } to { opacity: 1; transform: scale(1); } }
+@keyframes spatial-foundation-open { from { opacity: 0; transform: translateY(18px) scale(.5); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes spatial-ring-open { from { opacity: 0; transform: translateY(50px) scale(.05); } 45% { opacity: 1; } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes spatial-module-open { from { opacity: 0; transform: translateY(24px) scaleY(.3); } to { opacity: 1; transform: translateY(0) scaleY(1); } }
+@keyframes spatial-markers-open { from { opacity: 0; } to { opacity: .6; } }
+@keyframes spatial-ring-turn { from { transform: rotateX(-12deg) rotateY(-24deg) rotateZ(-19deg); } to { transform: rotateX(-12deg) rotateY(336deg) rotateZ(-19deg); } }
+@keyframes spatial-inner-ring-turn { from { transform: rotateX(27deg) rotateY(43deg) rotateZ(0); } to { transform: rotateX(27deg) rotateY(43deg) rotateZ(-360deg); } }
+@keyframes spatial-deck-sweep { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1555; } }
+@keyframes spatial-signal { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.65); } 12% { opacity: .55; } 78%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.4); } }
+@media (max-width: 660px) {
+  .spatial-scene { min-height: 385px; }
+  .spatial-scene__art { width: 131%; max-width: 690px; }
+  .spatial-scene__ring-svg { filter: drop-shadow(0 0 8px #efa2bc40); }
+  .spatial-scene__core { width: 21px; height: 21px; }
+  .spatial-scene__core span { inset: 4px; }
+  .spatial-scene__core b { inset: 8px; }
+  .spatial-scene__markers { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spatial-scene *, .spatial-scene *::before, .spatial-scene *::after { animation: none !important; transition: none !important; }
+  .spatial-scene__signal { display: none; }
+  .spatial-scene__platform, .spatial-scene__foundation, .spatial-scene__module { opacity: 1; }
+}

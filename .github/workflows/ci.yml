@@ -27,7 +27,7 @@ jobs:
         run: npx tsc --noEmit
       - name: Lint application code
         working-directory: website
-        run: npx eslint app components/cinematic-intro.tsx components/universe-map.tsx components/planet-orb.tsx components/origin-profile.tsx "components/math-*.tsx" lib/math "lib/math-*.mjs" "lib/math-*.mts" lib/code-counter lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
+        run: npx eslint app components/cinematic-intro.tsx components/universe-map.tsx components/spatial-scene.tsx components/planet-orb.tsx components/origin-profile.tsx "components/math-*.tsx" lib/math "lib/math-*.mjs" "lib/math-*.mts" lib/code-counter lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
       - name: Build website
         working-directory: website
         run: npm run build
