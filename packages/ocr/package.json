@@ -1,0 +1,27 @@
+{
+  "name": "@se-lab/ocr",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    "./browser": {
+      "types": "./src/browser-ocr.d.mts",
+      "import": "./src/browser-ocr.mjs"
+    },
+    "./server": {
+      "types": "./src/server.d.mts",
+      "import": "./src/server.mjs"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@se-lab/core": "0.2.0",
+    "tesseract.js": "7.0.0",
+    "@tesseract.js-data/eng": "1.0.0"
+  }
+}

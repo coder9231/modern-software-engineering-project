@@ -6,10 +6,10 @@
 
 | 材料 | 原版权所有者 | 许可证与保留位置 |
 | --- | --- | --- |
-| Sites Vite 集成插件 | OpenAI，2026 | MIT；[website/build/sites-vite-plugin.LICENSE](website/build/sites-vite-plugin.LICENSE) |
-| shadcn Tailwind 样式 | shadcn，2023 | MIT；[website/vendor/shadcn-tailwind-4.13.0.LICENSE.md](website/vendor/shadcn-tailwind-4.13.0.LICENSE.md) |
+| Sites Vite 集成插件 | OpenAI，2026 | MIT；[packages/web/build/sites-vite-plugin.LICENSE](packages/web/build/sites-vite-plugin.LICENSE) |
+| shadcn Tailwind 样式 | shadcn，2023 | MIT；[packages/web/vendor/shadcn-tailwind-4.13.0.LICENSE.md](packages/web/vendor/shadcn-tailwind-4.13.0.LICENSE.md) |
 
-通过 npm 安装的依赖遵循各自软件包的许可证。依赖声明与锁定版本见 `website/package.json` 和 `website/package-lock.json`；依赖目录不提交到本仓库。
+通过 npm 安装的依赖遵循各自软件包的许可证。依赖声明见根目录与四个工作区的 `package.json`，锁定版本统一见根目录 `package-lock.json`；依赖目录不提交到本仓库。本机 OCR 的资源准备脚本同时复制所用软件包的许可证与来源说明，生成资源不随源码提交。
 
 代码统计核心使用 `@babel/parser` 7.29.3（MIT）解析 JavaScript / TypeScript 的语法上下文；该运行依赖由网站与 CLI 共用。其许可随 npm 软件包提供，不将该第三方实现声明为项目自行编写。
 

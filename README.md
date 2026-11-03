@@ -1,110 +1,137 @@
-# 现代软件工程课程项目
+# SE Lab · 软件工程实践平台
 
-这是一个由团队逐步完成的课程项目。我们将结合《现代软件工程》的学习，记录需求、设计、实现、验证和复盘过程，并通过可运行的软件展示成果。
+<img src="packages/web/public/favicon.svg" width="64" height="64" alt="SE Lab 代码标识" />
 
-已实现代码量统计工具的命令行版本和网站前后端。自主功能现选为课堂图片中的四则运算：提供可配置出题、精确批改、打印、双语界面、计时与本地历史，并重用数学核心实现 24 点。网站使用 React/Vinext；个人展示信息仍待团队补充。四则运算的真实网页联调与发布状态见[本轮测试记录](docs/arithmetic-test-results.md)。
+[![构建检查](https://github.com/coder9231/modern-software-engineering-project/actions/workflows/ci.yml/badge.svg)](https://github.com/coder9231/modern-software-engineering-project/actions/workflows/ci.yml)
+[![Node](https://img.shields.io/badge/Node-%3E%3D22.22.1-43853d)](package.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Core coverage gate](https://img.shields.io/badge/core覆盖率门禁-行%2F分支%2F函数≥90%25-7057a3)](scripts/test-workspaces.mjs)
 
-2026-10-29 界面更新为“SE Lab · 工程实践空间”：移除实际页面中的星球、星云与轨道背景，改用紫黑色透视十字网格、旋转光环和等距平台。平台、装置与五个功能入口依次展开，支持暂停和重新展开；片头改为约 4.2 秒的圆环分层动画。桌面和手机布局、五个入口、示例统计、练习生成与往返保留已在本地浏览器检查，类型检查与生产构建通过。**本次 GitHub 同步包含界面源码与验证记录；未部署，线上仍为此前版本。**详情见[空间界面验证记录](docs/spatial-interface-test-results.md)。
+围绕《现代软件工程》课程，把需求、实现、测试与团队协作放进一个可运行的项目：统计项目代码，制作与批改四则运算练习，并展示工程实践与个人成果。
 
-同日进一步将代码统计、四则运算及其他功能页统一为入场动画的紫黑、桃橙、淡紫配色，包括表单、统计图表、批改结果与解析弹层。打印规则保留原白底黑字；本地验证结果同见上述记录。本次同步只上传源码，不部署线上网站。
+**本轮交付仓库源码、CI 与 Docker 配置，保留现有线上站点，不自动部署。** [现有演示站](https://se-practice-coder9231.a0910663736.chatgpt.site)与当前仓库可能不同步；访问演示站不代表下面所有新增能力已经上线。构建徽章展示 GitHub 工作流状态；覆盖率徽章表示门禁要求，不表示某次实测百分比。
 
-以下第 4～7 版描述为历史发布记录。
+## 五分钟本地启动
 
-2026-10-17 已发布网站第 4 版“SE Lab · 工程宇宙”：以星图首页和五颗功能星球承接代码统计、四则运算、工程实践、个人主页与项目档案，并加入进入功能的镜头过渡和约 5.4 秒的星系开场。采用原生 CSS/SVG 的 2.5D 表现，保留文字导航、功能直达链接与减少动态效果策略。类型检查、lint、生产构建及本地与线上各 14 项 HTTP 回归通过；桌面与手机本地交互已验收，线上另验星图、开场、键盘进入起源星、部分直达，以及重播和往返星图后的题目与答案保留。代码已推送 GitHub，[代码提交对应 CI](https://github.com/coder9231/modern-software-engineering-project/actions/runs/38988762989) 全部通过。设计与实际结果见[宇宙导航设计决策](docs/decisions/0005-universe-navigation.md)和[验证记录](docs/universe-test-results.md)。
-
-2026-10-17 第 5 版进一步把首页升级为持续运动的星系：球面和云层转动、轨道光点运行、星光与光晕渐变；支持暂停／播放，星球名称和点击区域保持固定。手机关闭球体漂移，减少动态效果设置下保持静止。实际验证范围与发布证据见[动态星图增量验收](docs/universe-test-results.md#2026-10-17动态星图增量验收)。
-
-第 6 版继续细化动态效果：柔和漂浮、固定光照下的横向球面纹理、只稳住所选星球的反馈，以及朝实际球心推进的进入镜头；暂停选择在当前标签页往返和刷新后保留。类型检查、生产构建及桌面、手机本地操作已验，线上已核对选取反馈、全局暂停、往返和刷新保留。
-
-第 7 版重新整理界面层级：更醒目的标题和常用操作、以功能名称为主的星球标签、随选择更新的目的地档案、宽屏侧栏与手机简短说明。顶栏和功能页返回入口也统一了样式，保留已有动画与业务规则。响应式布局与新增入口的实际验证范围见[界面验收记录](docs/universe-test-results.md#2026-10-17界面层级增量验收)。
-
-## 运行网站
-
-需要 Node.js **22.13.0 或以上**。在本仓库根目录执行：
+需要 Node.js **22.22.1 或以上**和 npm。所有命令都在仓库根目录执行；依赖由 npm workspaces 与根目录唯一的 package-lock.json 管理。
 
 ```powershell
-cd website
 npm ci
+npm run ocr:prepare
 npm run dev
 ```
 
-浏览器打开 [http://localhost:5173](http://localhost:5173)。选择项目文件或目录后，浏览器分批提交源码，后端调用共享统计核心返回结果；可使用内置示例验证 2 个文件、14 行、8 行代码、4 行注释、2 行空白。
+打开 [http://localhost:5173](http://localhost:5173)。在首页或导航中选择“代码统计”或“四则运算”。开发模式首次编译与本机 OCR 初始化可能需要等待。
 
-线上演示：[软件工程实践站](https://se-practice-coder9231.a0910663736.chatgpt.site)。2026-10-15 已设为公开访问，无需登录 ChatGPT 账号。验证过程与边界见 [网站测试记录](docs/web-test-results.md)。
-
-源码仓库：[coder9231/modern-software-engineering-project](https://github.com/coder9231/modern-software-engineering-project)，包含完整前后端、CLI 工具、自有测试和工程文档，欢迎 Fork 与提交 Pull Request。项目自有源码与文档采用 [MIT 许可证](LICENSE)；第三方许可和未公开课程材料的范围见 [许可说明](THIRD_PARTY_NOTICES.md)。
-
-网站运行、接口与限制见 [网站说明](docs/web-code-counter.md)，架构取舍见 [网站设计决策](docs/decisions/0002-web-code-counter.md)。
-
-通过星图中的逻辑星、侧边栏或 [`#math` 入口](https://se-practice-coder9231.a0910663736.chatgpt.site/#math)进入“四则运算”模块，可配置题量、运算符、操作数及答案范围、括号、负数、分数和除法模式。默认每题 2 个运算符、整数 0～100、答案 0～100；固定种子可复现题目，单次最多 10000 道。四则运算于 2026-10-16 随网站第 3 版上线，其历史版本与验收边界见[测试记录](docs/arithmetic-test-results.md)；当前第 4 版加入宇宙导航并通过线上 HTTP 回归。
-
-AI OCR 已实现服务端适配器与人工校正界面，模拟接口测试通过。密钥配置流程中断，尚未取得真实密钥，不能把功能入口视为已通过手写识别验收；人工转录、校正与数学批改独立于 AI 服务。第 3 版曾加入约 4.8 秒的原创胶片氛围开场，可跳过、按 Escape 退出或手动重播；未使用外部电影素材或音乐。该版设计与实测边界见[开场动画设计决策](docs/decisions/0004-cinematic-opening.md)，本轮宇宙主题升级的验收另行记录。
-
-## 运行四则运算工具
-
-需要 Node.js 22 或以上，无第三方依赖：
+本机服务运行时可直接进入：[创作空间](http://localhost:5173/#overview)、[代码统计](http://localhost:5173/#counter)、[四则运算](http://localhost:5173/#math)。这些入口在运行服务的电脑上生效；GitHub 仓库页用于查看与下载源码。
 
 ```powershell
-node tools/arithmetic/cli.mjs --count 300 --answers
-node tools/arithmetic/cli.mjs --count 10000 --seed course-10000 --json --answers --output reports/arithmetic-10000.json
-node --test website/lib/math/core.test.mjs website/lib/math-service.test.mjs website/lib/math-ocr.test.mjs tools/arithmetic/cli.test.mjs
+npm run build
+npm start
 ```
 
-CLI 与网站共用数学核心，用调度场算法、逆波兰表达式及精确分数计算；结构去重，题空间不足或搜索达限时明确报错，输出文件仅新建、不覆盖。参数与示例见[四则运算工具说明](tools/arithmetic/README.md)，完整课程需求映射见[四则运算需求](docs/arithmetic-requirements.md)。
+上面两条命令构建并在本地 Worker 环境运行产物。不要进入历史 website 目录单独安装；新功能以 packages/ 中的实现为准。
 
-启动网站后可运行 `node --test tools/arithmetic/web-api.test.mjs` 做真实 HTTP 功能验收。当前第 4 版的本地与线上回归分别通过数学 8 项和代码统计 6 项 HTTP 检查。容量实验另用 `node tools/arithmetic/load-test.mjs`，历史本地开发服务曾完成 5 并发、100 请求的测量；这不是生产容量承诺。万级并发尚未验证，不能由“生成一万道题”推断。
+## 可以做什么
 
-## 运行代码量统计工具
+| 使用场景       | 仓库中的能力                                                                         | 操作入口                             |
+| -------------- | ------------------------------------------------------------------------------------ | ------------------------------------ |
+| 观察项目规模   | C/C++、Java、JS/TS、Python、Go、Rust、C#、CSS、JSON 物理行统计、筛选与 JSON/CSV 导出 | “代码统计”→“选择文件夹”→“开始统计”   |
+| 观察代码变化   | 教学用复杂度估计、纯注释率、规范化片段重复率；两份 JSON 行数报告比较                 | “分析所选源码质量”“比较两次项目统计” |
+| 汇总班级作业   | 每人一份 ZIP，逐份统计并导出全班 CSV                                                 | “班级作业汇总”                       |
+| 老师备课       | 7 组可编辑教学参考预设、最多 10000 题、固定种子、试卷与独立答案卷打印                | “四则运算”→“出题与练习”              |
+| 学生练习       | 精确分数批改、计时、练习记录、错题筛选与原题重练                                     | “提交整卷批改”“错题本”               |
+| 挑战与识别     | 24 点限时关卡与本地榜单；本机印刷体 OCR、可选 AI OCR、人工核对后批改                 | “24 点挑战”“拍照改卷”                |
+| 阅读与操作辅助 | 高对比度、静态画面、系统减少动态效果支持、页面错误恢复入口                           | 页面辅助设置与错误提示               |
 
-建议 Node.js 22.13 或以上。首次使用先安装网站与命令行共用的解析依赖，在本仓库根目录执行：
+教学预设覆盖小学一至六年级和初中有理数，是可调整的示例，不代表官方课标。质量指标用于发现值得检查的代码，不能替代评审或判定抄袭。报告比较按路径与行数进行，不能识别等行数修改或文件重命名。
+
+<details>
+<summary>查看工作台与移动练习截图</summary>
+
+桌面代码统计使用自有合成 `lesson.go` 样例：
+
+![桌面代码统计工作台](docs/assets/counter-desktop.png)
+
+移动练习使用随机生成算式，班级与姓名保持空白：
+
+<img src="docs/assets/math-mobile.png" width="320" alt="移动端四则运算练习与批改界面" />
+
+截图对应本轮本地版本；现有线上演示站可能仍运行旧版。
+
+</details>
+
+300 题及以上采用 NDJSON 流式出题，每批最多 32 题，显示进度与预览，支持取消；服务器设 30 秒期限，页面另有超时保护。只有完整生成成功后才替换当前练习，取消、超时或题空间不足时保留原卷。生成一万道题不等于支持一万并发用户。
+
+## 按角色阅读
+
+- [教师指南](docs/guides/teacher.md)：选预设、出卷、独立答案卷、班级 ZIP 汇总。
+- [学生指南](docs/guides/student.md)：作答、错题重练、24 点与拍照改卷。
+- [开发者指南](docs/guides/developer.md)：工作区、命令、接口、质量门禁与容器运行。
+- [常见问题](docs/guides/faq.md)：存储、隐私、超时、OCR 与线上版本。
+- [架构说明](docs/architecture.md)：依赖关系、关键时序、数据边界与取舍。
+- [本轮优化状态](docs/upgrade-status.md)：路线图进度、复查命令与尚待验收的范围。
+- [贡献指南](CONTRIBUTING.md)、[团队协作](docs/team.md)：认领任务、评审与建议节奏。
+
+## 常用命令
 
 ```powershell
-npm --prefix website ci
-node tools/code-counter/cli.mjs . --details
-node tools/code-counter/cli.mjs tools/code-counter/examples --details
+npm run verify
+npm run test:coverage
+npm run test:e2e
+npm run bench
+npm run cli:bundle
+npm run cli:native
 ```
 
-支持 C/C++、Java、JavaScript/TypeScript、Python、CSS 和 JSON。可按语言汇总、显示文件明细、排除目录并导出 JSON/CSV；完整参数、统计规则和验收样例见 [工具说明](tools/code-counter/README.md)。
+verify 检查工作区依赖边界、严格类型、lint、格式和单元/服务测试；test:coverage 对 core 的行、分支、函数分别设 **90%** 门禁。E2E 配置包含桌面 Chromium、Firefox、WebKit 与 Chromium 手机视口，需要安装相应浏览器；配置存在不表示这些浏览器已全部实测。bench 输出当前机器测量到 reports/，结果不是生产服务承诺。详见[开发者指南](docs/guides/developer.md)。
 
-运行自动测试：
+根目录安装后可直接运行 CLI：
 
 ```powershell
-node --test tools/code-counter/analyzer.test.mjs tools/code-counter/c-family.test.mjs tools/code-counter/javascript.test.mjs tools/code-counter/python-fstring.test.mjs tools/code-counter/language-integration.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs
+node packages/cli/src/code-counter/cli.mjs . --details
+node packages/cli/src/code-counter/cli.mjs . --json --output reports/code-count.json
+node packages/cli/src/arithmetic/cli.mjs --count 300 --seed course-weekly --answers
+node packages/cli/src/arithmetic/cli.mjs --count 300 --seed course-weekly --json --answers --output reports/worksheet.json
 ```
 
-## 项目方向
+代码统计 CLI 的 --output 会覆盖指定报告文件；四则运算 CLI 只新建文件，存在同名文件会拒绝写入。cli:bundle 生成 packages/cli/dist/se-count.mjs 与 se-math.mjs，仍需 Node.js。cli:native 使用 Node 24 SEA 构建包含运行时的单文件程序；Windows x64 已完成空 PATH 独立目录帮助/JSON 检查，产物未做发行者签名。macOS 仅提供同机 arm64 构建路径，未实测；平台、签名与证据见[原生 CLI 交付](docs/native-cli.md)。
 
-- **代码量统计工具**：作为第一个可运行的功能，分析代码文件并展示统计结果。
-- **四则运算自主功能**：面向老师出题和学生练习，提供可配置规则、精确批改、可打印练习及 24 点重用案例。
-- **个人主页与成果展示**：本轮起源星展示已知 GitHub 账号与真实项目作品；个人介绍和成员职责待补充，不提供资料编辑或云同步。
+## 数据如何处理
 
-## 阶段里程碑
+选择文件不会自动上传。开始代码统计或质量分析后，所选源码会分批发送到本站对应接口；源码不执行、不做持久保存。班级 ZIP 在浏览器解包，符合条件的源码发送到统计接口。普通报告导出可能把统计结果交给本站格式化；大报告与差异报告在浏览器生成。
 
-| 阶段 | 预期成果 | 状态 |
-| --- | --- | --- |
-| 需求澄清 | 确认课程要求、统计规则、技术栈和任务分工 | 统计规则和网站技术栈已定义；四则运算主题已选，团队分工待填写 |
-| 统计工具最小版本 | 完成约定范围的统计功能及验收样例 | CLI 与网站前后端首版已实现 |
-| 自主功能迭代 | 四则运算、可配置练习、批改及模块重用 | 第 3 版首次上线，当前第 4 版宇宙导航继续保留功能；本地与线上 HTTP 已验证，真实 OCR 等独立流程待验收 |
-| 主页与展示 | 整理成果、演示流程和课程实践记录 | 第 4 版星图与起源星已上线；个人信息、成员职责与更多成果材料待补充 |
+练习生成发送规则与种子；批改发送算式与作答，服务器重新计算答案。练习摘要、错题本和 24 点榜单只存当前浏览器，没有账号、班级共享或云同步；错题重练后的批改仍会发送本次题目与答案。标题、班级、页脚用于本地打印。
 
-## 仓库导航
+“本机印刷体”用同站点准备的 Tesseract.js 资源在设备内处理图片，不把图片发送到 OCR 服务。它**不适合可靠识别手写**，结果必须逐行校正。“可选 AI 服务”只有配置服务端密钥与访问码后才启用；点击“上传并识别”会把图片经本站发送给 OpenAI。两种方式批改时都会把核对后的文本发给本站数学服务。[详细边界与清理方式](docs/guides/faq.md)。
 
-- [需求草案](docs/requirements.md)：已确认的范围、待讨论的问题和首版验收建议。
-- [学习笔记](docs/learning-notes.md)：将课程概念关联到具体工程实践。
-- [团队与分工](docs/team.md)：成员、职责和协作约定。
-- [统计工具设计决策](docs/decisions/0001-code-counter.md)：首版实现范围、取舍与验收依据。
-- [网站说明](docs/web-code-counter.md)：本地运行、前后端接口、上传限制与验证方式。
-- [网站设计决策](docs/decisions/0002-web-code-counter.md)：共享统计核心、无状态接口和部署边界。
-- [四则运算需求](docs/arithmetic-requirements.md)：四张课程照片的需求映射、实现规则和验收状态。
-- [四则运算设计决策](docs/decisions/0003-arithmetic.md)：RPN、精确有理数、结构去重、种子与 24 点重用。
-- [四则运算测试记录](docs/arithmetic-test-results.md)：单元测试、真实 HTTP 验收和容量验证边界。
-- [开场动画设计决策](docs/decisions/0004-cinematic-opening.md)：原创胶片意象、跳过与重播、焦点恢复、减少动态效果和浏览器实测。
-- [宇宙导航设计决策](docs/decisions/0005-universe-navigation.md)：功能星球、直达导航、业务状态保留与轻量视觉实现。
-- [宇宙导航验证记录](docs/universe-test-results.md)：本轮星图、转场、无障碍及功能回归的实际验收状态。
-- [协作说明](CONTRIBUTING.md)：Issue、分支、Pull Request 与评审流程。
-- [许可与第三方材料](THIRD_PARTY_NOTICES.md)：自有源码、依赖与本地课程材料的授权边界。
-- `.github/`：功能与缺陷 Issue 模板、Pull Request 模板。
+## 交付与验收边界
 
-代码量用于观察规模与变化，项目评价同时关注功能正确性、可维护性和团队协作。
+仓库提供 Dockerfile、compose.yaml 与 CI；容器配置使用非 root 用户、健康检查，并将本机 8080 端口绑定到回环地址。可运行：
 
-课程测试目录 `testcase1`–`testcase3`、生成报告和原始课堂资料保留在本地，不随公开源码分发。仓库内自有样例与自动测试可以独立运行。
+```powershell
+docker compose up --build
+```
+
+打开 [http://localhost:8080](http://localhost:8080)。本轮机器没有 Docker 命令，未完成容器实跑；CI 已配置镜像构建与健康检查任务，尚无本轮远端运行结果。
+
+2026-11-03 本地完整 verify 与生产构建通过；239 项测试中 233 通过、6 跳过，核心行/分支/函数覆盖率均超过 90%。Edge 桌面与 Chromium 手机模拟 10/10 项 E2E 通过，生产 Worker 的 9 项 HTTP 检查通过。具体范围与本地证据位置见[优化状态](docs/upgrade-status.md)。
+
+仍待验收：其他浏览器与实体设备、完整读屏/对比度、实际打印分页、更多印刷体样本、可选 AI 与真实手写、目标环境 Docker 及远端 CI。本机 OCR 样例出现多字，需人工校正；流程通过不表示识别逐字准确。历史测试记录只证明其对应版本。[已有验证记录](docs/arithmetic-test-results.md)与[界面记录](docs/spatial-interface-test-results.md)继续保留。
+
+## 目录与历史资料
+
+```text
+packages/
+  core/       浏览器与 Node 共用算法，严格 JSDoc + checkJs
+  cli/        文件扫描、命令行和单文件打包入口
+  web/        React / Vinext 页面、Worker API 与资源
+  ocr/        本机 Tesseract 与可选服务端 AI 适配器
+scripts/      统一检查、OCR 资源准备、基准与打包
+tests/e2e/    浏览器流程检查
+docs/         需求、决策、指南、学习与验证记录
+```
+
+website/ 与 tools/ 保留历史资料和兼容入口；新增实现位于 packages/，不要维护两套业务算法。历史第 3～7 版的发布与界面演进见[四则运算记录](docs/arithmetic-test-results.md)、[宇宙导航记录](docs/universe-test-results.md)、[空间界面记录](docs/spatial-interface-test-results.md)。其他入口：[需求](docs/requirements.md)、[四则运算需求](docs/arithmetic-requirements.md)、[设计决策](docs/decisions/)、[课程学习笔记](docs/learning-notes.md)。PPT 学习资料仅保留在维护者本地，不随公开源码分发。
+
+项目自有源码与文档采用 [MIT](LICENSE)，第三方依赖与课程材料范围见[许可说明](THIRD_PARTY_NOTICES.md)。本地 testcase1–testcase3、reports/、原始课堂资料与课件转录不随公开源码分发；截图与测试报告保留本地时也不要误加入提交。

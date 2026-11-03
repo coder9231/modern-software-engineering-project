@@ -1,0 +1,50 @@
+{
+  "name": "se-lab-workspace",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/core",
+    "packages/cli",
+    "packages/web",
+    "packages/ocr"
+  ],
+  "engines": {
+    "node": ">=22.22.1"
+  },
+  "scripts": {
+    "dev": "npm run dev -w @se-lab/web",
+    "build": "npm run build -w @se-lab/web",
+    "start": "npm run start -w @se-lab/web",
+    "test": "node scripts/test-workspaces.mjs",
+    "test:coverage": "node scripts/test-workspaces.mjs --coverage",
+    "test:e2e": "playwright test",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint packages/core/src packages/cli/src packages/ocr/src scripts && npm run lint -w @se-lab/web",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,mts,mjs,css,json}\" \"scripts/**/*.mjs\" \"tests/**/*.ts\" *.json *.mjs",
+    "format:check": "prettier --check \"packages/**/*.{ts,tsx,mts,mjs,css,json}\" \"scripts/**/*.mjs\" \"tests/**/*.ts\" *.json *.mjs",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "verify": "npm run check:boundaries && npm run typecheck && npm run lint && npm run format:check && npm test",
+    "prepare": "node scripts/setup-hooks.mjs",
+    "ocr:prepare": "node scripts/prepare-ocr-assets.mjs",
+    "bench": "node scripts/benchmark.mjs",
+    "cli:bundle": "node scripts/bundle-cli.mjs",
+    "cli:native": "node scripts/build-native-cli.mjs"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@playwright/test": "1.64.1",
+    "esbuild": "0.28.2",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "postject": "1.0.0-alpha.6",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "miniflare": {
+      "sharp": "0.35.4"
+    }
+  }
+}

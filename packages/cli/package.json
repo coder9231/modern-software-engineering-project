@@ -1,0 +1,16 @@
+{
+  "name": "@se-lab/cli",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "se-count": "./src/code-counter/cli.mjs",
+    "se-math": "./src/arithmetic/cli.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@se-lab/core": "0.2.0"
+  }
+}

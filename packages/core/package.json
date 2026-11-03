@@ -1,0 +1,34 @@
+{
+  "name": "@se-lab/core",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    "./math": {
+      "types": "./src/math/core.d.mts",
+      "import": "./src/math/core.mjs"
+    },
+    "./counter": {
+      "types": "./src/code-counter/analyzer.d.mts",
+      "import": "./src/code-counter/analyzer.mjs"
+    },
+    "./report": "./src/code-counter/report.mjs",
+    "./quality": {
+      "types": "./src/code-quality.d.mts",
+      "import": "./src/code-quality.mjs"
+    },
+    "./learning": {
+      "types": "./src/learning-tools.d.mts",
+      "import": "./src/learning-tools.mjs"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@babel/parser": "7.29.3"
+  }
+}

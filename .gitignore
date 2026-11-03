@@ -51,3 +51,25 @@ reports/
 /testcase2/
 /testcase3/
 /docs/course-photo-notes-2026-10-14.md
+/docs/ppt-study/
+/output/
+/tmp/
+
+# Workspace tooling, generated OCR resources and test output.
+.workspace-runtime/
+playwright-report/
+test-results/
+**/.sites-runtime/
+**/.wrangler/
+**/.next/
+**/.vinext/
+**/*.tsbuildinfo
+/packages/web/public/ocr/
+/packages/cli/dist/
+!/packages/web/build/
+/packages/web/build/*
+!/packages/web/build/*.ts
+!/packages/web/build/connector-preview-plugin.mjs
+!/packages/web/build/connector-preview-worker.mjs
+!/packages/web/build/sites-vite-plugin.LICENSE
+.baseline/

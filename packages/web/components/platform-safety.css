@@ -1,0 +1,135 @@
+.platform-fallback {
+  min-height: 100vh;
+  background: #17121c;
+  color: #f2e8f2;
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  padding: 10vw;
+}
+.platform-fallback h1 {
+  color: inherit;
+}
+.platform-fallback p {
+  line-height: 1.9;
+}
+.platform-fallback button {
+  min-height: 48px;
+  width: fit-content;
+  border: 1px solid #ffc29d;
+  border-radius: 8px;
+  background: #ffc29d;
+  color: #291b24;
+  padding: 12px 22px;
+}
+.platform-preferences {
+  position: relative;
+  z-index: 35;
+  font-size: 12px;
+}
+.platform-preferences details {
+  border: 1px solid #735580;
+  border-radius: 9px;
+  background: #211a28f5;
+  color: #e4cceb;
+  box-shadow: 0 8px 30px #0003;
+}
+.platform-preferences summary {
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 15px;
+}
+.platform-preferences details > div {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 270px;
+  border: 1px solid #61446e;
+  background: #211a28;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px #0005;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+.platform-preferences button {
+  background: #30243a;
+  color: #f0d9ed;
+  border: 1px solid #735580;
+  border-radius: 5px;
+  min-height: 48px;
+  padding: 9px;
+  text-align: left;
+}
+.platform-preferences p {
+  color: #c5b4ce;
+  font-size: 11px;
+  line-height: 1.8;
+  padding: 6px;
+}
+html[data-contrast='high'] .space-shell.in-workspace {
+  --work-bg: #100c14;
+  --work-panel: #18111e;
+  --work-panel-muted: #211727;
+  --work-input: #0e0a12;
+  --work-border: #977ca7;
+  --work-text: #fff;
+  --work-muted: #eedff5;
+  --work-dim: #d3bddf;
+}
+.spatial-scene__ring-turn,
+.spatial-scene__inner-ring {
+  will-change: transform;
+}
+.spatial-scene[data-paused='true'] .spatial-scene__ring-turn,
+.spatial-scene[data-inactive='true'] .spatial-scene__ring-turn {
+  will-change: auto;
+}
+html[data-motion='still'] :is(.spatial-scene, .space-hub, .cinematic-intro) *,
+html[data-motion='still'] :is(.spatial-scene, .space-hub, .cinematic-intro) *::before,
+html[data-motion='still'] :is(.spatial-scene, .space-hub, .cinematic-intro) *::after {
+  animation: none !important;
+  transition: none !important;
+  will-change: auto;
+}
+html[data-motion='still'] .spatial-scene__signal {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spatial-scene__ring-turn,
+  .spatial-scene__inner-ring {
+    will-change: auto;
+  }
+}
+@media screen and (max-width: 660px) {
+  .space-shell :is(button, a, summary) {
+    min-height: 48px !important;
+    min-width: 48px !important;
+  }
+  .space-shell :is(.pagination button, .math-pagination button, .icon-button) {
+    min-width: 48px;
+  }
+  .space-shell :is(.checkbox-row, .math-checkboxes label) {
+    min-height: 48px;
+    align-items: center;
+  }
+  .space-shell :is(input:not([type='checkbox']):not([type='file']), select, textarea) {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .platform-preferences summary {
+    padding: 0;
+    justify-content: center;
+  }
+  .platform-preferences summary > span {
+    display: none;
+  }
+}
+@media print {
+  .platform-preferences {
+    display: none !important;
+  }
+}

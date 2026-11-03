@@ -1,0 +1,17 @@
+{
+  "name": "course-code-counter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared source line counter with C/C++ splicing, Python f-string states and JS/TS syntax parsing",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "count": "node cli.mjs"
+  },
+  "bin": {
+    "code-count": "cli.mjs"
+  }
+}

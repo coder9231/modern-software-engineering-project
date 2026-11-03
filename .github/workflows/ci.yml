@@ -1,33 +1,79 @@
 name: Verify software engineering platform
-
 on:
   push:
   pull_request:
-
+  workflow_dispatch:
 permissions:
   contents: read
-
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      CI: true
+      HUSKY: 0
+      WRANGLER_SEND_METRICS: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
-          cache-dependency-path: website/package-lock.json
-      - name: Install website dependencies
-        working-directory: website
-        run: npm ci
-      - name: Verify shared counters, arithmetic and API services
-        run: node --test tools/code-counter/analyzer.test.mjs tools/code-counter/c-family.test.mjs tools/code-counter/javascript.test.mjs tools/code-counter/python-fstring.test.mjs tools/code-counter/language-integration.test.mjs tools/code-counter/scanner.test.mjs tools/code-counter/cli.test.mjs website/lib/code-count-service.test.mjs website/lib/math/core.test.mjs website/lib/math-service.test.mjs website/lib/math-ocr.test.mjs tools/arithmetic/cli.test.mjs
-      - name: Check website types
-        working-directory: website
-        run: npx tsc --noEmit
-      - name: Lint application code
-        working-directory: website
-        run: npx eslint app components/cinematic-intro.tsx components/universe-map.tsx components/spatial-scene.tsx components/planet-orb.tsx components/origin-profile.tsx "components/math-*.tsx" lib/math "lib/math-*.mjs" "lib/math-*.mts" lib/code-counter lib/code-count-service.mjs lib/code-count-service.test.mjs lib/code-count-service.d.mts
-      - name: Build website
-        working-directory: website
-        run: npm run build
+      - run: npm ci
+      - name: Check boundaries, strict types, lint and formatting
+        run: npm run verify
+      - name: Enforce core coverage
+        run: npm run test:coverage
+      - name: Check commit messages
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: npx commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+      - name: Baseline for performance comparison
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .baseline
+          persist-credentials: false
+      - run: npm run bench
+      - run: npm run build
+      - run: npm run cli:bundle
+      - name: Install E2E browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run test:e2e
+      - name: Retain reviewable artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-validation
+          path: |
+            packages/web/dist
+            packages/cli/dist
+            reports/benchmark-results.json
+            reports/core-coverage.lcov
+            playwright-report
+          if-no-files-found: warn
+  container-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build complete container
+        run: docker build --tag se-lab:test .
+      - name: Check local container health
+        run: |
+          docker run --detach --name se-lab-test --publish 127.0.0.1:8080:8080 se-lab:test
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8080/api/health; then exit 0; fi
+            sleep 2
+          done
+          docker logs se-lab-test
+          exit 1
+      - name: Clean up container
+        if: always()
+        run: docker rm --force se-lab-test || true

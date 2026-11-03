@@ -1,0 +1,59 @@
+name: 首次贡献
+description: 认领一个范围清楚、可以独立验收的小任务。
+title: '[首次贡献] '
+labels: ['good first issue']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎从文档、最小缺陷复现、可核对的样例或小型体验改进开始。
+        请先阅读 CONTRIBUTING.md。模板标签仅为元数据，维护者需按实际情况核对标签和认领人。
+        不要上传密钥、真实作业、个人资料、课堂照片或本地 reports/ 产物。
+  - type: dropdown
+    id: area
+    attributes:
+      label: 希望参与的范围
+      options:
+        - 文档与使用指南
+        - 缺陷复现与自有回归样例
+        - 小型界面与无障碍改进
+        - 共享算法或 CLI 小修复
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决的具体问题
+      description: 写清谁在什么操作下遇到了什么问题；缺陷请给最小输入与当前结果。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 本次改动范围
+      description: 列出计划修改的文件或功能，保持任务能独立评审；有依赖请说明。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 可观察的验收条件
+      description: 使用步骤、输入与预期输出，或读者能核对的文档变化。
+      placeholder: |
+        1. 执行……
+        2. 输入……
+        3. 应看到……
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: 计划如何验证
+      description: 按改动选择检查；如涉及界面，说明浏览器/视口。未执行的检查不要写为通过。
+    validations:
+      required: true
+  - type: textarea
+    id: support
+    attributes:
+      label: 需要维护者帮助的地方
+      description: 可填写待确认的规则、评审安排或环境问题；没有则填“无”。

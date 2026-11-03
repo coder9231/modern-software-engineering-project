@@ -1,0 +1,15 @@
+node_modules/
+reports/
+website/
+docs/ppt-study/
+packages/web/components/ui/
+packages/web/vendor/
+packages/web/build/
+packages/web/.sites-runtime/
+packages/web/.wrangler/
+packages/web/dist/
+packages/web/.next/
+packages/web/.vinext/
+packages/web/next-env.d.ts
+packages/web/public/ocr/
+**/package-lock.json
