@@ -22,6 +22,21 @@ export interface Evaluation {
   denominator: string;
   rpn: string[];
 }
+export interface CalculationStep {
+  operation: Operator | 'neg' | 'remainder';
+  before: string;
+  after: string;
+  calculation: string;
+  result: string;
+  check?: string;
+}
+export interface CalculationExplanation {
+  expression: string;
+  initial: string;
+  answer: string;
+  rpn: string[];
+  steps: CalculationStep[];
+}
 export interface Question {
   id: string;
   expression: string;

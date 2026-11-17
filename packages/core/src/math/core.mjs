@@ -228,6 +228,81 @@ export function evaluateExpression(expression) {
   return { answer: format(value), numerator: String(value.n), denominator: String(value.d), rpn: parsed.rpn };
 }
 
+/** Trace exact operations in the same postorder as the RPN evaluator. Extra
+ * parentheses make the order explicit; the trace never changes the source tree
+ * used for worksheet generation or grading.
+ * @param {string} expression @param {'normal'|'remainder'} [kind]
+ * @returns {import('./types.mjs').CalculationExplanation}
+ */
+export function explainExpression(expression, kind = 'normal') {
+  if (kind !== 'normal' && kind !== 'remainder') fail('invalid_questions', '不支持的题目类型。');
+  const parsed = parse(expression);
+  if (kind === 'remainder') {
+    const { answer, quotient, remainder } = remainderAnswer(expression);
+    const [a, b] = parsed.tokens.filter((t) => t.type === 'number').map((t) => t.text);
+    return {
+      expression,
+      initial: `${a} ÷ ${b}`,
+      answer,
+      rpn: parsed.rpn,
+      steps: [
+        {
+          operation: 'remainder',
+          before: `${a} ÷ ${b}`,
+          after: answer,
+          calculation: `${a} ÷ ${b}`,
+          result: answer,
+          check: `${b} × ${quotient} + ${remainder} = ${a}`,
+        },
+      ],
+    };
+  }
+  const evaluated = evaluateParsed(parsed);
+  let root = evaluated.node;
+  /** @param {ExpressionNode} node @param {boolean} [top] @returns {string} */
+  function render(node, top = false) {
+    if (node.op === 'number') {
+      const value = format(node.value);
+      return !top && (node.value.n < 0n || node.value.d !== 1n) ? `(${value})` : value;
+    }
+    if (node.op === 'neg') return `−(${render(node.child, true)})`;
+    const text = `${render(node.left)} ${node.op === '*' ? '×' : node.op === '/' ? '÷' : node.op} ${render(node.right)}`;
+    return top ? text : `(${text})`;
+  }
+  const initial = render(root, true);
+  /** @type {import('./types.mjs').CalculationStep[]} */
+  const steps = [];
+  /** @param {ExpressionNode} node @param {(next: ExpressionNode) => void} replace @returns {Rational} */
+  function reduce(node, replace) {
+    if (node.op === 'number') return node.value;
+    let value, calculation;
+    if (node.op === 'neg') {
+      const child = reduce(node.child, (next) => {
+        node.child = next;
+      });
+      value = rational(-child.n, child.d);
+      calculation = render(node, true);
+    } else {
+      const left = reduce(node.left, (next) => {
+        node.left = next;
+      });
+      const right = reduce(node.right, (next) => {
+        node.right = next;
+      });
+      value = operate(node.op, left, right);
+      calculation = render(node, true);
+    }
+    const before = render(root, true);
+    replace({ op: 'number', value });
+    steps.push({ operation: node.op, before, after: render(root, true), calculation, result: format(value) });
+    return value;
+  }
+  reduce(root, (next) => {
+    root = next;
+  });
+  return { expression, initial, answer: format(evaluated.value), rpn: parsed.rpn, steps };
+}
+
 /** @param {ExpressionNode} node @returns {string} */
 function canonical(node) {
   if (node.op === 'number') return `n:${format(node.value)}`;

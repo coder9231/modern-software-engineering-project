@@ -3,6 +3,7 @@ import {
   generateWorksheet,
   gradeWorksheet,
   evaluateExpression,
+  explainExpression,
   create24Puzzle,
   check24,
   solve24,
@@ -18,7 +19,9 @@ export interface MathConfig {
 export function getMathConfig(environment?: Record<string, string | undefined>): MathConfig;
 export function generateMathWorksheet(payload: unknown): ReturnType<typeof generateWorksheet>;
 export function gradeMathWorksheet(payload: unknown): ReturnType<typeof gradeWorksheet>;
-export function evaluateMathExpression(payload: unknown): ReturnType<typeof evaluateExpression>;
+export function evaluateMathExpression(
+  payload: unknown,
+): ReturnType<typeof evaluateExpression> | ReturnType<typeof explainExpression>;
 export function play24(
   payload: unknown,
 ): ReturnType<typeof create24Puzzle> | ReturnType<typeof check24> | { solution: ReturnType<typeof solve24> };

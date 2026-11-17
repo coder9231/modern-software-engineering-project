@@ -26,6 +26,8 @@ import {
   X,
 } from 'lucide-react';
 import MathOCRPanel from './math-ocr-panel';
+import MathStepExplanation from './math-step-explanation';
+import type { CalculationExplanation } from '@se-lab/core/math';
 import { readWorksheetStream } from '../lib/math-stream-client';
 import {
   CHALLENGE_STORAGE_KEY,
@@ -101,7 +103,7 @@ type Attempt = {
   options: Options;
 };
 type Section = 'practice' | 'history' | 'mistakes' | '24' | 'ocr';
-type Evaluation = { expression: string; answer: string; rpn: string[] };
+type Evaluation = CalculationExplanation;
 const initialOptions: Options = {
   count: 20,
   min: 0,
@@ -272,6 +274,8 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
   const printTimerRef = useRef<number | null>(null);
   const requestRef = useRef<AbortController | null>(null);
   const modalCloseRef = useRef<HTMLButtonElement>(null);
+  const modalRef = useRef<HTMLElement>(null);
+  const explanationTriggerRef = useRef<HTMLElement | null>(null);
   const touchedOptions = useRef(false);
   const t = (zh: string, en: string) => (language === 'zh' ? zh : en);
   const remainder = options.divisionMode === 'remainder';
@@ -362,13 +366,23 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
 
   useEffect(() => {
     if (!evaluation || !active) return;
-    const previousFocus = document.activeElement;
+    const previousFocus = explanationTriggerRef.current ?? document.activeElement;
     const frame = requestAnimationFrame(() => modalCloseRef.current?.focus());
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setEvaluation(null);
       if (event.key === 'Tab') {
-        event.preventDefault();
-        modalCloseRef.current?.focus();
+        const focusable = Array.from(
+          modalRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), summary') ?? [],
+        );
+        const first = focusable[0],
+          last = focusable.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
       }
     };
     document.addEventListener('keydown', onKeyDown);
@@ -604,11 +618,15 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
     setNotice(null);
   }
 
-  async function explain(expression: string) {
-    const data = await request<{ answer: string; rpn: string[] }>('evaluate', '/api/math/evaluate', {
+  async function explain(expression: string, kind: 'normal' | 'remainder') {
+    explanationTriggerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const data = await request<CalculationExplanation>('evaluate', '/api/math/evaluate', {
       expression,
+      steps: true,
+      kind,
     });
-    if (data) setEvaluation({ expression, answer: data.answer, rpn: data.rpn });
+    if (data) setEvaluation(data);
   }
 
   function printWorksheet(mode: 'questions' | 'answers' = 'questions') {
@@ -1238,12 +1256,9 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
                               </span>
                             )}
                             <button
-                              onClick={() => explain(question.expression)}
+                              onClick={() => explain(question.expression, question.kind)}
                               disabled={!!busy || question.kind === 'remainder'}
-                              title={t(
-                                '查看逆波兰表达式与计算结果',
-                                'View reverse Polish notation and result',
-                              )}
+                              title={t('查看提示与分步计算', 'View reverse Polish notation and result')}
                             >
                               {t('解析', 'Explain')}
                               <ChevronRight size={12} />
@@ -2066,6 +2081,7 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
         <div className="math-modal-backdrop" onClick={() => setEvaluation(null)}>
           <section
             className="math-modal"
+            ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="math-evaluation-title"
@@ -2083,17 +2099,8 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
                 <X size={19} />
               </button>
             </div>
-            <div className="math-evaluation-expression">
-              {displayExpression(evaluation.expression)} = <b>{evaluation.answer}</b>
-            </div>
-            <h3>{t('逆波兰表达式 RPN', 'Reverse Polish notation')}</h3>
-            <code>{evaluation.rpn.join(' ')}</code>
-            <p>
-              {t(
-                '依次读取数字并入栈，遇到运算符时取出操作数计算，再把结果压回栈。括号与优先级已在转换阶段处理。',
-                'Read each number onto a stack. For each operator, pop its operands, calculate, then push the result. Parentheses and precedence were resolved during conversion.',
-              )}
-            </p>
+            <div className="math-evaluation-expression">{displayExpression(evaluation.expression)}</div>
+            <MathStepExplanation key={evaluation.expression} explanation={evaluation} language={language} />
           </section>
         </div>
       )}

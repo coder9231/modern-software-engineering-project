@@ -11,9 +11,10 @@ export const MAX_PARSER_BYTES = 64 * 1024;
  * conservative scanner instead of making an entire upload fail.
  * @param {string} text
  * @param {string} language
+ * @param {import('@se-lab/core/counter').LineExplanation[]} [details]
  * @returns {import('@se-lab/core/counter').Counts|null}
  */
-export function analyzeJavaScript(text, language) {
+export function analyzeJavaScript(text, language, details) {
   if (text.length > MAX_PARSER_BYTES || new TextEncoder().encode(text).byteLength > MAX_PARSER_BYTES)
     return null;
   let tokens;
@@ -52,17 +53,39 @@ export function analyzeJavaScript(text, language) {
     while (line + 1 < starts.length && starts[line + 1] <= token.start) line += 1;
     const comment =
       token.type === 'CommentLine' || token.type === 'CommentBlock' || token.type.label === '#!...';
-    const flag = comment ? 1 : 2;
+    const label = typeof token.type === 'string' ? token.type : token.type.label;
+    const literal = details && ['string', 'regexp', 'template', '`'].includes(label);
+    const flag = comment ? 1 : literal ? 6 : 2;
     for (let covered = line; covered < starts.length && starts[covered] < token.end; covered += 1) {
       flags[covered] |= flag;
     }
   }
   const counts = { total: lines.length, code: 0, comment: 0, blank: 0 };
   for (let index = 0; index < lines.length; index += 1) {
-    if (lines[index].trim() === '') counts.blank += 1;
-    else if (flags[index] & 2) counts.code += 1;
-    else if (flags[index] & 1) counts.comment += 1;
-    else counts.code += 1;
+    const kind =
+      lines[index].trim() === ''
+        ? 'blank'
+        : flags[index] & 2
+          ? 'code'
+          : flags[index] & 1
+            ? 'comment'
+            : 'code';
+    counts[kind] += 1;
+    details?.push({
+      line: index + 1,
+      text: lines[index],
+      kind,
+      reason:
+        kind === 'blank'
+          ? 'whitespace'
+          : kind === 'comment'
+            ? 'comment'
+            : flags[index] & 1
+              ? 'mixed'
+              : flags[index] & 4
+                ? 'literal'
+                : 'code',
+    });
   }
   return counts;
 }

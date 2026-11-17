@@ -1179,6 +1179,8 @@
   backdrop-filter: blur(3px);
 }
 .math-modal {
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
   width: 100%;
   max-width: 540px;
   background: #fff;
@@ -1186,6 +1188,56 @@
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 15px 70px #15352030;
+}
+.math-step-explanation {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--work-text, #38432f);
+}
+.math-step-current,
+.math-step-hint,
+.math-calculation-steps li {
+  border: 1px solid var(--work-border, #dbe7d5);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.math-step-current {
+  font-size: 20px;
+  background: var(--work-panel, #f5f8ef);
+}
+.math-step-hint {
+  border-left: 3px solid var(--work-accent, #5f8f3f);
+}
+.math-step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0;
+}
+.math-calculation-steps {
+  padding-left: 24px;
+}
+.math-calculation-steps p {
+  margin: 6px 0 0;
+}
+.math-step-answer {
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+.math-step-rpn {
+  margin-top: 18px;
+}
+.math-step-rpn summary {
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+.math-step-rpn code {
+  display: block;
+  overflow-wrap: anywhere;
 }
 .math-modal .math-panel-title {
   color: #92ac7b;

@@ -4,6 +4,7 @@ import {
   generateWorksheet,
   gradeWorksheet,
   evaluateExpression,
+  explainExpression,
   create24Puzzle,
   check24,
   solve24,
@@ -101,7 +102,11 @@ export function gradeMathWorksheet(payload) {
 }
 
 export function evaluateMathExpression(payload) {
-  object(payload, ['expression']);
+  object(payload, ['expression', 'steps', 'kind']);
+  if (payload.steps !== undefined && typeof payload.steps !== 'boolean') fail('steps 须为布尔值。');
+  if (payload.kind !== undefined && !['normal', 'remainder'].includes(payload.kind)) fail('题目类型无效。');
+  if (payload.steps === true) return explainExpression(text(payload.expression, '算式'), payload.kind);
+  if (payload.kind === 'remainder') fail('带余数讲解须开启 steps。');
   return evaluateExpression(text(payload.expression, '算式'));
 }
 

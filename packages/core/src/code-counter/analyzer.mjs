@@ -1,5 +1,5 @@
 import { analyzeCFamily } from './c-family.mjs';
-import { analyzeJavaScript } from './javascript.mjs';
+import { analyzeJavaScript, MAX_PARSER_BYTES } from './javascript.mjs';
 import { analyzePython } from './python.mjs';
 import { analyzeExtended } from './extended.mjs';
 
@@ -140,6 +140,12 @@ export function analyzeText(text, language) {
     if (parsed) return parsed;
   }
 
+  return scanText(text, language);
+}
+
+/** @param {string} text @param {string} language @param {import('@se-lab/core/counter').LineExplanation[]} [details] */
+function scanText(text, language, details) {
+  const counts = { total: 0, code: 0, comment: 0, blank: 0 };
   const lines = text.split(/\r\n|\n|\r/u);
   // A final newline terminates its preceding physical line; it adds no extra line.
   if (lines.at(-1) === '') lines.pop();
@@ -157,11 +163,20 @@ export function analyzeText(text, language) {
   for (const line of lines) {
     let hasCode = false;
     let hasComment = false;
+    let hasLiteral = false;
     let index = 0;
 
     while (index < line.length) {
       const frame = frames[frames.length - 1];
       const character = line[index];
+      if (
+        details &&
+        (['string', 'template', 'regex'].includes(frame.kind) ||
+          character === '"' ||
+          character === "'" ||
+          (isScript && character === '`'))
+      )
+        hasLiteral = true;
 
       if (frame.kind === 'blockComment') {
         hasComment = true;
@@ -394,10 +409,40 @@ export function analyzeText(text, language) {
       finishValue(frames.at(-1));
     }
 
-    if (line.trim() === '') counts.blank += 1;
-    else if (hasCode) counts.code += 1;
-    else if (hasComment) counts.comment += 1;
-    else counts.code += 1;
+    const kind = line.trim() === '' ? 'blank' : hasCode ? 'code' : hasComment ? 'comment' : 'code';
+    counts[kind] += 1;
+    details?.push({
+      line: details.length + 1,
+      text: line,
+      kind,
+      reason:
+        kind === 'blank'
+          ? 'whitespace'
+          : kind === 'comment'
+            ? 'comment'
+            : hasCode && hasComment
+              ? 'mixed'
+              : hasLiteral
+                ? 'literal'
+                : 'code',
+    });
   }
   return counts;
+}
+
+/** Explain with the same parser/scanner used by ordinary counts. No source is evaluated.
+ * @param {string} text @returns {import('@se-lab/core/counter').LineAnalysis}
+ */
+export function explainJavaScript(text) {
+  if (typeof text !== 'string') throw new TypeError('text must be a string');
+  if (text.length > MAX_PARSER_BYTES || new TextEncoder().encode(text).byteLength > MAX_PARSER_BYTES)
+    throw new RangeError('逐行解释最多支持 64 KiB UTF-8 源码；较大文件仍可正常统计。');
+  /** @type {import('@se-lab/core/counter').LineExplanation[]} */
+  const lines = [];
+  const parsed = analyzeJavaScript(text, 'JavaScript', lines);
+  return {
+    counts: parsed ?? scanText(text, 'JavaScript', lines),
+    lines,
+    method: parsed ? 'parser' : 'scanner',
+  };
 }

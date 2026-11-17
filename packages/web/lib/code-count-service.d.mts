@@ -38,6 +38,9 @@ export const LIMITS: Readonly<Config['limits']>;
 export const MAX_REQUEST_BYTES: number;
 export function getConfig(): Config;
 export function analyzeUploads(payload: unknown): Report;
+export function explainCodeUpload(
+  payload: unknown,
+): import('@se-lab/core/counter').LineAnalysis & { path: string };
 export function analyzeQualityUploads(payload: unknown): import('@se-lab/core/quality').ProjectQualityReport;
 export function getDemoReport(): Report;
 export function exportReport(payload: unknown): { body: string; contentType: string; filename: string };

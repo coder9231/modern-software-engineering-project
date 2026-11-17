@@ -19,6 +19,10 @@ export class MathError extends Error {
 }
 export function normalizeOptions(options?: MathOptions): NormalizedOptions;
 export function evaluateExpression(expression: string): Evaluation;
+export function explainExpression(
+  expression: string,
+  kind?: 'normal' | 'remainder',
+): import('./types.mjs').CalculationExplanation;
 export function generateWorksheet(options?: MathOptions): Worksheet;
 export function generateWorksheetStream(
   options?: MathOptions,
