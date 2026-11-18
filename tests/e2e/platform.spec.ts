@@ -35,6 +35,15 @@ async function expectMobileTouchTargets(page: Page) {
   expect(overflowingTabs).toEqual([]);
 }
 
+async function openCounterTool(page: Page, name: string) {
+  const menu = page.getByRole('button', { name: '打开导航', exact: true });
+  if (await menu.isVisible()) await menu.click();
+  await page
+    .getByRole('navigation', { name: '代码统计子功能', exact: true })
+    .getByRole('button', { name, exact: true })
+    .click();
+}
+
 test('upload code and use learning tools on desktop and mobile', async ({ page }, testInfo) => {
   const size = testInfo.project.name === 'chromium' ? 'desktop' : testInfo.project.name;
   await page.goto('/#counter');
@@ -59,8 +68,8 @@ test('upload code and use learning tools on desktop and mobile', async ({ page }
   await expect(page.locator('html')).toHaveAttribute('data-contrast', 'high');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'still');
   await page.getByRole('button', { name: '返回空间', exact: true }).first().click();
-  await expect(page.locator('.spatial-scene__ring-turn')).toHaveCSS('animation-name', 'none');
-  await expect(page.locator('.spatial-scene__signal').first()).toHaveCSS('display', 'none');
+  await expect(page.locator('.home-portal')).toHaveAttribute('data-phase', 'settled');
+  await expect(page.locator('.home-cinematic .cinematic-spin')).toHaveCSS('animation-name', 'none');
   await settings.click();
   await page.getByRole('button', { name: '高对比度：开', exact: true }).click();
   await page.getByRole('button', { name: '静态画面：开', exact: true }).click();
@@ -89,15 +98,15 @@ test('upload code and use learning tools on desktop and mobile', async ({ page }
   await expect(
     page.locator('.metric-card').filter({ hasText: '空白行数' }).locator('.metric-value'),
   ).toHaveText('1行');
+  await openCounterTool(page, '质量分析');
   await page.getByRole('button', { name: '分析所选源码质量', exact: true }).click();
   await expect(page.locator('.counter-insights [role="status"]')).toContainText('重复行率 0.0% · 1 个文件');
   await expect(page.locator('.counter-insights tbody')).toContainText('lesson.go');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await mkdir('reports', { recursive: true });
   await capture(page, `reports/upgrade-counter-${size}.png`);
-  if (await page.getByRole('button', { name: '打开导航', exact: true }).isVisible())
-    await page.getByRole('button', { name: '打开导航', exact: true }).click();
-  await page.getByRole('button', { name: '四则运算 MATH LAB', exact: true }).click();
+  await page.getByRole('button', { name: '返回空间', exact: true }).click();
+  await page.getByRole('button', { name: '进入四则运算', exact: true }).click();
   await page.getByLabel('题目数量', { exact: true }).fill('3');
   const generation = page.waitForResponse((response) => response.url().endsWith('/api/math/generate'));
   await page.getByRole('button', { name: '生成练习', exact: true }).click();
@@ -109,6 +118,7 @@ test('upload code and use learning tools on desktop and mobile', async ({ page }
   await expect(page.locator('.math-grade-summary')).toBeVisible();
   await expectMobileTouchTargets(page);
   await capture(page, `reports/upgrade-math-${size}.png`);
+  await page.getByRole('button', { name: '关闭小窗', exact: true }).click();
   await page.getByRole('button', { name: /^错题本/ }).click();
   await expect(page.locator('.math-mistakes')).toBeVisible();
   await expect(page.locator('.math-mistakes .math-review-list article')).toHaveCount(3);
@@ -129,7 +139,9 @@ test('compare revisions and export a classroom batch', async ({ page }, testInfo
   await page.getByRole('button', { name: '开始统计', exact: true }).click();
   const codeLines = page.locator('.metric-card').filter({ hasText: '代码行数' }).locator('.metric-value');
   await expect(codeLines).toHaveText('2行');
+  await openCounterTool(page, '版本对比');
   await page.getByRole('button', { name: '当前结果设为基准', exact: true }).click();
+  await openCounterTool(page, '新建统计');
   await upload.setInputFiles({
     name: 'lesson.go',
     mimeType: 'text/plain',
@@ -137,6 +149,7 @@ test('compare revisions and export a classroom batch', async ({ page }, testInfo
   });
   await page.getByRole('button', { name: '开始统计', exact: true }).click();
   await expect(codeLines).toHaveText('4行');
+  await openCounterTool(page, '版本对比');
   await page.getByRole('button', { name: '当前结果设为新版本', exact: true }).click();
   await page.getByRole('button', { name: '生成差异报告', exact: true }).click();
   await expect(page.locator('.counter-insights [role="status"]').last()).toHaveText(
@@ -153,6 +166,7 @@ test('compare revisions and export a classroom batch', async ({ page }, testInfo
   expect(difference.delta).toMatchObject({ code: 2, comment: 0, blank: 0 });
   expect(difference.files.changed).toHaveLength(1);
 
+  await openCounterTool(page, '批量统计');
   await page.getByLabel('选择学生作业 ZIP', { exact: true }).setInputFiles([
     {
       name: 'student-one.zip',
@@ -193,10 +207,11 @@ test('compare revisions and export a classroom batch', async ({ page }, testInfo
 test('system reduced motion disables the space animation', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#overview');
-  await expect(page.locator('.spatial-scene__ring-turn')).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('.home-portal')).toHaveAttribute('data-phase', 'settled');
+  await expect(page.locator('.home-entry')).toHaveCount(4);
   await expectMobileTouchTargets(page);
   const animations = await page
-    .locator('.spatial-scene')
+    .locator('.home-cinematic')
     .evaluate(
       (element) =>
         element.getAnimations({ subtree: true }).filter((animation) => animation.playState === 'running')

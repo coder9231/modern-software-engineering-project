@@ -277,15 +277,6 @@ export default function SpatialScene({
             </g>
           </g>
 
-          <g transform="translate(595 637)">
-            <g className="spatial-scene__module spatial-scene__module--front" data-node="profile">
-              <path d="m-28-9 28-15 28 15v11L0 17-28 2Z" fill="#875d79" />
-              <path d="m-28-9 28 14L28-9 0-24Z" fill="#e0a8a1" />
-              <path d="m-17-9 17-9 17 9L0 0Z" fill="#392c48" />
-              <path d="m-17-9 17-9 17 9" stroke="#f6d3ae" strokeWidth="1.5" />
-            </g>
-          </g>
-
           <g className="spatial-scene__markers" stroke="#9b719c" strokeWidth="1" opacity=".6">
             <path d="m280 486-34-17h-46m720 14 34-17h46M460 707l-22 12h-46m360-12 22 12h46" />
             <path d="M194 465v8m812-11v8m-620 245v8m440-8v8" />

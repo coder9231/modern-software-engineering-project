@@ -139,42 +139,7 @@ export default function CinematicIntro({ replayToken = 0, onActiveChange }: Cine
           SE LAB 工作空间开场。一个圆环在网格空间中旋转、分层展开，再呈现项目名称。无声开场约四秒后结束，可按
           Escape 或点击按钮跳过。
         </p>
-        <div className="cinematic-floor" aria-hidden="true">
-          <svg viewBox="0 0 1200 1200" preserveAspectRatio="none">
-            <defs>
-              <pattern id="cinematic-cross-grid" width="54" height="54" patternUnits="userSpaceOnUse">
-                <path d="M23 27h8m-4-4v8" />
-              </pattern>
-            </defs>
-            <rect width="1200" height="1200" fill="url(#cinematic-cross-grid)" />
-            <path className="cinematic-floor-axis" d="M0 600h1200M600 0v1200" />
-          </svg>
-        </div>
-        <div className="cinematic-light-wash" aria-hidden="true" />
-        <div className="cinematic-apparatus" aria-hidden="true">
-          <div className="cinematic-ring-rig">
-            <div className="cinematic-ring-platform">
-              <span />
-              <i />
-            </div>
-            {[0, 1, 2].map((layer) => (
-              <div className={`cinematic-ring-plane cinematic-ring-plane--${layer}`} key={layer}>
-                <svg className="cinematic-ring-spin" viewBox="0 0 400 400">
-                  <circle className="cinematic-ring-edge" cx="200" cy="200" r="164" />
-                  <circle className="cinematic-ring-track" cx="200" cy="200" r="154" />
-                  <circle className="cinematic-ring-light" cx="200" cy="200" r="164" />
-                  <circle className="cinematic-ring-dashes" cx="200" cy="200" r="177" />
-                </svg>
-              </div>
-            ))}
-            <div className="cinematic-ring-connections">
-              <i />
-              <i />
-              <i />
-              <i />
-            </div>
-          </div>
-        </div>
+        <CinematicArtwork />
 
         <div className="cinematic-topline" aria-hidden="true">
           <span>
@@ -228,5 +193,49 @@ export default function CinematicIntro({ replayToken = 0, onActiveChange }: Cine
         </div>
       </div>
     </dialog>
+  );
+}
+
+/** Shared artwork: the home keeps its finished frame behind the entry points. */
+export function CinematicArtwork() {
+  return (
+    <>
+      <div className="cinematic-floor" aria-hidden="true">
+        <svg viewBox="0 0 1200 1200" preserveAspectRatio="none">
+          <defs>
+            <pattern id="cinematic-cross-grid" width="54" height="54" patternUnits="userSpaceOnUse">
+              <path d="M23 27h8m-4-4v8" />
+            </pattern>
+          </defs>
+          <rect width="1200" height="1200" fill="url(#cinematic-cross-grid)" />
+          <path className="cinematic-floor-axis" d="M0 600h1200M600 0v1200" />
+        </svg>
+      </div>
+      <div className="cinematic-light-wash" aria-hidden="true" />
+      <div className="cinematic-apparatus" aria-hidden="true">
+        <div className="cinematic-ring-rig">
+          <div className="cinematic-ring-platform">
+            <span />
+            <i />
+          </div>
+          {[0, 1, 2].map((layer) => (
+            <div className={`cinematic-ring-plane cinematic-ring-plane--${layer}`} key={layer}>
+              <svg className="cinematic-ring-spin" viewBox="0 0 400 400">
+                <circle className="cinematic-ring-edge" cx="200" cy="200" r="164" />
+                <circle className="cinematic-ring-track" cx="200" cy="200" r="154" />
+                <circle className="cinematic-ring-light" cx="200" cy="200" r="164" />
+                <circle className="cinematic-ring-dashes" cx="200" cy="200" r="177" />
+              </svg>
+            </div>
+          ))}
+          <div className="cinematic-ring-connections">
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

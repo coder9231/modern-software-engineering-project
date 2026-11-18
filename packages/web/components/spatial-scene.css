@@ -55,13 +55,9 @@
 .spatial-scene [data-node='math'] {
   animation-delay: 2.5s;
 }
-.spatial-scene [data-node='profile'] {
-  animation-delay: 2.8s;
-}
 .spatial-scene[data-active='counter'] [data-node='counter'],
 .spatial-scene[data-active='math'] [data-node='math'],
 .spatial-scene[data-active='practice'] [data-node='practice'],
-.spatial-scene[data-active='profile'] [data-node='profile'],
 .spatial-scene[data-active='about'] [data-node='about'] {
   filter: brightness(1.3) drop-shadow(0 0 10px #f7b4b63b);
 }

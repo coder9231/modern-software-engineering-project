@@ -9,7 +9,6 @@ import {
   BookOpen,
   Calculator,
   Check,
-  UserRound,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
@@ -37,12 +36,12 @@ import { formatReport } from '@se-lab/core/report';
 import MathWorkspace from '../components/math-workspace';
 import CinematicIntro from '../components/cinematic-intro';
 import UniverseMap from '../components/universe-map';
-import OriginProfile from '../components/origin-profile';
 import CounterInsights from '../components/counter-insights';
 import CounterClassroom from '../components/counter-classroom';
 import PlatformPreferences from '../components/platform-safety';
 import '../components/universe-shell.css';
 import '../components/workspace-theme.css';
+import '../components/counter-workspace.css';
 
 type Counts = { files: number; total: number; code: number; comment: number; blank: number };
 type FileCount = Omit<Counts, 'files'> & { path: string; language: string };
@@ -65,7 +64,73 @@ type Config = {
 };
 type Selected = { path: string; file: File };
 type Recent = { name: string; date: string; files: number; code: number };
-type Section = 'counter' | 'math' | 'overview' | 'practice' | 'about' | 'profile';
+type Section = 'counter' | 'math' | 'overview' | 'practice' | 'about';
+type CounterView = 'setup' | 'results' | 'classroom' | 'quality' | 'compare' | 'history' | 'rules';
+const counterPages: {
+  id: CounterView;
+  label: string;
+  title: string;
+  description: string;
+  icon: typeof Code2;
+  group: string;
+}[] = [
+  {
+    id: 'setup',
+    label: '新建统计',
+    title: '代码统计',
+    description: '选择项目源码，设置统计范围，生成一份清楚的代码报告。',
+    icon: FolderOpen,
+    group: '项目统计',
+  },
+  {
+    id: 'results',
+    label: '统计报告',
+    title: '统计报告',
+    description: '查看代码规模、语言分布和文件明细，导出本次统计结果。',
+    icon: BarChart3,
+    group: '项目统计',
+  },
+  {
+    id: 'classroom',
+    label: '批量统计',
+    title: '班级批量统计',
+    description: '导入多份作业，在一个独立工作区中汇总代码规模。',
+    icon: Files,
+    group: '分析工具',
+  },
+  {
+    id: 'quality',
+    label: '质量分析',
+    title: '代码质量分析',
+    description: '基于已选源码，进一步查看教学用质量指标。',
+    icon: ShieldCheck,
+    group: '分析工具',
+  },
+  {
+    id: 'compare',
+    label: '版本对比',
+    title: '版本对比',
+    description: '比较两份统计报告，观察项目规模和文件变化。',
+    icon: Layers,
+    group: '分析工具',
+  },
+  {
+    id: 'history',
+    label: '最近统计',
+    title: '最近统计',
+    description: '回顾当前浏览器保存的统计摘要。',
+    icon: Terminal,
+    group: '记录与说明',
+  },
+  {
+    id: 'rules',
+    label: '统计规则',
+    title: '统计规则',
+    description: '了解代码行、注释行与空白行的分类方式和统计边界。',
+    icon: BookOpen,
+    group: '记录与说明',
+  },
+];
 const zero: Counts = { files: 0, total: 0, code: 0, comment: 0, blank: 0 };
 const repo = 'https://github.com/coder9231/modern-software-engineering-project';
 const storageKey = 'se-lab-count-history-v1';
@@ -157,6 +222,7 @@ export default function Home() {
   const [introReplay, setIntroReplay] = useState(0);
   const [introActive, setIntroActive] = useState(false);
   const [section, setSection] = useState<Section>('overview');
+  const [counterView, setCounterView] = useState<CounterView>('setup');
   const [mapVisit, setMapVisit] = useState(0);
   const [mobileNav, setMobileNav] = useState(false);
   const [config, setConfig] = useState<Config | null>(null);
@@ -190,13 +256,17 @@ export default function Home() {
 
   useEffect(() => {
     const restoreSection = () => {
-      const target = window.location.hash.slice(1);
+      const [target, detail] = window.location.hash.slice(1).split('/');
+      setCounterView(counterPages.find((item) => item.id === detail)?.id ?? 'setup');
+      if (!['counter', 'math', 'practice', 'about', 'overview', ''].includes(target)) {
+        window.history.replaceState(
+          window.history.state,
+          '',
+          `${window.location.pathname}${window.location.search}#overview`,
+        );
+      }
       setSection(
-        target === 'counter' ||
-          target === 'math' ||
-          target === 'practice' ||
-          target === 'about' ||
-          target === 'profile'
+        target === 'counter' || target === 'math' || target === 'practice' || target === 'about'
           ? target
           : 'overview',
       );
@@ -287,15 +357,17 @@ export default function Home() {
       ? `conic-gradient(${compositionColors.code} 0 ${(report.totals.code / report.totals.total) * 100}%, ${compositionColors.comment} ${(report.totals.code / report.totals.total) * 100}% ${((report.totals.code + report.totals.comment) / report.totals.total) * 100}%, ${compositionColors.blank} ${((report.totals.code + report.totals.comment) / report.totals.total) * 100}% 100%)`
       : 'var(--work-panel-muted)';
 
-  function navigate(next: Section) {
+  function navigate(next: Section, view: CounterView = 'setup') {
+    const hash = next === 'counter' && view !== 'setup' ? `counter/${view}` : next;
+    if (next === 'counter') setCounterView(view);
     setMapVisit((visit) => visit + 1);
     setSection(next);
     setMobileNav(false);
-    if (window.location.hash !== `#${next}`)
+    if (window.location.hash !== `#${hash}`)
       window.history.pushState(
         window.history.state,
         '',
-        `${window.location.pathname}${window.location.search}#${next}`,
+        `${window.location.pathname}${window.location.search}#${hash}`,
       );
     window.scrollTo({ top: 0, behavior: 'instant' });
     if (navigationFrame.current !== null) window.cancelAnimationFrame(navigationFrame.current);
@@ -372,6 +444,7 @@ export default function Home() {
     setTab('files');
     setPage(1);
     if (!demo) remember(result, name);
+    navigate('counter', 'results');
   }
 
   async function analyze() {
@@ -565,7 +638,6 @@ export default function Home() {
     { id: 'counter' as Section, label: '代码统计', caption: 'CODE METRICS', icon: BarChart3 },
     { id: 'math' as Section, label: '四则运算', caption: 'MATH LAB', icon: Calculator },
     { id: 'practice' as Section, label: '工程实践', caption: 'BUILD JOURNAL', icon: BookOpen },
-    { id: 'profile' as Section, label: '个人主页', caption: 'THE CREATOR', icon: UserRound },
     { id: 'about' as Section, label: '关于项目', caption: 'PROJECT NOTES', icon: Info },
   ];
   const activeLabel = navItems.find((item) => item.id === section)?.label;
@@ -574,17 +646,19 @@ export default function Home() {
       counter: { name: '数据工作台', icon: BarChart3, sector: '01 / CODE' },
       math: { name: '思维实验室', icon: Calculator, sector: '02 / MATH' },
       practice: { name: '构建日志', icon: BookOpen, sector: '03 / BUILD' },
-      profile: { name: '创作者档案', icon: UserRound, sector: '04 / PROFILE' },
-      about: { name: '项目说明', icon: Info, sector: '05 / PROJECT' },
+      about: { name: '项目说明', icon: Info, sector: '04 / PROJECT' },
     } as const
   )[section === 'overview' ? 'counter' : section];
   const ArrivalIcon = currentArea.icon;
+  const counterPage = counterPages.find((item) => item.id === counterView) ?? counterPages[0];
 
   return (
     <>
-      <CinematicIntro replayToken={introReplay} onActiveChange={setIntroActive} />
+      {section !== 'overview' && section !== 'counter' && (
+        <CinematicIntro replayToken={introReplay} onActiveChange={setIntroActive} />
+      )}
       <div
-        className={`app-shell space-shell is-spatial ${section === 'overview' ? 'is-universe' : 'in-workspace'}`}
+        className={`app-shell space-shell is-spatial ${section === 'overview' ? 'is-universe' : 'in-workspace'} ${section === 'counter' ? 'counter-workspace' : ''}`}
         id="se-lab-content"
       >
         {mobileNav && (
@@ -602,40 +676,75 @@ export default function Home() {
               <small>软件工程 · 创作空间</small>
             </span>
           </button>
-          <div className="workspace-label">
-            工作空间 <span>WORKSPACES</span>
-          </div>
-          <nav aria-label="主导航">
-            {navItems.map(({ id, label, caption, icon: Icon }) => (
-              <button
-                key={id}
-                className={`nav-item ${section === id ? 'active' : ''}`}
-                onClick={() => navigate(id)}
-                aria-current={section === id ? 'page' : undefined}
-              >
-                <Icon size={19} />
+          {section === 'counter' ? (
+            <>
+              <div className="counter-scope">
+                <BarChart3 size={18} />
+                <div>
+                  <strong>代码统计</strong>
+                  <small>CODE METRICS</small>
+                </div>
+              </div>
+              <nav className="counter-subnav" aria-label="代码统计子功能">
+                {['项目统计', '分析工具', '记录与说明'].map((group) => (
+                  <div className="counter-nav-group" key={group}>
+                    <p>{group}</p>
+                    {counterPages
+                      .filter((item) => item.group === group)
+                      .map(({ id, label, icon: Icon }) => (
+                        <button
+                          key={id}
+                          className={`counter-nav-item ${counterView === id ? 'active' : ''}`}
+                          onClick={() => navigate('counter', id)}
+                          aria-current={counterView === id ? 'page' : undefined}
+                          disabled={busy}
+                        >
+                          <Icon size={16} />
+                          <span>{label}</span>
+                          {id === 'results' && report && <i aria-hidden="true" title="已有统计报告" />}
+                        </button>
+                      ))}
+                  </div>
+                ))}
+              </nav>
+              <div className="counter-sidebar-note">
+                <ShieldCheck size={15} />
                 <span>
-                  {label}
-                  <small>{caption}</small>
+                  源码仅用于本次分析
+                  <br />
+                  不会保存到服务器
                 </span>
-                {id === 'counter' && <span className="nav-badge">工具</span>}
-              </button>
-            ))}
-          </nav>
-          <div className="sidebar-project">
-            <div className="project-symbol">
-              <Layers size={19} />
-            </div>
-            <p>让想法，逐步成形。</p>
-            <span>
-              从需求到实现，
-              <br />
-              展开下一次工程实践。
-            </span>
-            <button onClick={() => navigate('practice')}>
-              查看实践路线 <ArrowUpRight size={15} />
-            </button>
-          </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="workspace-label">
+                当前工作空间 <span>WORKSPACE</span>
+              </div>
+              <nav aria-label="当前工作空间">
+                {navItems
+                  .filter((item) => item.id === section)
+                  .map(({ id, label, caption, icon: Icon }) => (
+                    <button
+                      key={id}
+                      className="nav-item active"
+                      aria-current="page"
+                      onClick={() => navigate(id)}
+                    >
+                      <Icon size={19} />
+                      <span>
+                        {label}
+                        <small>{caption}</small>
+                      </span>
+                    </button>
+                  ))}
+              </nav>
+            </>
+          )}
+          <button className="workspace-home-link" onClick={() => navigate('overview')}>
+            <ArrowLeft size={16} />
+            返回主页
+          </button>
           <a className="sidebar-repo" href={repo} target="_blank" rel="noreferrer">
             <Github size={18} />
             <span>项目代码仓库</span>
@@ -681,17 +790,11 @@ export default function Home() {
                 </button>
                 <span>{currentArea.name}</span>
                 <ChevronRight size={13} />
-                <strong>{activeLabel}</strong>
+                <strong>{section === 'counter' ? counterPage.label : activeLabel}</strong>
               </div>
             )}
             {section === 'overview' && (
               <nav className="universe-top-nav" aria-label="首页快捷导航">
-                <button type="button" onClick={() => navigate('counter')}>
-                  代码统计
-                </button>
-                <button type="button" onClick={() => navigate('math')}>
-                  四则运算
-                </button>
                 <a href={repo} target="_blank" rel="noreferrer">
                   GitHub
                   <ArrowUpRight size={13} />
@@ -700,18 +803,20 @@ export default function Home() {
             )}
             <div className="topbar-end">
               <PlatformPreferences />
-              <button
-                className="intro-replay-button"
-                type="button"
-                onClick={() => setIntroReplay((value) => value + 1)}
-                aria-label="重播空间开场"
-                aria-expanded={introActive}
-                aria-haspopup="dialog"
-                title="重播空间开场"
-              >
-                <Play size={13} />
-                <span>重播开场</span>
-              </button>
+              {section !== 'overview' && section !== 'counter' && (
+                <button
+                  className="intro-replay-button"
+                  type="button"
+                  onClick={() => setIntroReplay((value) => value + 1)}
+                  aria-label="重播空间开场"
+                  aria-expanded={introActive}
+                  aria-haspopup="dialog"
+                  title="重播空间开场"
+                >
+                  <Play size={13} />
+                  <span>重播开场</span>
+                </button>
+              )}
               <span className={`service-status ${configError ? 'offline' : ''}`}>
                 <i />
                 {config ? '工作空间已就绪' : configError ? '统计服务暂不可用' : '正在连接工作空间'}
@@ -724,9 +829,15 @@ export default function Home() {
             className="workspace"
             ref={workspaceRef}
             tabIndex={-1}
-            aria-label={section === 'overview' ? 'SE Lab 创作空间' : `${currentArea.name} · ${activeLabel}`}
+            aria-label={
+              section === 'overview'
+                ? 'SE Lab 创作空间'
+                : section === 'counter'
+                  ? `代码统计 · ${counterPage.label}`
+                  : `${currentArea.name} · ${activeLabel}`
+            }
           >
-            {section !== 'overview' && (
+            {section !== 'overview' && section !== 'counter' && (
               <div className="planet-arrival">
                 <span className="arrival-symbol">
                   <ArrivalIcon size={21} />
@@ -743,225 +854,44 @@ export default function Home() {
             )}
             <MathWorkspace active={section === 'math'} />
             {section === 'counter' ? (
-              <>
-                <div className="page-heading">
+              <div className="counter-page" data-counter-view={counterView}>
+                <div className="page-heading counter-page-heading">
                   <div>
                     <div className="eyebrow">
-                      <span /> DEVELOPER TOOLKIT
+                      <span /> CODE METRICS /{' '}
+                      {counterView === 'setup' ? 'NEW ANALYSIS' : counterView.toUpperCase()}
                     </div>
-                    <div className="title-row">
-                      <h1>代码统计</h1>
-                      <span className="version-tag">v1.0</span>
-                    </div>
-                    <p>读懂代码规模，让每一次工程实践都有据可循。</p>
+                    <h1>{counterPage.title}</h1>
+                    <p>{counterPage.description}</p>
                   </div>
-                  <button className="button secondary demo-button" onClick={loadDemo} disabled={busy}>
-                    <Play size={15} />
-                    体验示例项目
-                    <ArrowUpRight size={14} />
-                  </button>
-                </div>
-
-                <div className="tool-workbench">
-                  <section className="panel source-panel" aria-labelledby="source-title">
-                    <div className="panel-heading">
-                      <div className="panel-title">
-                        <span className="step-number">01</span>
-                        <h2 id="source-title">选择代码来源</h2>
-                      </div>
-                      <span className="subtle-label">支持文件与完整项目</span>
-                    </div>
-                    <div
-                      className={`drop-zone ${dragging ? 'dragging' : ''} ${selected.length ? 'has-files' : ''}`}
-                      onDragOver={(event) => {
-                        event.preventDefault();
-                        if (!busy) setDragging(true);
-                      }}
-                      onDragLeave={() => setDragging(false)}
-                      onDrop={onDrop}
-                    >
-                      <div className="upload-symbol">
-                        {selected.length ? (
-                          <FolderOpen size={28} strokeWidth={1.6} />
-                        ) : (
-                          <Upload size={26} strokeWidth={1.6} />
-                        )}
-                      </div>
-                      <strong>{selected.length ? sourceName : '将代码文件拖放到这里'}</strong>
-                      <p>
-                        {selected.length ? (
-                          <>
-                            已选择 <b>{number(selected.length)}</b> 个文件 · {byteSize(selectedBytes)}
-                          </>
-                        ) : (
-                          '也可以选择文件夹，保留项目目录结构'
-                        )}
-                      </p>
-                      <div className="upload-buttons">
-                        <button
-                          className="button primary small"
-                          onClick={() => folderInput.current?.click()}
-                          disabled={busy}
-                        >
-                          <FolderOpen size={15} />
-                          {selected.length ? '更换文件夹' : '选择文件夹'}
-                        </button>
-                        <button
-                          className="button secondary small"
-                          onClick={() => filesInput.current?.click()}
-                          disabled={busy}
-                        >
-                          <FileCode2 size={15} />
-                          选择文件
-                        </button>
-                      </div>
-                    </div>
-                    <input
-                      ref={filesInput}
-                      className="visually-hidden"
-                      aria-label="选择代码文件"
-                      type="file"
-                      multiple
-                      onChange={(event) => onInput(event)}
-                    />
-                    <input
-                      ref={folderInput}
-                      className="visually-hidden"
-                      aria-label="选择代码文件夹"
-                      type="file"
-                      multiple
-                      {...({ webkitdirectory: '', directory: '' } as Record<string, string>)}
-                      onChange={(event) => onInput(event, true)}
-                    />
-                    <div className="source-footnote">
-                      <ShieldCheck size={14} />
-                      <span>
-                        文件仅用于本次统计，不保存源码。单文件上限{' '}
-                        {config ? byteSize(config.limits.maxFileBytes) : '4 MB'}。
-                      </span>
-                    </div>
-                  </section>
-
-                  <section className="panel options-panel" aria-labelledby="options-title">
-                    <div className="panel-heading">
-                      <div className="panel-title">
-                        <span className="step-number">02</span>
-                        <h2 id="options-title">统计选项</h2>
-                      </div>
-                      <Settings2 size={17} className="muted-icon" />
-                    </div>
-                    <div className="option-row">
-                      <label htmlFor="encoding">文件编码</label>
-                      <select
-                        id="encoding"
-                        value={encoding}
-                        onChange={(event) => setEncoding(event.target.value)}
-                        disabled={busy}
-                      >
-                        <option value="auto">自动识别</option>
-                        <option value="utf8">UTF-8</option>
-                        <option value="gb18030">GB18030</option>
-                      </select>
-                    </div>
-                    <label className="checkbox-row">
-                      <input
-                        type="checkbox"
-                        checked={useDefaultExcludes}
-                        onChange={(event) => setUseDefaultExcludes(event.target.checked)}
-                        disabled={busy}
-                      />
-                      <span>
-                        <strong>排除依赖与构建目录</strong>
-                        <small>让统计更聚焦于项目源码</small>
-                      </span>
-                    </label>
-                    <div className="exclude-tags" title={config?.defaultExcludes.join('、')}>
-                      <span>node_modules</span>
-                      <span>.git</span>
-                      <span>dist</span>
-                      <span>…</span>
-                    </div>
-                    <details className="advanced-options">
-                      <summary>
-                        更多筛选条件 <ChevronRight size={14} />
-                      </summary>
-                      <div className="advanced-body">
-                        <label htmlFor="extension-option">统计语言</label>
-                        <select
-                          id="extension-option"
-                          value={extensionOption}
-                          onChange={(event) => setExtensionOption(event.target.value)}
-                          disabled={busy}
-                        >
-                          <option value="">全部支持的语言</option>
-                          {config?.languages.map((language) => (
-                            <option key={language.name} value={language.name}>
-                              {language.name} ({language.extensions.join(', ')})
-                            </option>
-                          ))}
-                        </select>
-                        <label htmlFor="exclude-patterns">自定义排除规则</label>
-                        <textarea
-                          id="exclude-patterns"
-                          value={excludes}
-                          onChange={(event) => setExcludes(event.target.value)}
-                          disabled={busy}
-                          rows={3}
-                          placeholder={'例如：vendor、generated/**\n多个规则用逗号或换行分隔'}
-                        />
-                        <small>目录名或相对路径匹配规则，支持 * 和 **。</small>
-                      </div>
-                    </details>
-                  </section>
-                </div>
-
-                <div className="action-bar">
-                  <div className="supported-languages">
-                    <span>支持</span>
-                    {(
-                      config?.languages || [
-                        { name: 'C / C++' },
-                        { name: 'Java' },
-                        { name: 'Python' },
-                        { name: 'JS / TS' },
-                      ]
-                    )
-                      .slice(0, 5)
-                      .map((language) => (
-                        <span key={language.name} className="language-chip">
-                          {language.name}
-                        </span>
-                      ))}
-                    <span className="language-more">等源码类型</span>
-                  </div>
-                  <div className="action-buttons">
-                    <button
-                      className="button text-button"
-                      onClick={reset}
-                      disabled={busy || (!selected.length && !report)}
-                    >
-                      <RotateCcw size={14} />
-                      重置
-                    </button>
-                    {busy ? (
-                      <button className="button primary" onClick={() => abortRef.current?.abort()}>
-                        <X size={16} />
-                        取消统计
+                  <div className="counter-heading-actions">
+                    {counterView === 'setup' ? (
+                      <button className="button secondary" onClick={loadDemo} disabled={busy}>
+                        <Play size={14} />
+                        体验示例项目
                       </button>
                     ) : (
                       <button
-                        className="button primary analyze-button"
-                        onClick={analyze}
-                        disabled={!selected.length || !config}
+                        className="button secondary"
+                        onClick={() => navigate('counter')}
+                        disabled={busy}
                       >
-                        <BarChart3 size={17} />
-                        开始统计
-                        <ArrowRight size={16} />
+                        <ArrowLeft size={15} />
+                        返回统计
+                      </button>
+                    )}
+                    {counterView === 'setup' && report && (
+                      <button
+                        className="button text-button"
+                        onClick={() => navigate('counter', 'results')}
+                        disabled={busy}
+                      >
+                        查看本次报告
+                        <ArrowRight size={14} />
                       </button>
                     )}
                   </div>
                 </div>
-
                 {configError && (
                   <div className="message error-message" role="alert">
                     <CircleAlert size={17} />
@@ -985,7 +915,7 @@ export default function Home() {
                     </button>
                   </div>
                 )}
-                {notice && !error && (
+                {notice && !error && ['setup', 'results'].includes(counterView) && (
                   <div className="message notice-message" role="status">
                     <Info size={15} />
                     <span>{notice}</span>
@@ -1011,395 +941,646 @@ export default function Home() {
                   </div>
                 )}
 
-                <div className="results-section">
-                  <div className="results-heading">
-                    <div>
-                      <h2>统计结果 {isDemo && <span className="demo-tag">示例数据</span>}</h2>
-                      <p>
-                        {report ? (
-                          <>
-                            {reportName} <span className="middle-dot">·</span> {when(report.generatedAt)} 生成
-                          </>
-                        ) : (
-                          '导入项目后，在这里查看完整的代码分析'
-                        )}
-                      </p>
-                    </div>
-                    <div className="export-actions">
-                      <button
-                        className="button secondary small"
-                        onClick={() => exportReport('json')}
-                        disabled={!report || busy || !!exporting}
-                      >
-                        {exporting === 'json' ? (
-                          <LoaderCircle size={14} className="spin" />
-                        ) : (
-                          <Download size={14} />
-                        )}
-                        JSON
-                      </button>
-                      <button
-                        className="button secondary small"
-                        onClick={() => exportReport('csv')}
-                        disabled={!report || busy || !!exporting}
-                      >
-                        {exporting === 'csv' ? (
-                          <LoaderCircle size={14} className="spin" />
-                        ) : (
-                          <ArrowDownToLine size={14} />
-                        )}
-                        导出 CSV
-                      </button>
-                    </div>
-                  </div>
-                  <div className="metric-grid">
-                    {[
-                      {
-                        label: '代码行数',
-                        key: 'code' as const,
-                        icon: Code2,
-                        detail: '有效代码的物理行数',
-                        highlight: true,
-                      },
-                      {
-                        label: '注释行数',
-                        key: 'comment' as const,
-                        icon: BookOpen,
-                        detail: '仅包含注释的行',
-                      },
-                      {
-                        label: '空白行数',
-                        key: 'blank' as const,
-                        icon: Layers,
-                        detail: '仅包含空白字符的行',
-                      },
-                      {
-                        label: '源码文件',
-                        key: 'files' as const,
-                        icon: Files,
-                        detail: report ? `总计 ${number(report.totals.total)} 行` : '成功识别并统计的文件',
-                      },
-                    ].map(({ label, key, icon: Icon, detail, highlight }) => (
-                      <div className={`metric-card ${highlight ? 'metric-highlight' : ''}`} key={key}>
-                        <div className="metric-top">
-                          <span>{label}</span>
-                          <Icon size={18} strokeWidth={1.7} />
-                        </div>
-                        <div className="metric-value">
-                          {report ? number(report.totals[key]) : <span className="empty-number">—</span>}
-                          <small>{key === 'files' ? '个' : '行'}</small>
-                        </div>
-                        <span className="metric-detail">{detail}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <section className="panel distribution-panel">
-                    <div className="language-distribution">
-                      <div className="chart-heading">
-                        <h3>语言分布</h3>
-                        <span>按代码行数</span>
-                      </div>
-                      {report && report.languages.length ? (
-                        <div className="language-bars">
-                          {report.languages.slice(0, 6).map((language, index) => (
-                            <div className="language-bar-row" key={language.language}>
-                              <div className="language-bar-label">
-                                <span>
-                                  <i style={{ background: palette[index % palette.length] }} />
-                                  {language.language}
-                                </span>
-                                <span>
-                                  <b>{number(language.code)}</b>
-                                  <small>
-                                    {report.totals.code
-                                      ? `${((language.code / report.totals.code) * 100).toFixed(1)}%`
-                                      : '0%'}
-                                  </small>
-                                </span>
-                              </div>
-                              <div className="bar-track">
-                                <div
-                                  style={{
-                                    width: `${report.totals.code ? Math.max(0.5, (language.code / report.totals.code) * 100) : 0}%`,
-                                    background: palette[index % palette.length],
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                          {report.languages.length > 6 && (
-                            <p className="tiny-note">
-                              另有 {report.languages.length - 6} 种语言，完整明细见导出报告。
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="chart-empty">
-                          <BarChart3 size={31} strokeWidth={1.2} />
-                          <p>{report ? '暂无可统计的语言' : '等待你的第一个项目'}</p>
-                          <span>
-                            {report ? '检查文件类型、编码与排除条件' : '分析完成后，查看各语言的代码占比'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="line-composition">
-                      <div className="chart-heading">
-                        <h3>代码构成</h3>
-                        <span>物理行统计</span>
-                      </div>
-                      <div className="composition-content">
-                        <div
-                          className="donut"
-                          style={{ background: distribution }}
-                          role="img"
-                          aria-label={
-                            report
-                              ? `总计${report.totals.total}行，代码${report.totals.code}行，注释${report.totals.comment}行，空白${report.totals.blank}行`
-                              : '尚无统计数据'
-                          }
-                        >
-                          <div>
-                            <strong>{report ? number(report.totals.total) : '—'}</strong>
-                            <small>总行数</small>
+                {counterView === 'setup' && (
+                  <>
+                    <div className="tool-workbench">
+                      <section className="panel source-panel" aria-labelledby="source-title">
+                        <div className="panel-heading">
+                          <div className="panel-title">
+                            <span className="step-number">01</span>
+                            <h2 id="source-title">选择代码来源</h2>
                           </div>
+                          <span className="subtle-label">支持文件与完整项目</span>
                         </div>
-                        <div className="composition-legend">
-                          {[
-                            { label: '代码', color: compositionColors.code, key: 'code' as const },
-                            { label: '注释', color: compositionColors.comment, key: 'comment' as const },
-                            { label: '空白', color: compositionColors.blank, key: 'blank' as const },
-                          ].map((item) => (
-                            <div key={item.key}>
-                              <span>
-                                <i style={{ background: item.color }} />
-                                {item.label}
-                              </span>
-                              <b>
-                                {report && report.totals.total
-                                  ? `${((report.totals[item.key] / report.totals.total) * 100).toFixed(1)}%`
-                                  : '—'}
-                              </b>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section className="panel files-panel">
-                    <div className="files-toolbar">
-                      <div className="result-tabs" role="tablist" aria-label="文件统计明细">
-                        <button
-                          role="tab"
-                          aria-selected={tab === 'files'}
-                          onClick={() => {
-                            setTab('files');
-                            setPage(1);
+                        <div
+                          className={`drop-zone ${dragging ? 'dragging' : ''} ${selected.length ? 'has-files' : ''}`}
+                          onDragOver={(event) => {
+                            event.preventDefault();
+                            if (!busy) setDragging(true);
                           }}
-                          className={tab === 'files' ? 'active' : ''}
+                          onDragLeave={() => setDragging(false)}
+                          onDrop={onDrop}
                         >
-                          文件明细 <span>{report ? number(report.files.length) : 0}</span>
-                        </button>
-                        <button
-                          role="tab"
-                          aria-selected={tab === 'skipped'}
-                          onClick={() => {
-                            setTab('skipped');
-                            setPage(1);
-                          }}
-                          className={tab === 'skipped' ? 'active' : ''}
-                        >
-                          已跳过 <span>{report ? number(report.skipped.length) : 0}</span>
-                        </button>
-                        <button
-                          role="tab"
-                          aria-selected={tab === 'errors'}
-                          onClick={() => {
-                            setTab('errors');
-                            setPage(1);
-                          }}
-                          className={tab === 'errors' ? 'active' : ''}
-                        >
-                          异常 <span>{report ? number(report.errors.length) : 0}</span>
-                        </button>
-                      </div>
-                      <div className="table-filters">
-                        <div className="search-input">
-                          <Search size={15} />
-                          <input
-                            aria-label="搜索文件名"
-                            placeholder="搜索文件…"
-                            value={search}
-                            onChange={(event) => {
-                              setSearch(event.target.value);
-                              setPage(1);
-                            }}
-                            disabled={!report}
-                          />
-                        </div>
-                        {tab === 'files' && (
-                          <select
-                            aria-label="筛选文件语言"
-                            value={languageFilter}
-                            onChange={(event) => {
-                              setLanguageFilter(event.target.value);
-                              setPage(1);
-                            }}
-                            disabled={!report}
-                          >
-                            <option value="">全部语言</option>
-                            {report?.languages.map((language) => (
-                              <option key={language.language} value={language.language}>
-                                {language.language}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-                      </div>
-                    </div>
-                    <div className="table-scroll">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>文件路径</th>
-                            {tab === 'files' ? (
+                          <div className="upload-symbol">
+                            {selected.length ? (
+                              <FolderOpen size={28} strokeWidth={1.6} />
+                            ) : (
+                              <Upload size={26} strokeWidth={1.6} />
+                            )}
+                          </div>
+                          <strong>{selected.length ? sourceName : '将代码文件拖放到这里'}</strong>
+                          <p>
+                            {selected.length ? (
                               <>
-                                <th>语言</th>
-                                <th>总行数</th>
-                                <th>代码</th>
-                                <th>注释</th>
-                                <th>空白</th>
+                                已选择 <b>{number(selected.length)}</b> 个文件 · {byteSize(selectedBytes)}
                               </>
                             ) : (
-                              <th>{tab === 'skipped' ? '跳过原因' : '异常说明'}</th>
+                              '也可以选择文件夹，保留项目目录结构'
                             )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {tab === 'files'
-                            ? visibleFiles.map((file) => (
-                                <tr key={file.path}>
-                                  <td>
-                                    <span className="file-path" title={file.path}>
-                                      <FileCode2 size={15} />
-                                      {file.path}
-                                    </span>
-                                  </td>
-                                  <td>
-                                    <span className="table-language">{file.language}</span>
-                                  </td>
-                                  <td>{number(file.total)}</td>
-                                  <td className="code-cell">{number(file.code)}</td>
-                                  <td>{number(file.comment)}</td>
-                                  <td>{number(file.blank)}</td>
-                                </tr>
-                              ))
-                            : tab === 'skipped'
-                              ? visibleSkipped.map((file, index) => (
-                                  <tr key={`${file.path}-${index}`}>
-                                    <td>
-                                      <span className="file-path" title={file.path}>
-                                        <FileCode2 size={15} />
-                                        {file.path}
-                                      </span>
-                                    </td>
-                                    <td className="reason-cell">{reasonText[file.reason] || file.reason}</td>
-                                  </tr>
-                                ))
-                              : visibleErrors.map((file, index) => (
-                                  <tr key={`${file.path}-${index}`}>
-                                    <td>
-                                      <span className="file-path" title={file.path}>
-                                        <CircleAlert size={15} />
-                                        {file.path}
-                                      </span>
-                                    </td>
-                                    <td className="reason-cell">{file.message}</td>
-                                  </tr>
-                                ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    {!rowCount && (
-                      <div className="table-empty">
-                        <div className="empty-file-icon">
-                          <FileCode2 size={24} strokeWidth={1.3} />
+                          </p>
+                          <div className="upload-buttons">
+                            <button
+                              className="button primary small"
+                              onClick={() => folderInput.current?.click()}
+                              disabled={busy}
+                            >
+                              <FolderOpen size={15} />
+                              {selected.length ? '更换文件夹' : '选择文件夹'}
+                            </button>
+                            <button
+                              className="button secondary small"
+                              onClick={() => filesInput.current?.click()}
+                              disabled={busy}
+                            >
+                              <FileCode2 size={15} />
+                              选择文件
+                            </button>
+                          </div>
                         </div>
-                        <strong>
-                          {!report
-                            ? '你的代码报告，从这里开始'
-                            : search || languageFilter
-                              ? '没有找到匹配的文件'
-                              : tab === 'skipped'
-                                ? '没有跳过的文件'
-                                : tab === 'errors'
-                                  ? '没有处理异常'
-                                  : '没有可统计的源码文件'}
-                        </strong>
-                        <p>
-                          {!report
-                            ? '选择一个项目，或者先体验示例，看看代码的全貌。'
-                            : search || languageFilter
-                              ? '试试其他关键词或语言筛选。'
-                              : tab === 'files'
-                                ? '请确认文件类型受支持，并在「已跳过」中查看原因。'
-                                : '全部处理记录已在报告中保留。'}
-                        </p>
-                        {!report && (
-                          <button className="empty-demo-link" onClick={loadDemo} disabled={busy}>
-                            体验示例项目 <ArrowRight size={14} />
+                        <input
+                          ref={filesInput}
+                          className="visually-hidden"
+                          aria-label="选择代码文件"
+                          type="file"
+                          multiple
+                          onChange={(event) => onInput(event)}
+                        />
+                        <input
+                          ref={folderInput}
+                          className="visually-hidden"
+                          aria-label="选择代码文件夹"
+                          type="file"
+                          multiple
+                          {...({ webkitdirectory: '', directory: '' } as Record<string, string>)}
+                          onChange={(event) => onInput(event, true)}
+                        />
+                        <div className="source-footnote">
+                          <ShieldCheck size={14} />
+                          <span>
+                            文件仅用于本次统计，不保存源码。单文件上限{' '}
+                            {config ? byteSize(config.limits.maxFileBytes) : '4 MB'}。
+                          </span>
+                        </div>
+                      </section>
+
+                      <section className="panel options-panel" aria-labelledby="options-title">
+                        <div className="panel-heading">
+                          <div className="panel-title">
+                            <span className="step-number">02</span>
+                            <h2 id="options-title">统计选项</h2>
+                          </div>
+                          <Settings2 size={17} className="muted-icon" />
+                        </div>
+                        <div className="option-row">
+                          <label htmlFor="encoding">文件编码</label>
+                          <select
+                            id="encoding"
+                            value={encoding}
+                            onChange={(event) => setEncoding(event.target.value)}
+                            disabled={busy}
+                          >
+                            <option value="auto">自动识别</option>
+                            <option value="utf8">UTF-8</option>
+                            <option value="gb18030">GB18030</option>
+                          </select>
+                        </div>
+                        <label className="checkbox-row">
+                          <input
+                            type="checkbox"
+                            checked={useDefaultExcludes}
+                            onChange={(event) => setUseDefaultExcludes(event.target.checked)}
+                            disabled={busy}
+                          />
+                          <span>
+                            <strong>排除依赖与构建目录</strong>
+                            <small>让统计更聚焦于项目源码</small>
+                          </span>
+                        </label>
+                        <div className="exclude-tags" title={config?.defaultExcludes.join('、')}>
+                          <span>node_modules</span>
+                          <span>.git</span>
+                          <span>dist</span>
+                          <span>…</span>
+                        </div>
+                        <details className="advanced-options">
+                          <summary>
+                            更多筛选条件 <ChevronRight size={14} />
+                          </summary>
+                          <div className="advanced-body">
+                            <label htmlFor="extension-option">统计语言</label>
+                            <select
+                              id="extension-option"
+                              value={extensionOption}
+                              onChange={(event) => setExtensionOption(event.target.value)}
+                              disabled={busy}
+                            >
+                              <option value="">全部支持的语言</option>
+                              {config?.languages.map((language) => (
+                                <option key={language.name} value={language.name}>
+                                  {language.name} ({language.extensions.join(', ')})
+                                </option>
+                              ))}
+                            </select>
+                            <label htmlFor="exclude-patterns">自定义排除规则</label>
+                            <textarea
+                              id="exclude-patterns"
+                              value={excludes}
+                              onChange={(event) => setExcludes(event.target.value)}
+                              disabled={busy}
+                              rows={3}
+                              placeholder={'例如：vendor、generated/**\n多个规则用逗号或换行分隔'}
+                            />
+                            <small>目录名或相对路径匹配规则，支持 * 和 **。</small>
+                          </div>
+                        </details>
+                      </section>
+                    </div>
+
+                    <div className="action-bar">
+                      <div className="supported-languages">
+                        <span>支持</span>
+                        {(
+                          config?.languages || [
+                            { name: 'C / C++' },
+                            { name: 'Java' },
+                            { name: 'Python' },
+                            { name: 'JS / TS' },
+                          ]
+                        )
+                          .slice(0, 5)
+                          .map((language) => (
+                            <span key={language.name} className="language-chip">
+                              {language.name}
+                            </span>
+                          ))}
+                        <span className="language-more">等源码类型</span>
+                      </div>
+                      <div className="action-buttons">
+                        <button
+                          className="button text-button"
+                          onClick={reset}
+                          disabled={busy || (!selected.length && !report)}
+                        >
+                          <RotateCcw size={14} />
+                          重置
+                        </button>
+                        {busy ? (
+                          <button className="button primary" onClick={() => abortRef.current?.abort()}>
+                            <X size={16} />
+                            取消统计
+                          </button>
+                        ) : (
+                          <button
+                            className="button primary analyze-button"
+                            onClick={analyze}
+                            disabled={!selected.length || !config}
+                          >
+                            <BarChart3 size={17} />
+                            开始统计
+                            <ArrowRight size={16} />
                           </button>
                         )}
                       </div>
-                    )}
-                    <div className="table-footer">
-                      <span>
-                        {report
-                          ? `共 ${number(rowCount)} 条记录${rowCount > 0 ? `，当前显示 ${(currentPage - 1) * 10 + 1}–${Math.min(currentPage * 10, rowCount)}` : ''}`
-                          : '准备好时，开始你的第一次统计'}
-                      </span>
-                      <div className="pagination">
-                        <button
-                          aria-label="上一页"
-                          disabled={currentPage <= 1}
-                          onClick={() => setPage(currentPage - 1)}
-                        >
-                          <ChevronLeft size={15} />
+                    </div>
+
+                    <p className="counter-submit-note">
+                      <Files size={14} />
+                      完成统计后，将自动打开独立报告页。
+                    </p>
+                  </>
+                )}
+                {counterView === 'results' &&
+                  (report ? (
+                    <div className="results-section">
+                      <div className="results-heading">
+                        <div>
+                          <h2>统计结果 {isDemo && <span className="demo-tag">示例数据</span>}</h2>
+                          <p>
+                            {report ? (
+                              <>
+                                {reportName} <span className="middle-dot">·</span> {when(report.generatedAt)}{' '}
+                                生成
+                              </>
+                            ) : (
+                              '导入项目后，在这里查看完整的代码分析'
+                            )}
+                          </p>
+                        </div>
+                        <div className="export-actions">
+                          <button
+                            className="button secondary small"
+                            onClick={() => exportReport('json')}
+                            disabled={!report || busy || !!exporting}
+                          >
+                            {exporting === 'json' ? (
+                              <LoaderCircle size={14} className="spin" />
+                            ) : (
+                              <Download size={14} />
+                            )}
+                            JSON
+                          </button>
+                          <button
+                            className="button secondary small"
+                            onClick={() => exportReport('csv')}
+                            disabled={!report || busy || !!exporting}
+                          >
+                            {exporting === 'csv' ? (
+                              <LoaderCircle size={14} className="spin" />
+                            ) : (
+                              <ArrowDownToLine size={14} />
+                            )}
+                            导出 CSV
+                          </button>
+                        </div>
+                      </div>
+                      <div className="metric-grid">
+                        {[
+                          {
+                            label: '代码行数',
+                            key: 'code' as const,
+                            icon: Code2,
+                            detail: '有效代码的物理行数',
+                            highlight: true,
+                          },
+                          {
+                            label: '注释行数',
+                            key: 'comment' as const,
+                            icon: BookOpen,
+                            detail: '仅包含注释的行',
+                          },
+                          {
+                            label: '空白行数',
+                            key: 'blank' as const,
+                            icon: Layers,
+                            detail: '仅包含空白字符的行',
+                          },
+                          {
+                            label: '源码文件',
+                            key: 'files' as const,
+                            icon: Files,
+                            detail: report
+                              ? `总计 ${number(report.totals.total)} 行`
+                              : '成功识别并统计的文件',
+                          },
+                        ].map(({ label, key, icon: Icon, detail, highlight }) => (
+                          <div className={`metric-card ${highlight ? 'metric-highlight' : ''}`} key={key}>
+                            <div className="metric-top">
+                              <span>{label}</span>
+                              <Icon size={18} strokeWidth={1.7} />
+                            </div>
+                            <div className="metric-value">
+                              {report ? number(report.totals[key]) : <span className="empty-number">—</span>}
+                              <small>{key === 'files' ? '个' : '行'}</small>
+                            </div>
+                            <span className="metric-detail">{detail}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <section className="panel distribution-panel">
+                        <div className="language-distribution">
+                          <div className="chart-heading">
+                            <h3>语言分布</h3>
+                            <span>按代码行数</span>
+                          </div>
+                          {report && report.languages.length ? (
+                            <div className="language-bars">
+                              {report.languages.slice(0, 6).map((language, index) => (
+                                <div className="language-bar-row" key={language.language}>
+                                  <div className="language-bar-label">
+                                    <span>
+                                      <i style={{ background: palette[index % palette.length] }} />
+                                      {language.language}
+                                    </span>
+                                    <span>
+                                      <b>{number(language.code)}</b>
+                                      <small>
+                                        {report.totals.code
+                                          ? `${((language.code / report.totals.code) * 100).toFixed(1)}%`
+                                          : '0%'}
+                                      </small>
+                                    </span>
+                                  </div>
+                                  <div className="bar-track">
+                                    <div
+                                      style={{
+                                        width: `${report.totals.code ? Math.max(0.5, (language.code / report.totals.code) * 100) : 0}%`,
+                                        background: palette[index % palette.length],
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                              {report.languages.length > 6 && (
+                                <p className="tiny-note">
+                                  另有 {report.languages.length - 6} 种语言，完整明细见导出报告。
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="chart-empty">
+                              <BarChart3 size={31} strokeWidth={1.2} />
+                              <p>{report ? '暂无可统计的语言' : '等待你的第一个项目'}</p>
+                              <span>
+                                {report ? '检查文件类型、编码与排除条件' : '分析完成后，查看各语言的代码占比'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="line-composition">
+                          <div className="chart-heading">
+                            <h3>代码构成</h3>
+                            <span>物理行统计</span>
+                          </div>
+                          <div className="composition-content">
+                            <div
+                              className="donut"
+                              style={{ background: distribution }}
+                              role="img"
+                              aria-label={
+                                report
+                                  ? `总计${report.totals.total}行，代码${report.totals.code}行，注释${report.totals.comment}行，空白${report.totals.blank}行`
+                                  : '尚无统计数据'
+                              }
+                            >
+                              <div>
+                                <strong>{report ? number(report.totals.total) : '—'}</strong>
+                                <small>总行数</small>
+                              </div>
+                            </div>
+                            <div className="composition-legend">
+                              {[
+                                { label: '代码', color: compositionColors.code, key: 'code' as const },
+                                { label: '注释', color: compositionColors.comment, key: 'comment' as const },
+                                { label: '空白', color: compositionColors.blank, key: 'blank' as const },
+                              ].map((item) => (
+                                <div key={item.key}>
+                                  <span>
+                                    <i style={{ background: item.color }} />
+                                    {item.label}
+                                  </span>
+                                  <b>
+                                    {report && report.totals.total
+                                      ? `${((report.totals[item.key] / report.totals.total) * 100).toFixed(1)}%`
+                                      : '—'}
+                                  </b>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+
+                      <section className="panel files-panel">
+                        <div className="files-toolbar">
+                          <div className="result-tabs" role="tablist" aria-label="文件统计明细">
+                            <button
+                              role="tab"
+                              aria-selected={tab === 'files'}
+                              onClick={() => {
+                                setTab('files');
+                                setPage(1);
+                              }}
+                              className={tab === 'files' ? 'active' : ''}
+                            >
+                              文件明细 <span>{report ? number(report.files.length) : 0}</span>
+                            </button>
+                            <button
+                              role="tab"
+                              aria-selected={tab === 'skipped'}
+                              onClick={() => {
+                                setTab('skipped');
+                                setPage(1);
+                              }}
+                              className={tab === 'skipped' ? 'active' : ''}
+                            >
+                              已跳过 <span>{report ? number(report.skipped.length) : 0}</span>
+                            </button>
+                            <button
+                              role="tab"
+                              aria-selected={tab === 'errors'}
+                              onClick={() => {
+                                setTab('errors');
+                                setPage(1);
+                              }}
+                              className={tab === 'errors' ? 'active' : ''}
+                            >
+                              异常 <span>{report ? number(report.errors.length) : 0}</span>
+                            </button>
+                          </div>
+                          <div className="table-filters">
+                            <div className="search-input">
+                              <Search size={15} />
+                              <input
+                                aria-label="搜索文件名"
+                                placeholder="搜索文件…"
+                                value={search}
+                                onChange={(event) => {
+                                  setSearch(event.target.value);
+                                  setPage(1);
+                                }}
+                                disabled={!report}
+                              />
+                            </div>
+                            {tab === 'files' && (
+                              <select
+                                aria-label="筛选文件语言"
+                                value={languageFilter}
+                                onChange={(event) => {
+                                  setLanguageFilter(event.target.value);
+                                  setPage(1);
+                                }}
+                                disabled={!report}
+                              >
+                                <option value="">全部语言</option>
+                                {report?.languages.map((language) => (
+                                  <option key={language.language} value={language.language}>
+                                    {language.language}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </div>
+                        </div>
+                        <div className="table-scroll">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>文件路径</th>
+                                {tab === 'files' ? (
+                                  <>
+                                    <th>语言</th>
+                                    <th>总行数</th>
+                                    <th>代码</th>
+                                    <th>注释</th>
+                                    <th>空白</th>
+                                  </>
+                                ) : (
+                                  <th>{tab === 'skipped' ? '跳过原因' : '异常说明'}</th>
+                                )}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {tab === 'files'
+                                ? visibleFiles.map((file) => (
+                                    <tr key={file.path}>
+                                      <td>
+                                        <span className="file-path" title={file.path}>
+                                          <FileCode2 size={15} />
+                                          {file.path}
+                                        </span>
+                                      </td>
+                                      <td>
+                                        <span className="table-language">{file.language}</span>
+                                      </td>
+                                      <td>{number(file.total)}</td>
+                                      <td className="code-cell">{number(file.code)}</td>
+                                      <td>{number(file.comment)}</td>
+                                      <td>{number(file.blank)}</td>
+                                    </tr>
+                                  ))
+                                : tab === 'skipped'
+                                  ? visibleSkipped.map((file, index) => (
+                                      <tr key={`${file.path}-${index}`}>
+                                        <td>
+                                          <span className="file-path" title={file.path}>
+                                            <FileCode2 size={15} />
+                                            {file.path}
+                                          </span>
+                                        </td>
+                                        <td className="reason-cell">
+                                          {reasonText[file.reason] || file.reason}
+                                        </td>
+                                      </tr>
+                                    ))
+                                  : visibleErrors.map((file, index) => (
+                                      <tr key={`${file.path}-${index}`}>
+                                        <td>
+                                          <span className="file-path" title={file.path}>
+                                            <CircleAlert size={15} />
+                                            {file.path}
+                                          </span>
+                                        </td>
+                                        <td className="reason-cell">{file.message}</td>
+                                      </tr>
+                                    ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        {!rowCount && (
+                          <div className="table-empty">
+                            <div className="empty-file-icon">
+                              <FileCode2 size={24} strokeWidth={1.3} />
+                            </div>
+                            <strong>
+                              {!report
+                                ? '你的代码报告，从这里开始'
+                                : search || languageFilter
+                                  ? '没有找到匹配的文件'
+                                  : tab === 'skipped'
+                                    ? '没有跳过的文件'
+                                    : tab === 'errors'
+                                      ? '没有处理异常'
+                                      : '没有可统计的源码文件'}
+                            </strong>
+                            <p>
+                              {!report
+                                ? '选择一个项目，或者先体验示例，看看代码的全貌。'
+                                : search || languageFilter
+                                  ? '试试其他关键词或语言筛选。'
+                                  : tab === 'files'
+                                    ? '请确认文件类型受支持，并在「已跳过」中查看原因。'
+                                    : '全部处理记录已在报告中保留。'}
+                            </p>
+                            {!report && (
+                              <button className="empty-demo-link" onClick={loadDemo} disabled={busy}>
+                                体验示例项目 <ArrowRight size={14} />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        <div className="table-footer">
+                          <span>
+                            {report
+                              ? `共 ${number(rowCount)} 条记录${rowCount > 0 ? `，当前显示 ${(currentPage - 1) * 10 + 1}–${Math.min(currentPage * 10, rowCount)}` : ''}`
+                              : '准备好时，开始你的第一次统计'}
+                          </span>
+                          <div className="pagination">
+                            <button
+                              aria-label="上一页"
+                              disabled={currentPage <= 1}
+                              onClick={() => setPage(currentPage - 1)}
+                            >
+                              <ChevronLeft size={15} />
+                            </button>
+                            <span>
+                              {currentPage} / {pageCount}
+                            </span>
+                            <button
+                              aria-label="下一页"
+                              disabled={currentPage >= pageCount}
+                              onClick={() => setPage(currentPage + 1)}
+                            >
+                              <ChevronRight size={15} />
+                            </button>
+                          </div>
+                        </div>
+                      </section>
+                    </div>
+                  ) : (
+                    <div className="panel counter-empty-report">
+                      <BarChart3 size={34} strokeWidth={1.2} />
+                      <h2>还没有本次统计报告</h2>
+                      <p>
+                        选择源码并完成统计后，结果会在此页打开。刷新页面后需重新统计，最近统计仅保存摘要。
+                      </p>
+                      <div>
+                        <button className="button primary" onClick={() => navigate('counter')}>
+                          新建统计
+                          <ArrowRight size={15} />
                         </button>
-                        <span>
-                          {currentPage} / {pageCount}
-                        </span>
-                        <button
-                          aria-label="下一页"
-                          disabled={currentPage >= pageCount}
-                          onClick={() => setPage(currentPage + 1)}
-                        >
-                          <ChevronRight size={15} />
+                        <button className="button secondary" onClick={loadDemo} disabled={busy}>
+                          体验示例项目
                         </button>
                       </div>
                     </div>
-                  </section>
+                  ))}
+                <div hidden={counterView !== 'classroom'}>
+                  <CounterClassroom />
                 </div>
-
-                <CounterClassroom />
-                <CounterInsights
-                  report={report}
-                  uploads={selected}
-                  options={{
-                    encoding,
-                    useDefaultExcludes,
-                    exclude: excludes
-                      .split(/[\n,，]/)
-                      .map((value) => value.trim())
-                      .filter(Boolean),
-                    extensions:
-                      config?.languages.find((language) => language.name === extensionOption)?.extensions ??
-                      [],
-                  }}
-                />
-                <div className="bottom-grid">
+                <div hidden={!['quality', 'compare'].includes(counterView)}>
+                  {counterView === 'quality' && (
+                    <div className="counter-source-context">
+                      <FileCode2 size={16} />
+                      <span>
+                        {selected.length
+                          ? `当前源码：${sourceName} · ${number(selected.length)} 个文件`
+                          : '尚未选择源码，请先在新建统计中导入文件。'}
+                      </span>
+                      <button onClick={() => navigate('counter')}>
+                        {selected.length ? '更换源码' : '选择源码'}
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  )}
+                  <CounterInsights
+                    view={counterView === 'compare' ? 'compare' : 'quality'}
+                    report={report}
+                    uploads={selected}
+                    options={{
+                      encoding,
+                      useDefaultExcludes,
+                      exclude: excludes
+                        .split(/[\n,，]/)
+                        .map((value) => value.trim())
+                        .filter(Boolean),
+                      extensions:
+                        config?.languages.find((language) => language.name === extensionOption)?.extensions ??
+                        [],
+                    }}
+                  />
+                </div>
+                <div hidden={counterView !== 'rules'} className="counter-reference-page">
                   <section className="panel rules-panel">
                     <div className="small-panel-heading">
                       <ShieldCheck size={17} />
@@ -1422,6 +1603,8 @@ export default function Home() {
                       ))}
                     </ul>
                   </section>
+                </div>
+                <div hidden={counterView !== 'history'} className="counter-reference-page">
                   <section className="panel recent-panel">
                     <div className="small-panel-heading">
                       <Terminal size={17} />
@@ -1467,11 +1650,9 @@ export default function Home() {
                     )}
                   </section>
                 </div>
-              </>
+              </div>
             ) : section === 'overview' ? (
               <UniverseMap key={mapVisit} onNavigate={navigate} introActive={introActive} />
-            ) : section === 'profile' ? (
-              <OriginProfile onNavigate={navigate} />
             ) : section === 'practice' ? (
               <>
                 <div className="page-heading">
@@ -1575,11 +1756,11 @@ export default function Home() {
                     <span className="hero-kicker">SOFTWARE ENGINEERING LAB</span>
                     <h2>SE Lab · 软件工程实践平台</h2>
                     <p>
-                      本项目围绕《现代软件工程》课程逐步建设：先实现代码量统计工具，再完成自主设计功能，最终通过个人主页展示项目成果与学习过程。
+                      本项目围绕《现代软件工程》课程逐步建设，通过代码量统计、四则运算和工程实践记录展示需求、设计与验证过程。
                     </p>
                     <p>
                       当前网站提供项目代码统计与报告导出，以及可定制的四则运算练习、答案核验、计时、浏览器历史、打印与
-                      24 点游戏。个人主页的真实资料与成果内容将随课程进度继续完善。
+                      24 点游戏。后续内容将随课程进度继续补充。
                     </p>
                     <a className="button primary" href={repo} target="_blank" rel="noreferrer">
                       <Github size={17} />

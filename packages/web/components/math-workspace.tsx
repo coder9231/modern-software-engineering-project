@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import MathOCRPanel from './math-ocr-panel';
 import MathStepExplanation from './math-step-explanation';
+import MathWindow from './math-window';
 import type { CalculationExplanation } from '@se-lab/core/math';
 import { readWorksheetStream } from '../lib/math-stream-client';
 import {
@@ -47,6 +48,7 @@ import {
   type Mistake,
 } from '@se-lab/core/learning';
 import './math-workspace.css';
+import './math-window.css';
 
 type Language = 'zh' | 'en';
 type Options = {
@@ -221,6 +223,7 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
   const [config, setConfig] = useState<Config | null>(null);
   const [configError, setConfigError] = useState(false);
   const [configRetry, setConfigRetry] = useState(0);
+  const [workspaceWindow, setWorkspaceWindow] = useState<'practice' | 'export' | null>(null);
   const [worksheet, setWorksheet] = useState<Worksheet | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [grade, setGrade] = useState<Grade | null>(null);
@@ -273,8 +276,8 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
   const [challengeRecords, setChallengeRecords] = useState<ChallengeRecord[]>([]);
   const printTimerRef = useRef<number | null>(null);
   const requestRef = useRef<AbortController | null>(null);
-  const modalCloseRef = useRef<HTMLButtonElement>(null);
-  const modalRef = useRef<HTMLElement>(null);
+  const printReturnRef = useRef(false);
+  const practiceLauncherRef = useRef<HTMLButtonElement>(null);
   const explanationTriggerRef = useRef<HTMLElement | null>(null);
   const touchedOptions = useRef(false);
   const t = (zh: string, en: string) => (language === 'zh' ? zh : en);
@@ -337,6 +340,10 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
     const finishPrint = () => {
       setPrinting(false);
       document.body.classList.remove('math-print-mode');
+      if (printReturnRef.current) {
+        printReturnRef.current = false;
+        setWorkspaceWindow('export');
+      }
     };
     window.addEventListener('afterprint', finishPrint);
     return () => {
@@ -363,35 +370,6 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
     }, 1000);
     return () => window.clearInterval(interval);
   }, [cardStartedAt, cardRoundDone, cardLimit]);
-
-  useEffect(() => {
-    if (!evaluation || !active) return;
-    const previousFocus = explanationTriggerRef.current ?? document.activeElement;
-    const frame = requestAnimationFrame(() => modalCloseRef.current?.focus());
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setEvaluation(null);
-      if (event.key === 'Tab') {
-        const focusable = Array.from(
-          modalRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), summary') ?? [],
-        );
-        const first = focusable[0],
-          last = focusable.at(-1);
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last?.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      cancelAnimationFrame(frame);
-      document.removeEventListener('keydown', onKeyDown);
-      if (previousFocus instanceof HTMLElement) previousFocus.focus();
-    };
-  }, [evaluation, active]);
 
   const resultMap = useMemo(() => new Map(grade?.results.map((item) => [item.id, item]) || []), [grade]);
   const questionList = useMemo(
@@ -427,6 +405,8 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
     setOptions((previous) => ({ ...previous, ...update }));
   }
   function switchSection(next: Section) {
+    setWorkspaceWindow(null);
+    setEvaluation(null);
     setSection(next);
     setError('');
     setNotice(null);
@@ -472,6 +452,7 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
   function retryMistakes(items: Mistake[]) {
     if (!items.length) return;
     const questions = items.map((item, index) => ({ ...item.question, id: String(index + 1) }));
+    setWorkspaceWindow('practice');
     setWorksheet({
       seed: `mistakes-${newAttemptId()}`,
       options: { ...items[0].options, count: questions.length },
@@ -565,6 +546,7 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
     } else data = await request<Worksheet>('generate', '/api/math/generate', { options: submitted });
     if (!data) return;
     setWorksheet(data);
+    setWorkspaceWindow('practice');
     setAnswers({});
     setGrade(null);
     setPage(1);
@@ -631,6 +613,8 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
 
   function printWorksheet(mode: 'questions' | 'answers' = 'questions') {
     if (!worksheet) return;
+    printReturnRef.current = true;
+    setWorkspaceWindow(null);
     setPrintMode(mode);
     setPrinting(true);
     document.body.classList.add('math-print-mode');
@@ -1112,350 +1096,61 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
               </p>
             </section>
 
-            <section className="math-practice-area">
-              <div className="math-practice-heading">
-                <div>
+            <section className="math-practice-area math-practice-launch">
+              {worksheet ? (
+                <div className="math-panel math-ready-card">
+                  <div className="math-ready-icon">
+                    <BookOpen size={27} strokeWidth={1.4} />
+                  </div>
                   <span className="math-kicker">YOUR PRACTICE SPACE</span>
                   <h2>
-                    {worksheet
-                      ? t('专注这一题，进步一点点。', 'One question. One step forward.')
-                      : t('准备好，开始一次小练习。', 'Ready for a little practice?')}
-                  </h2>
-                </div>
-                <div className="math-timer">
-                  <Clock3 size={17} />
-                  <strong>{timeText(elapsed)}</strong>
-                  <span>
                     {grade
-                      ? t('已结束', 'Finished')
-                      : worksheet
-                        ? t('练习计时', 'Elapsed')
-                        : t('等待开始', 'Ready')}
-                  </span>
-                </div>
-              </div>
-              {worksheet ? (
-                <>
-                  <div className="math-session-bar">
+                      ? t('这份练习已完成批改', 'Your worksheet has been graded')
+                      : t('本次练习已就绪', 'Your worksheet is ready')}
+                  </h2>
+                  <p>
+                    {t(
+                      '在专注小窗中作答，随时关闭、继续或导出。',
+                      'Practice in a focused window. Close, resume, or export at any time.',
+                    )}
+                  </p>
+                  <div className="math-ready-stats">
                     <span>
-                      <b>{worksheet.questions.length.toLocaleString()}</b>{' '}
-                      {t('道不重复题目', 'unique questions')}
+                      <b>{worksheet.questions.length}</b>
+                      {t(' 道题目', ' questions')}
                     </span>
                     <span>
-                      {t('已作答', 'Answered')} <b>{answered}</b> / {worksheet.questions.length}
+                      {t('已作答 ', 'Answered ')}
+                      <b>
+                        {answered} / {worksheet.questions.length}
+                      </b>
                     </span>
-                    <button className="math-inline" onClick={restart} disabled={!!busy}>
-                      <RotateCcw size={14} />
-                      {t('重做此卷', 'Start over')}
-                    </button>
-                  </div>
-                  {grade && (
-                    <div className="math-grade-summary" aria-live="polite">
-                      <div
-                        className="math-score-ring"
-                        style={
-                          {
-                            '--score': `${Math.max(0, Math.min(100, grade.accuracy * 100))}%`,
-                          } as CSSProperties
-                        }
-                      >
-                        <strong>
-                          {(grade.accuracy * 100).toFixed(1)}
-                          <small>%</small>
-                        </strong>
-                      </div>
-                      <div>
-                        <span>{t('本次准确率', 'This attempt')}</span>
-                        <h3>
-                          {t(
-                            `答对 ${grade.correct} / ${grade.total} 道`,
-                            `${grade.correct} of ${grade.total} correct`,
-                          )}
-                        </h3>
-                        <p>
-                          {t(
-                            `作答 ${grade.answered} 道 · 用时 ${timeText(elapsed)} · 未作答计为未正确`,
-                            `${grade.answered} answered · ${timeText(elapsed)} elapsed · Blanks count as incorrect`,
-                          )}
-                        </p>
-                      </div>
-                      <Check size={27} />
-                    </div>
-                  )}
-                  <div className="math-worksheet-toolbar">
-                    <div>
-                      {grade && (
-                        <button
-                          className={onlyWrong ? 'active' : ''}
-                          onClick={() => {
-                            setOnlyWrong(!onlyWrong);
-                            setPage(1);
-                          }}
-                        >
-                          {t('只看错题', 'Incorrect only')}
-                        </button>
-                      )}
-                      <button
-                        className={showAnswers ? 'active' : ''}
-                        onClick={() => setShowAnswers(!showAnswers)}
-                      >
-                        {showAnswers ? t('隐藏答案', 'Hide answers') : t('显示答案', 'Show answers')}
-                      </button>
-                    </div>
                     <span>
-                      {t(
-                        '分数可输入 1/2；小数按精确值比较',
-                        'Fractions: 1/2. Decimals are compared exactly.',
-                      )}
+                      <Clock3 size={14} />
+                      {timeText(elapsed)}
                     </span>
                   </div>
-                  <div className="math-question-grid">
-                    {visibleQuestions.map((question) => {
-                      const result = resultMap.get(question.id);
-                      const originalIndex = worksheet.questions.indexOf(question);
-                      return (
-                        <div
-                          className={`math-question ${result ? (result.correct ? 'is-correct' : 'is-wrong') : ''}`}
-                          key={question.id}
-                        >
-                          <div className="math-question-top">
-                            <span>{String(originalIndex + 1).padStart(2, '0')}</span>
-                            {result && (
-                              <span className="math-result-tag">
-                                {result.correct ? <Check size={13} /> : <X size={13} />}
-                                {result.correct ? t('正确', 'Correct') : t('待订正', 'Review')}
-                              </span>
-                            )}
-                          </div>
-                          <label htmlFor={`answer-${question.id}`} className="math-expression">
-                            {displayExpression(question.expression)} <span>=</span>
-                          </label>
-                          <input
-                            id={`answer-${question.id}`}
-                            aria-label={t(`第 ${originalIndex + 1} 题答案`, `Answer ${originalIndex + 1}`)}
-                            autoComplete="off"
-                            spellCheck={false}
-                            value={answers[question.id] || ''}
-                            maxLength={100}
-                            disabled={!!busy || !!grade}
-                            onChange={(event) =>
-                              setAnswers((previous) => ({ ...previous, [question.id]: event.target.value }))
-                            }
-                            placeholder={
-                              question.kind === 'remainder' ? '3 r 1' : t('输入答案', 'Your answer')
-                            }
-                          />
-                          <div className="math-question-bottom">
-                            {showAnswers || (result && !result.correct) ? (
-                              <span>
-                                {t('答案', 'Answer')}: <b>{result?.expected ?? question.answer}</b>
-                              </span>
-                            ) : (
-                              <span>
-                                {question.kind === 'remainder' ? t('求商与余数', 'Quotient & remainder') : ''}
-                              </span>
-                            )}
-                            <button
-                              onClick={() => explain(question.expression, question.kind)}
-                              disabled={!!busy || question.kind === 'remainder'}
-                              title={t('查看提示与分步计算', 'View reverse Polish notation and result')}
-                            >
-                              {t('解析', 'Explain')}
-                              <ChevronRight size={12} />
-                            </button>
-                          </div>
-                          {result?.message && !result.correct && (
-                            <p className="math-answer-note">{localizedMessage(result.message, language)}</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {!questionList.length && (
-                    <div className="math-all-correct">
-                      <Check size={30} />
-                      <h3>{t('本次没有错题', 'No incorrect answers')}</h3>
-                      <p>
-                        {t('可以换一组规则，继续挑战。', 'Try another set of rules for your next challenge.')}
-                      </p>
-                    </div>
-                  )}
-                  <div className="math-pagination">
-                    <span>
-                      {t(
-                        `第 ${currentPage} / ${pages} 页 · 每页 ${pageSize} 题`,
-                        `Page ${currentPage} of ${pages} · ${pageSize} per page`,
-                      )}
-                    </span>
-                    <div>
-                      <button
-                        aria-label={t('上一页', 'Previous page')}
-                        disabled={currentPage <= 1}
-                        onClick={() => setPage(currentPage - 1)}
-                      >
-                        <ChevronLeft size={17} />
-                      </button>
-                      <button
-                        aria-label={t('下一页', 'Next page')}
-                        disabled={currentPage >= pages}
-                        onClick={() => setPage(currentPage + 1)}
-                      >
-                        <ChevronRight size={17} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="math-submit-row">
-                    <p>
-                      {t(
-                        '批改会检查整张练习卷，包含其他分页中的题目。',
-                        'Grading checks the entire worksheet, including other pages.',
-                      )}
-                    </p>
+                  <div className="math-ready-actions">
                     <button
                       className="math-btn math-btn-primary"
-                      onClick={submitAnswers}
-                      disabled={!!busy || !!grade}
+                      ref={practiceLauncherRef}
+                      onClick={() => setWorkspaceWindow('practice')}
                     >
-                      <ListChecks size={17} />
-                      {grade ? t('批改已完成', 'Graded') : t('提交整卷批改', 'Grade worksheet')}
+                      <Play size={16} />
+                      {grade ? t('查看批改结果', 'Review results') : t('继续练习', 'Continue practice')}
+                    </button>
+                    <button className="math-btn math-btn-soft" onClick={() => setWorkspaceWindow('export')}>
+                      <Printer size={16} />
+                      {t('带走这张答题纸', 'Take your worksheet with you')}
                     </button>
                   </div>
-                  <div className="math-export-panel">
-                    <div>
-                      <h3>
-                        <Printer size={17} />
-                        {t('带走这张练习纸', 'Take your worksheet with you')}
-                      </h3>
-                      <p>
-                        {t(
-                          '打印全部题目，或导出可复现的 JSON 文件。',
-                          'Print every question or export a reproducible JSON file.',
-                        )}
-                      </p>
-                    </div>
-                    <div className="math-paper-fields">
-                      <label htmlFor="math-paper-title">
-                        {t('试卷标题', 'Paper title')}
-                        <input
-                          id="math-paper-title"
-                          value={paperTitle}
-                          maxLength={60}
-                          onChange={(event) => setPaperTitle(event.target.value)}
-                          placeholder={t('四则运算练习', 'Arithmetic worksheet')}
-                        />
-                      </label>
-                      <label htmlFor="math-paper-class">
-                        {t('班级（可留空）', 'Class (optional)')}
-                        <input
-                          id="math-paper-class"
-                          value={paperClass}
-                          maxLength={40}
-                          onChange={(event) => setPaperClass(event.target.value)}
-                        />
-                      </label>
-                      <label htmlFor="math-paper-footer">
-                        {t('页脚提示（可选）', 'Footer note (optional)')}
-                        <input
-                          id="math-paper-footer"
-                          value={paperFooter}
-                          maxLength={80}
-                          onChange={(event) => setPaperFooter(event.target.value)}
-                        />
-                      </label>
-                    </div>
-                    <div className="math-print-options">
-                      <label>
-                        {t('列数', 'Columns')}
-                        <select
-                          value={printColumns}
-                          onChange={(event) => setPrintColumns(Number(event.target.value))}
-                        >
-                          {[1, 2, 3, 4].map((value) => (
-                            <option value={value} key={value}>
-                              {value}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        {t('行间距', 'Row gap')}
-                        <select
-                          value={printGap}
-                          onChange={(event) => setPrintGap(Number(event.target.value))}
-                        >
-                          {[12, 22, 36, 52].map((value) => (
-                            <option value={value} key={value}>
-                              {value} px
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className="math-print-check">
-                        <input
-                          type="checkbox"
-                          checked={printAnswers}
-                          onChange={(event) => setPrintAnswers(event.target.checked)}
-                        />
-                        {t('附答案', 'Answers')}
-                      </label>
-                      <button
-                        className="math-btn math-btn-soft"
-                        onClick={() => printWorksheet('questions')}
-                        disabled={printing}
-                      >
-                        <Printer size={15} />
-                        {t('试卷 / PDF', 'Worksheet / PDF')}
-                      </button>
-                      <button
-                        className="math-btn math-btn-soft"
-                        onClick={() => printWorksheet('answers')}
-                        disabled={printing}
-                      >
-                        <Printer size={15} />
-                        {t('独立答案卷 / PDF', 'Answer sheet / PDF')}
-                      </button>
-                    </div>
-                    <p className="math-help">
-                      {t(
-                        '在系统打印窗口中选择“另存为 PDF”。试卷与答案卷分别生成；班级与页脚只用于本地打印。',
-                        "Choose Save as PDF in your browser's print dialog. Worksheet and answer sheet are separate; class and footer stay in this browser.",
-                      )}
-                    </p>
-                    <div className="math-downloads">
-                      <button
-                        className="math-inline"
-                        onClick={() =>
-                          downloadJson(`worksheet-${worksheet.seed}.json`, {
-                            seed: worksheet.seed,
-                            options: worksheet.options,
-                            questions: worksheet.questions.map(({ id, expression, kind }) => ({
-                              id,
-                              expression,
-                              kind,
-                            })),
-                          })
-                        }
-                      >
-                        <Download size={15} />
-                        {t('题目 JSON', 'Questions JSON')}
-                      </button>
-                      <button
-                        className="math-inline"
-                        onClick={() =>
-                          downloadJson(`answers-${worksheet.seed}.json`, {
-                            seed: worksheet.seed,
-                            options: worksheet.options,
-                            questions: worksheet.questions,
-                          })
-                        }
-                      >
-                        <Download size={15} />
-                        {t('题目与答案 JSON', 'Questions & answers JSON')}
-                      </button>
-                      <code title={worksheet.seed}>Seed: {worksheet.seed}</code>
-                    </div>
-                  </div>
-                </>
+                  <small>
+                    {t(
+                      '关闭小窗会保留当前作答，刷新页面后需重新生成。',
+                      'Closing the window preserves your answers. Reloading requires a new worksheet.',
+                    )}
+                  </small>
+                </div>
               ) : (
                 <div className="math-empty-practice">
                   <div className="math-empty-art" aria-hidden="true">
@@ -2077,33 +1772,393 @@ export default function MathWorkspace({ active = true }: { active?: boolean }) {
       )}
 
       {section === 'ocr' && <MathOCRPanel language={language} />}
-      {evaluation && (
-        <div className="math-modal-backdrop" onClick={() => setEvaluation(null)}>
-          <section
-            className="math-modal"
-            ref={modalRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="math-evaluation-title"
-            onClick={(event) => event.stopPropagation()}
+      <MathWindow
+        open={active && section === 'practice' && !!worksheet && workspaceWindow !== null}
+        kind={workspaceWindow === 'export' ? 'export' : 'practice'}
+        returnFocusRef={practiceLauncherRef}
+        title={
+          workspaceWindow === 'export'
+            ? t('带走这张答题纸', 'Take your worksheet with you')
+            : t('本次练习', 'Your worksheet')
+        }
+        eyebrow={workspaceWindow === 'export' ? 'PRINT & EXPORT' : 'FOCUS & PRACTICE'}
+        closeLabel={t('关闭小窗', 'Close window')}
+        onClose={() => {
+          setEvaluation(null);
+          setWorkspaceWindow(null);
+        }}
+        actions={
+          <button
+            className="math-btn math-btn-soft"
+            onClick={() => setWorkspaceWindow(workspaceWindow === 'export' ? 'practice' : 'export')}
           >
-            <div className="math-panel-title">
-              <BookOpen size={20} />
-              <h2 id="math-evaluation-title">{t('这道题如何计算', 'How this expression is evaluated')}</h2>
-              <button
-                ref={modalCloseRef}
-                className="math-icon-button"
-                onClick={() => setEvaluation(null)}
-                aria-label={t('关闭解析', 'Close explanation')}
-              >
-                <X size={19} />
-              </button>
+            {workspaceWindow === 'export' ? <ChevronLeft size={15} /> : <Printer size={15} />}
+            {workspaceWindow === 'export'
+              ? t('返回练习', 'Back to practice')
+              : t('打印与导出', 'Print & export')}
+          </button>
+        }
+      >
+        {error && (
+          <div className="math-message math-error" role="alert">
+            <CircleAlert size={17} />
+            <span>{localizedMessage(error, language)}</span>
+          </div>
+        )}
+        {worksheet &&
+          (workspaceWindow === 'export' ? (
+            <div className="math-export-panel">
+              <div className="math-export-intro">
+                <h3>
+                  <Printer size={17} />
+                  {t('打印与导出', 'Print & export')}
+                </h3>
+                <p>
+                  {t(
+                    '打印全部题目，或导出可复现的 JSON 文件。',
+                    'Print every question or export a reproducible JSON file.',
+                  )}
+                </p>
+              </div>
+              <div className="math-paper-fields">
+                <label htmlFor="math-paper-title">
+                  {t('试卷标题', 'Paper title')}
+                  <input
+                    id="math-paper-title"
+                    value={paperTitle}
+                    maxLength={60}
+                    onChange={(event) => setPaperTitle(event.target.value)}
+                    placeholder={t('四则运算练习', 'Arithmetic worksheet')}
+                  />
+                </label>
+                <label htmlFor="math-paper-class">
+                  {t('班级（可留空）', 'Class (optional)')}
+                  <input
+                    id="math-paper-class"
+                    value={paperClass}
+                    maxLength={40}
+                    onChange={(event) => setPaperClass(event.target.value)}
+                  />
+                </label>
+                <label htmlFor="math-paper-footer">
+                  {t('页脚提示（可选）', 'Footer note (optional)')}
+                  <input
+                    id="math-paper-footer"
+                    value={paperFooter}
+                    maxLength={80}
+                    onChange={(event) => setPaperFooter(event.target.value)}
+                  />
+                </label>
+              </div>
+              <div className="math-print-options">
+                <label>
+                  {t('列数', 'Columns')}
+                  <select
+                    value={printColumns}
+                    onChange={(event) => setPrintColumns(Number(event.target.value))}
+                  >
+                    {[1, 2, 3, 4].map((value) => (
+                      <option value={value} key={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  {t('行间距', 'Row gap')}
+                  <select value={printGap} onChange={(event) => setPrintGap(Number(event.target.value))}>
+                    {[12, 22, 36, 52].map((value) => (
+                      <option value={value} key={value}>
+                        {value} px
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="math-print-check">
+                  <input
+                    type="checkbox"
+                    checked={printAnswers}
+                    onChange={(event) => setPrintAnswers(event.target.checked)}
+                  />
+                  {t('附答案', 'Answers')}
+                </label>
+                <button
+                  className="math-btn math-btn-soft"
+                  onClick={() => printWorksheet('questions')}
+                  disabled={printing}
+                >
+                  <Printer size={15} />
+                  {t('试卷 / PDF', 'Worksheet / PDF')}
+                </button>
+                <button
+                  className="math-btn math-btn-soft"
+                  onClick={() => printWorksheet('answers')}
+                  disabled={printing}
+                >
+                  <Printer size={15} />
+                  {t('独立答案卷 / PDF', 'Answer sheet / PDF')}
+                </button>
+              </div>
+              <p className="math-help">
+                {t(
+                  '在系统打印窗口中选择“另存为 PDF”。试卷与答案卷分别生成；班级与页脚只用于本地打印。',
+                  "Choose Save as PDF in your browser's print dialog. Worksheet and answer sheet are separate; class and footer stay in this browser.",
+                )}
+              </p>
+              <div className="math-downloads">
+                <button
+                  className="math-inline"
+                  onClick={() =>
+                    downloadJson(`worksheet-${worksheet.seed}.json`, {
+                      seed: worksheet.seed,
+                      options: worksheet.options,
+                      questions: worksheet.questions.map(({ id, expression, kind }) => ({
+                        id,
+                        expression,
+                        kind,
+                      })),
+                    })
+                  }
+                >
+                  <Download size={15} />
+                  {t('题目 JSON', 'Questions JSON')}
+                </button>
+                <button
+                  className="math-inline"
+                  onClick={() =>
+                    downloadJson(`answers-${worksheet.seed}.json`, {
+                      seed: worksheet.seed,
+                      options: worksheet.options,
+                      questions: worksheet.questions,
+                    })
+                  }
+                >
+                  <Download size={15} />
+                  {t('题目与答案 JSON', 'Questions & answers JSON')}
+                </button>
+                <code title={worksheet.seed}>Seed: {worksheet.seed}</code>
+              </div>
             </div>
+          ) : (
+            <>
+              <div className="math-practice-heading">
+                <div>
+                  <span className="math-kicker">YOUR PRACTICE SPACE</span>
+                  <h2>
+                    {worksheet
+                      ? t('专注这一题，进步一点点。', 'One question. One step forward.')
+                      : t('准备好，开始一次小练习。', 'Ready for a little practice?')}
+                  </h2>
+                </div>
+                <div className="math-timer">
+                  <Clock3 size={17} />
+                  <strong>{timeText(elapsed)}</strong>
+                  <span>
+                    {grade
+                      ? t('已结束', 'Finished')
+                      : worksheet
+                        ? t('练习计时', 'Elapsed')
+                        : t('等待开始', 'Ready')}
+                  </span>
+                </div>
+              </div>
+              <div className="math-session-bar">
+                <span>
+                  <b>{worksheet.questions.length.toLocaleString()}</b> {t('道不重复题目', 'unique questions')}
+                </span>
+                <span>
+                  {t('已作答', 'Answered')} <b>{answered}</b> / {worksheet.questions.length}
+                </span>
+                <button className="math-inline" onClick={restart} disabled={!!busy}>
+                  <RotateCcw size={14} />
+                  {t('重做此卷', 'Start over')}
+                </button>
+              </div>
+              {grade && (
+                <div className="math-grade-summary" aria-live="polite">
+                  <div
+                    className="math-score-ring"
+                    style={
+                      {
+                        '--score': `${Math.max(0, Math.min(100, grade.accuracy * 100))}%`,
+                      } as CSSProperties
+                    }
+                  >
+                    <strong>
+                      {(grade.accuracy * 100).toFixed(1)}
+                      <small>%</small>
+                    </strong>
+                  </div>
+                  <div>
+                    <span>{t('本次准确率', 'This attempt')}</span>
+                    <h3>
+                      {t(
+                        `答对 ${grade.correct} / ${grade.total} 道`,
+                        `${grade.correct} of ${grade.total} correct`,
+                      )}
+                    </h3>
+                    <p>
+                      {t(
+                        `作答 ${grade.answered} 道 · 用时 ${timeText(elapsed)} · 未作答计为未正确`,
+                        `${grade.answered} answered · ${timeText(elapsed)} elapsed · Blanks count as incorrect`,
+                      )}
+                    </p>
+                  </div>
+                  <Check size={27} />
+                </div>
+              )}
+              <div className="math-worksheet-toolbar">
+                <div>
+                  {grade && (
+                    <button
+                      className={onlyWrong ? 'active' : ''}
+                      onClick={() => {
+                        setOnlyWrong(!onlyWrong);
+                        setPage(1);
+                      }}
+                    >
+                      {t('只看错题', 'Incorrect only')}
+                    </button>
+                  )}
+                  <button
+                    className={showAnswers ? 'active' : ''}
+                    onClick={() => setShowAnswers(!showAnswers)}
+                  >
+                    {showAnswers ? t('隐藏答案', 'Hide answers') : t('显示答案', 'Show answers')}
+                  </button>
+                </div>
+                <span>
+                  {t('分数可输入 1/2；小数按精确值比较', 'Fractions: 1/2. Decimals are compared exactly.')}
+                </span>
+              </div>
+              <div className="math-question-grid">
+                {visibleQuestions.map((question) => {
+                  const result = resultMap.get(question.id);
+                  const originalIndex = worksheet.questions.indexOf(question);
+                  return (
+                    <div
+                      className={`math-question ${result ? (result.correct ? 'is-correct' : 'is-wrong') : ''}`}
+                      key={question.id}
+                    >
+                      <div className="math-question-top">
+                        <span>{String(originalIndex + 1).padStart(2, '0')}</span>
+                        {result && (
+                          <span className="math-result-tag">
+                            {result.correct ? <Check size={13} /> : <X size={13} />}
+                            {result.correct ? t('正确', 'Correct') : t('待订正', 'Review')}
+                          </span>
+                        )}
+                      </div>
+                      <label htmlFor={`answer-${question.id}`} className="math-expression">
+                        {displayExpression(question.expression)} <span>=</span>
+                      </label>
+                      <input
+                        id={`answer-${question.id}`}
+                        aria-label={t(`第 ${originalIndex + 1} 题答案`, `Answer ${originalIndex + 1}`)}
+                        autoComplete="off"
+                        spellCheck={false}
+                        value={answers[question.id] || ''}
+                        maxLength={100}
+                        disabled={!!busy || !!grade}
+                        onChange={(event) =>
+                          setAnswers((previous) => ({ ...previous, [question.id]: event.target.value }))
+                        }
+                        placeholder={question.kind === 'remainder' ? '3 r 1' : t('输入答案', 'Your answer')}
+                      />
+                      <div className="math-question-bottom">
+                        {showAnswers || (result && !result.correct) ? (
+                          <span>
+                            {t('答案', 'Answer')}: <b>{result?.expected ?? question.answer}</b>
+                          </span>
+                        ) : (
+                          <span>
+                            {question.kind === 'remainder' ? t('求商与余数', 'Quotient & remainder') : ''}
+                          </span>
+                        )}
+                        <button
+                          onClick={() => explain(question.expression, question.kind)}
+                          disabled={!!busy || question.kind === 'remainder'}
+                          title={t('查看提示与分步计算', 'View reverse Polish notation and result')}
+                        >
+                          {t('解析', 'Explain')}
+                          <ChevronRight size={12} />
+                        </button>
+                      </div>
+                      {result?.message && !result.correct && (
+                        <p className="math-answer-note">{localizedMessage(result.message, language)}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {!questionList.length && (
+                <div className="math-all-correct">
+                  <Check size={30} />
+                  <h3>{t('本次没有错题', 'No incorrect answers')}</h3>
+                  <p>
+                    {t('可以换一组规则，继续挑战。', 'Try another set of rules for your next challenge.')}
+                  </p>
+                </div>
+              )}
+              <div className="math-pagination">
+                <span>
+                  {t(
+                    `第 ${currentPage} / ${pages} 页 · 每页 ${pageSize} 题`,
+                    `Page ${currentPage} of ${pages} · ${pageSize} per page`,
+                  )}
+                </span>
+                <div>
+                  <button
+                    aria-label={t('上一页', 'Previous page')}
+                    disabled={currentPage <= 1}
+                    onClick={() => setPage(currentPage - 1)}
+                  >
+                    <ChevronLeft size={17} />
+                  </button>
+                  <button
+                    aria-label={t('下一页', 'Next page')}
+                    disabled={currentPage >= pages}
+                    onClick={() => setPage(currentPage + 1)}
+                  >
+                    <ChevronRight size={17} />
+                  </button>
+                </div>
+              </div>
+              <div className="math-submit-row">
+                <p>
+                  {t(
+                    '批改会检查整张练习卷，包含其他分页中的题目。',
+                    'Grading checks the entire worksheet, including other pages.',
+                  )}
+                </p>
+                <button
+                  className="math-btn math-btn-primary"
+                  onClick={submitAnswers}
+                  disabled={!!busy || !!grade}
+                >
+                  <ListChecks size={17} />
+                  {grade ? t('批改已完成', 'Graded') : t('提交整卷批改', 'Grade worksheet')}
+                </button>
+              </div>
+            </>
+          ))}
+      </MathWindow>
+      <MathWindow
+        open={active && !!evaluation}
+        kind="explanation"
+        returnFocusRef={explanationTriggerRef}
+        title={t('这道题如何计算', 'How this expression is evaluated')}
+        eyebrow="STEP BY STEP"
+        closeLabel={t('关闭解析', 'Close explanation')}
+        onClose={() => setEvaluation(null)}
+      >
+        {evaluation && (
+          <>
             <div className="math-evaluation-expression">{displayExpression(evaluation.expression)}</div>
             <MathStepExplanation key={evaluation.expression} explanation={evaluation} language={language} />
-          </section>
-        </div>
-      )}
+          </>
+        )}
+      </MathWindow>
       {printing && worksheet && (
         <section
           className="math-print-sheet"

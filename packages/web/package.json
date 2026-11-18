@@ -10,7 +10,7 @@
     "dev": "node scripts/run-framework.mjs dev",
     "build": "node scripts/run-framework.mjs build",
     "start": "node scripts/start-worker.mjs",
-    "lint": "eslint app components/cinematic-intro.tsx components/universe-map.tsx components/spatial-scene.tsx components/origin-profile.tsx \"components/math-*.tsx\" \"components/counter-*.tsx\" \"components/platform-*.tsx\" lib",
+    "lint": "eslint app components/cinematic-intro.tsx components/universe-map.tsx components/spatial-scene.tsx \"components/math-*.tsx\" \"components/counter-*.tsx\" \"components/platform-*.tsx\" lib",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit --incremental false",
     "prebuild": "node ../../scripts/prepare-ocr-assets.mjs"
