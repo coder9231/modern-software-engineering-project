@@ -1,4 +1,4 @@
-import { LANGUAGES, analyzeText, detectLanguage, explainJavaScript } from '@se-lab/core/counter';
+import { LANGUAGES, analyzeText, detectLanguage } from '@se-lab/core/counter';
 import { formatReport } from '@se-lab/core/report';
 import { analyzeProjectQuality } from '@se-lab/core/quality';
 
@@ -399,36 +399,6 @@ export function analyzeQualityUploads(payload) {
   } catch (error) {
     if (error instanceof RangeError || error instanceof TypeError)
       throw new HttpError('quality_limit', error.message);
-    throw error;
-  }
-}
-
-export function explainCodeUpload(payload) {
-  objectWithKeys(payload, ['files', 'options'], '请求');
-  if (!Array.isArray(payload.files) || payload.files.length !== 1)
-    fail('逐行解释每次请选择一个 JavaScript 文件。');
-  const entry = objectWithKeys(payload.files[0], ['path', 'contentBase64'], '文件条目');
-  const path = relativePath(entry.path);
-  if (detectLanguage(path) !== 'JavaScript') fail('逐行解释目前支持 .js、.mjs、.cjs 文件。');
-  const options = parseOptions(payload.options);
-  if (pathExcluded(path, options)) fail('该文件符合排除规则，请调整筛选后重试。');
-  const extension = path.slice(path.lastIndexOf('.')).toLowerCase();
-  if (options.extensions.size && !options.extensions.has(extension)) fail('该文件不在扩展名筛选范围内。');
-  const bytes = decodeBase64(entry.contentBase64);
-  if (bytes.byteLength > 128 * 1024)
-    fail('逐行解释仅支持小文件：原文件最多 128 KiB、解码后 UTF-8 最多 64 KiB。', 'payload_too_large', 413);
-  if (obviousBinary(bytes)) fail('请选择文本源码文件。');
-  let source;
-  try {
-    source = decodeSource(bytes, options.encoding);
-  } catch {
-    fail('无法按所选编码读取，请切换文件编码。', 'invalid_encoding');
-  }
-  if (source.includes('\0')) fail('请选择文本源码文件。');
-  try {
-    return { path, ...explainJavaScript(source) };
-  } catch (error) {
-    if (error instanceof RangeError) fail(error.message, 'payload_too_large', 413);
     throw error;
   }
 }

@@ -1,45 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { explainCodeUpload, analyzeUploads, errorJSON } from './code-count-service.mjs';
 import { evaluateMathExpression, handleMathRequest } from './math-service.mjs';
-
-const upload = (content, path = 'lesson.mjs', options = {}) => ({
-  files: [{ path, contentBase64: Buffer.from(content).toString('base64') }],
-  options,
-});
-
-test('line explanation honors decoding, filtering and ordinary counts', () => {
-  const body = upload(
-    Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from('// 中文\nconst a = 1;\n', 'utf16le')]),
-  );
-  const result = explainCodeUpload(body);
-  assert.equal(result.lines[0].text, '// 中文');
-  const { path, language, ...counts } = analyzeUploads(body).files[0];
-  assert.deepEqual(result.counts, counts);
-  assert.equal(result.path, path);
-  assert.equal(language, 'JavaScript');
-  assert.throws(() => explainCodeUpload(upload('x', 'node_modules/a.js')), /排除/u);
-  assert.throws(() => explainCodeUpload(upload('x', 'a.js', { extensions: ['py'] })), /筛选/u);
-  assert.throws(() => explainCodeUpload(upload('x', '../a.js')));
-  assert.throws(() => explainCodeUpload(upload('x', 'a.ts')), /目前支持/u);
-  assert.throws(() => explainCodeUpload({ files: [] }));
-  assert.throws(() => explainCodeUpload(upload(Buffer.from([0xff]))), /编码/u);
-  assert.throws(() => explainCodeUpload(upload(Buffer.from([0]))), /文本/u);
-  assert.throws(() => explainCodeUpload(upload(Buffer.from([0x50, 0x4b, 0x03, 0x04]))), /文本/u);
-});
-
-test('oversized line explanations return a useful 413 response', async () => {
-  for (const source of [' '.repeat(65537), ' '.repeat(131073)]) {
-    let response;
-    try {
-      explainCodeUpload(upload(source));
-    } catch (error) {
-      response = errorJSON(error);
-    }
-    assert.equal(response.status, 413);
-    assert.match((await response.json()).error.message, /KiB/u);
-  }
-});
 
 test('math explanation is opt-in and keeps existing evaluation responses compatible', async () => {
   const old = evaluateMathExpression({ expression: '8+12/3' });

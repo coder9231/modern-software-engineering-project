@@ -65,7 +65,7 @@ npm start
 
 ## 按角色阅读
 
-- [逐行统计解释与算式分步讲解](docs/feature-explanations.md)：查看 JavaScript 每行分类依据，按提示逐步学习算式计算过程。
+- [四则运算分步讲解](docs/feature-explanations.md)：按提示逐步学习算式计算过程。
 
 - [教师指南](docs/guides/teacher.md)：选预设、出卷、独立答案卷、班级 ZIP 汇总。
 - [学生指南](docs/guides/student.md)：作答、错题重练、24 点与拍照改卷。

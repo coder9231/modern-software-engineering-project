@@ -3,7 +3,6 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import type { Report } from '../lib/code-count-service.mjs';
 import type { ProjectQualityReport, ReportComparison } from '@se-lab/core/quality';
 import { comparisonToCsv } from './counter-insights-export.mjs';
-import CounterLineExplainer from './counter-line-explainer';
 import './counter-insights.css';
 type Props = {
   report: Report | null;
@@ -109,7 +108,6 @@ export default function CounterInsights({ report, uploads, options }: Props) {
   }
   return (
     <section className="counter-insights" aria-label="代码质量与版本对比">
-      <CounterLineExplainer uploads={uploads} options={options} />
       <section className="panel">
         <h2>从规模，进一步观察质量</h2>
         <p>
